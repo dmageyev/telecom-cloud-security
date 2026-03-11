@@ -139,7 +139,7 @@
                             <li>Підтримує деталізовані дозволи</li>
                             <li>Інтегрується з усіма сервісами AWS</li>
                         </ul>
-                        <h3 style="margin-top:0.8em;">Ключові компоненти</h3>
+                        <h3 style="margin-top:0.4em;">Ключові компоненти</h3>
                         <ul style="font-size:0.8em;">
                             <li><span class="tag">Users</span> Користувачі</li>
                             <li><span class="tag">Groups</span> Групи</li>
@@ -183,10 +183,7 @@
                                 <li>Email + пароль для входу</li>
                                 <li><strong>Не рекомендується використовувати щодня!</strong></li>
                             </ul>
-                            <p style="font-size:0.75em; margin-top:0.5em;">Використовувати тільки для:<br>
-                            – Налаштування білінгу<br>
-                            – Закриття акаунту<br>
-                            – Відновлення доступу</p>
+                            <p style="font-size:0.75em; margin-top:0.3em;">Тільки для: налаштування білінгу, закриття акаунту, відновлення доступу.</p>
                         </div>
                     </div>
                     <div>
@@ -226,7 +223,7 @@
                             <li>Групи не можуть містити інші групи</li>
                             <li>Спрощують управління правами</li>
                         </ul>
-                        <h3 style="margin-top:0.8em;">Приклад структури</h3>
+                        <h3 style="margin-top:0.4em;">Приклад структури</h3>
                         <ul style="font-size:0.82em;">
                             <li><span class="tag-green">Admins</span> — повний доступ</li>
                             <li><span class="tag">Developers</span> — EC2, S3, Lambda</li>
@@ -239,8 +236,7 @@
                         <div class="box">
                             <p style="font-size:0.8em;">Замість призначення прав <em>кожному</em> користувачу окремо — призначте права <strong>групі</strong>. При переведенні співробітника просто змініть членство у групі.</p>
                         </div>
-                        <br>
-                        <table style="font-size:0.7em;">
+                        <table style="font-size:0.7em; margin-top:0.3em;">
                             <tr><th>Без груп</th><th>З групами</th></tr>
                             <tr><td>10 користувачів × 5 правил = 50 змін</td><td>1 зміна в групі = миттєво</td></tr>
                             <tr><td>Ризик пропустити оновлення</td><td>Централізоване управління</td></tr>
@@ -262,7 +258,7 @@
                             <li>Для федеративних ідентичностей (SSO)</li>
                             <li>Для зовнішніх IdP (Google, Active Directory)</li>
                         </ul>
-                        <h3 style="margin-top:0.8em;">Типи ролей</h3>
+                        <h3 style="margin-top:0.4em;">Типи ролей</h3>
                         <ul style="font-size:0.82em;">
                             <li><span class="tag">Service Role</span> — для сервісів AWS</li>
                             <li><span class="tag">Cross-account Role</span> — між акаунтами</li>
@@ -281,7 +277,7 @@
                                 <li>Після закінчення — автоматичне скасування</li>
                             </ol>
                         </div>
-                        <p style="font-size:0.72em; color:#888; margin-top:0.5em;">💡 Ролі безпечніші за постійні Access Keys — немає ризику витоку довгоживучих облікових даних</p>
+                        <p style="font-size:0.72em; color:#888; margin-top:0.2em;">💡 Ролі безпечніші за постійні Access Keys — немає ризику витоку довгоживучих облікових даних</p>
                     </div>
                 </div>
             </section>
@@ -299,7 +295,7 @@
                             <li><span class="tag">SCP</span> — Service Control Policies (AWS Organizations)</li>
                             <li><span class="tag">Session Policy</span> — тимчасові обмеження для сесії</li>
                         </ul>
-                        <h3 style="margin-top:0.6em;">Правило оцінки</h3>
+                        <h3 style="margin-top:0.3em;">Правило оцінки</h3>
                         <div class="box" style="border-color:#da3633; font-size:0.9em;">
                             <strong style="color:#da3633;">Implicit Deny</strong> → Explicit Deny → Explicit Allow
                             <p style="margin-top:0.3em;">Якщо немає явного дозволу — <strong>доступ заборонений</strong></p>
@@ -344,7 +340,7 @@
                                 <li>Приклади: <code>AdministratorAccess</code>, <code>ReadOnlyAccess</code>, <code>AmazonS3FullAccess</code></li>
                             </ul>
                         </div>
-                        <div class="box" style="border-color:#238636; margin-top:0.6em;">
+                        <div class="box" style="border-color:#238636; margin-top:0.3em;">
                             <h3>Customer Managed Policies</h3>
                             <ul style="font-size:0.8em;">
                                 <li>Створені вами</li>
@@ -364,7 +360,7 @@
                                 <li>Не рекомендуються для масштабних рішень</li>
                             </ul>
                         </div>
-                        <div class="box" style="margin-top:0.6em;">
+                        <div class="box" style="margin-top:0.3em;">
                             <h3>💡 Порада</h3>
                             <p style="font-size:0.8em;">Надавайте лише необхідні права. Уникайте <code>*</code> в Action або Resource без крайньої потреби.</p>
                         </div>
@@ -384,7 +380,7 @@
                             <li>👁 <strong>Те, чим є</strong> — біометрія (відбиток, обличчя)</li>
                             <li>🌍 <strong>Де знаходишся</strong> — геолокація, IP-адреса</li>
                         </ul>
-                        <h3 style="margin-top:0.8em;">Типи MFA в AWS</h3>
+                        <h3 style="margin-top:0.4em;">Типи MFA в AWS</h3>
                         <ul style="font-size:0.82em;">
                             <li><span class="tag">TOTP</span> Virtual MFA (Google Authenticator, Authy)</li>
                             <li><span class="tag">TOTP</span> Hardware MFA (фізичний токен)</li>
@@ -418,7 +414,7 @@
                         <div class="box">
                             <p style="font-size:0.82em;">Кожен суб'єкт (людина, сервіс, процес) повинен мати <span class="highlight">лише мінімально необхідні права</span> для виконання своїх функцій — і не більше.</p>
                         </div>
-                        <h3 style="margin-top:0.8em;">Як застосовувати в AWS</h3>
+                        <h3 style="margin-top:0.4em;">Як застосовувати в AWS</h3>
                         <ul style="font-size:0.8em;">
                             <li>Починайте з мінімальних прав, додавайте при необхідності</li>
                             <li>Використовуйте IAM Access Analyzer</li>
@@ -455,7 +451,7 @@
                     <div>
                         <h3>Принцип федерації</h3>
                         <p style="font-size:0.82em;">Довіра до зовнішнього Identity Provider (IdP): замість окремих IAM-користувачів — єдина корпоративна ідентичність.</p>
-                        <h3 style="margin-top:0.6em;">Протоколи та стандарти</h3>
+                        <h3 style="margin-top:0.3em;">Протоколи та стандарти</h3>
                         <ul style="font-size:0.8em;">
                             <li><span class="tag">SAML 2.0</span> — для корпоративних IdP (AD, Okta)</li>
                             <li><span class="tag">OIDC</span> — для вебзастосунків (Google, GitHub)</li>
@@ -474,7 +470,7 @@
                                 <li>Видаються тимчасові credentials</li>
                             </ol>
                         </div>
-                        <p style="font-size:0.72em; color:#888; margin-top:0.4em;">💡 Перевага: не потрібно створювати IAM user для кожного співробітника. Звільнення — лише в корпоративному IdP.</p>
+                        <p style="font-size:0.72em; color:#888; margin-top:0.2em;">💡 Перевага: не потрібно створювати IAM user для кожного співробітника. Звільнення — лише в корпоративному IdP.</p>
                     </div>
                 </div>
             </section>
@@ -492,7 +488,7 @@
                             <li>Вимоги ETSI, 3GPP для управління ідентичністю</li>
                             <li>Роуминг — міжоператорна довіра</li>
                         </ul>
-                        <h3 style="margin-top:0.6em;">Сценарії використання</h3>
+                        <h3 style="margin-top:0.3em;">Сценарії використання</h3>
                         <ul style="font-size:0.8em;">
                             <li><span class="tag">NOC/SOC</span> — обмежений доступ лише до моніторингу</li>
                             <li><span class="tag">CI/CD</span> — автоматичні ролі без постійних ключів</li>
@@ -520,20 +516,20 @@
                         <h3>Найпоширеніші атаки</h3>
                         <ul style="font-size:0.78em;">
                             <li>
-                                <strong>🔑 Витік Access Keys</strong><br>
-                                <span style="color:#888;">Ключі в публічних репозиторіях GitHub, у коді</span>
+                                <strong>🔑 Витік Access Keys</strong> —
+                                <span style="color:#888;">ключі в публічних репозиторіях GitHub, у коді</span>
                             </li>
-                            <li style="margin-top:0.5em;">
-                                <strong>🎭 Privilege Escalation</strong><br>
-                                <span style="color:#888;">Використання прав для отримання ширших прав (iam:PassRole, iam:CreatePolicyVersion)</span>
+                            <li>
+                                <strong>🎭 Privilege Escalation</strong> —
+                                <span style="color:#888;">iam:PassRole, iam:CreatePolicyVersion для розширення прав</span>
                             </li>
-                            <li style="margin-top:0.5em;">
-                                <strong>🌐 Cross-Account Attack</strong><br>
-                                <span style="color:#888;">Некоректно налаштована trust policy дозволяє доступ з чужого акаунту</span>
+                            <li>
+                                <strong>🌐 Cross-Account Attack</strong> —
+                                <span style="color:#888;">некоректна trust policy дозволяє доступ з чужого акаунту</span>
                             </li>
-                            <li style="margin-top:0.5em;">
-                                <strong>📧 Credential Stuffing / Phishing</strong><br>
-                                <span style="color:#888;">Злам пароля консолі AWS через перебір або фішинг</span>
+                            <li>
+                                <strong>📧 Credential Stuffing / Phishing</strong> —
+                                <span style="color:#888;">злам пароля консолі AWS через перебір або фішинг</span>
                             </li>
                         </ul>
                     </div>
@@ -582,7 +578,7 @@
                             <li>GuardDuty: виявлення підозрілих IAM-дій</li>
                             <li>IAM Access Analyzer: аналіз зовнішнього доступу</li>
                         </ul>
-                        <h3 style="margin-top:0.6em;">Превентивні заходи</h3>
+                        <h3 style="margin-top:0.3em;">Превентивні заходи</h3>
                         <ul style="font-size:0.8em;">
                             <li>Permissions Boundary — жорстке обмеження максимальних прав</li>
                             <li>SCP — заборона небезпечних дій на рівні організації</li>
@@ -604,7 +600,7 @@
                             <li>Видаляти невикористані ключі та користувачів</li>
                             <li>Ніколи не вбудовувати ключі в код або конфіги</li>
                         </ul>
-                        <h3 style="margin-top:0.6em;">🎭 Ролі та права</h3>
+                        <h3 style="margin-top:0.3em;">🎭 Ролі та права</h3>
                         <ul style="font-size:0.78em;">
                             <li>Використовувати ролі для EC2, Lambda та інших сервісів</li>
                             <li>Принцип найменших привілеїв для кожної ідентичності</li>
@@ -620,7 +616,7 @@
                             <li>Використовувати IAM Access Analyzer</li>
                             <li>Регулярно переглядати Credential Report</li>
                         </ul>
-                        <h3 style="margin-top:0.6em;">🏢 Організаційний рівень</h3>
+                        <h3 style="margin-top:0.3em;">🏢 Організаційний рівень</h3>
                         <ul style="font-size:0.78em;">
                             <li>AWS Organizations + SCP для жорсткого управління</li>
                             <li>AWS IAM Identity Center для централізованого SSO</li>
@@ -645,7 +641,7 @@
                             <li>Портал самообслуговування для користувачів</li>
                             <li>Підтримка SCIM для автоматичного провізіонування</li>
                         </ul>
-                        <h3 style="margin-top:0.6em;">Рекомендовано для</h3>
+                        <h3 style="margin-top:0.3em;">Рекомендовано для</h3>
                         <ul style="font-size:0.82em;">
                             <li>Компаній з >5 AWS-акаунтів</li>
                             <li>Корпоративних середовищ з Active Directory</li>
@@ -675,14 +671,14 @@
                         <h3>Принципи Zero Trust</h3>
                         <div class="box">
                             <p style="font-size:0.82em;"><span class="highlight">«Never trust, always verify»</span></p>
-                            <ul style="font-size:0.78em; margin-top:0.4em;">
+                            <ul style="font-size:0.78em; margin-top:0.2em;">
                                 <li>Перевіряти ідентичність при кожному запиті</li>
                                 <li>Мінімальні привілеї за замовчуванням</li>
                                 <li>Постійний моніторинг та валідація</li>
                                 <li>Мікросегментація доступу</li>
                             </ul>
                         </div>
-                        <h3 style="margin-top:0.6em;">IAM як основа Zero Trust</h3>
+                        <h3 style="margin-top:0.3em;">IAM як основа Zero Trust</h3>
                         <ul style="font-size:0.8em;">
                             <li>Ідентичність — новий периметр безпеки</li>
                             <li>Контекстна авторизація (IP, час, пристрій)</li>
@@ -741,8 +737,7 @@
                             <li><span class="tag">AWS Trusted Advisor</span> — рекомендації з безпеки IAM</li>
                             <li><span class="tag">AWS Security Hub</span> — відповідність CIS AWS Foundations</li>
                         </ul>
-                        <p style="font-size:0.72em; color:#888; margin-top:0.5em;">📚 Посилання: <br>
-                        AWS IAM Best Practices: docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html</p>
+                        <p style="font-size:0.72em; color:#888; margin-top:0.3em;">📚 AWS IAM Best Practices: docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html</p>
                     </div>
                 </div>
             </section>
@@ -771,7 +766,7 @@
                             <li>→ Лекція 5: Захист даних (шифрування + KMS ролі)</li>
                             <li>→ Лекція 8: Моніторинг (CloudTrail, GuardDuty)</li>
                         </ul>
-                        <div class="box" style="margin-top:0.8em; border-color:#e8b04b; font-size:0.8em;">
+                        <div class="box" style="margin-top:0.4em; border-color:#e8b04b; font-size:0.8em;">
                             <strong>Запам'ятайте:</strong>
                             <p>Більшість успішних зломів хмарних середовищ — це не атаки на інфраструктуру, а <span class="highlight">компрометація ідентичностей</span>.</p>
                         </div>
@@ -797,7 +792,7 @@
             slideNumber: 'c/t',
             center: false,
             width: 1100,
-            height: 700,
+            height: 900,
             margin: 0.04,
             minScale: 0.2,
             maxScale: 2.0
