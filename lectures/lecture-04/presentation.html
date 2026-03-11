@@ -8,23 +8,24 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/black.css">
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
     <style>
-        .reveal h1 { font-size: 1.8em; }
-        .reveal h2 { font-size: 1.4em; color: #58a6ff; }
-        .reveal h3 { font-size: 1.1em; color: #e8b04b; }
-        .reveal ul { text-align: left; }
-        .reveal li { margin-bottom: 0.4em; }
-        .two-col { display: flex; gap: 2em; }
-        .two-col > div { flex: 1; }
+        .reveal h1 { font-size: 1.5em; }
+        .reveal h2 { font-size: 1.2em; color: #58a6ff; }
+        .reveal h3 { font-size: 0.9em; color: #e8b04b; margin: 0.3em 0 0.2em; }
+        .reveal ul, .reveal ol { text-align: left; }
+        .reveal li { margin-bottom: 0.15em; }
+        .reveal p { margin: 0.25em 0; }
+        .two-col { display: flex; gap: 1.2em; }
+        .two-col > div { flex: 1; min-width: 0; }
         .highlight { color: #e8b04b; font-weight: bold; }
-        .tag { background: #1f6feb; border-radius: 4px; padding: 2px 8px; font-size: 0.8em; margin: 2px; display: inline-block; }
-        .tag-green { background: #238636; border-radius: 4px; padding: 2px 8px; font-size: 0.8em; margin: 2px; display: inline-block; }
-        .tag-red { background: #da3633; border-radius: 4px; padding: 2px 8px; font-size: 0.8em; margin: 2px; display: inline-block; }
-        .box { border: 1px solid #444; border-radius: 6px; padding: 0.6em 1em; margin: 0.4em 0; }
-        table { font-size: 0.75em; border-collapse: collapse; width: 100%; }
-        th { background: #1f6feb; padding: 6px 10px; }
-        td { padding: 6px 10px; border-bottom: 1px solid #444; }
-        code { background: #161b22; padding: 2px 6px; border-radius: 4px; font-size: 0.85em; color: #58a6ff; }
-        pre code { display: block; padding: 0.6em; font-size: 0.7em; color: #c9d1d9; line-height: 1.4; white-space: pre; }
+        .tag { background: #1f6feb; border-radius: 4px; padding: 1px 6px; font-size: 0.75em; margin: 1px; display: inline-block; }
+        .tag-green { background: #238636; border-radius: 4px; padding: 1px 6px; font-size: 0.75em; margin: 1px; display: inline-block; }
+        .tag-red { background: #da3633; border-radius: 4px; padding: 1px 6px; font-size: 0.75em; margin: 1px; display: inline-block; }
+        .box { border: 1px solid #444; border-radius: 5px; padding: 0.3em 0.7em; margin: 0.2em 0; }
+        table { font-size: 0.7em; border-collapse: collapse; width: 100%; }
+        th { background: #1f6feb; padding: 4px 8px; }
+        td { padding: 4px 8px; border-bottom: 1px solid #444; }
+        code { background: #161b22; padding: 1px 5px; border-radius: 4px; font-size: 0.82em; color: #58a6ff; }
+        pre code { display: block; padding: 0.5em; font-size: 0.65em; color: #c9d1d9; line-height: 1.35; white-space: pre; }
     </style>
 </head>
 <body>
@@ -64,25 +65,25 @@
                     <div>
                         <div class="box">
                             <h3>🪪 Ідентифікація</h3>
-                            <p style="font-size:0.8em;">Процес заявлення про свою ідентичність<br><span class="highlight">«Хто я?»</span></p>
-                            <p style="font-size:0.75em; color:#888;">Приклад: введення імені користувача</p>
+                            <p style="font-size:0.78em;">Заявлення про свою ідентичність — <span class="highlight">«Хто я?»</span></p>
+                            <p style="font-size:0.72em; color:#888;">Приклад: ввести ім'я користувача</p>
                         </div>
                         <div class="box">
                             <h3>🔐 Аутентифікація</h3>
-                            <p style="font-size:0.8em;">Підтвердження заявленої ідентичності<br><span class="highlight">«Чи дійсно ти той, за кого себе видаєш?»</span></p>
-                            <p style="font-size:0.75em; color:#888;">Приклад: перевірка пароля, MFA, сертифіката</p>
+                            <p style="font-size:0.78em;">Підтвердження ідентичності — <span class="highlight">«Чи ти дійсно той, за кого себе видаєш?»</span></p>
+                            <p style="font-size:0.72em; color:#888;">Приклад: пароль, MFA, сертифікат</p>
                         </div>
                     </div>
                     <div>
                         <div class="box">
                             <h3>✅ Авторизація</h3>
-                            <p style="font-size:0.8em;">Визначення прав та дозволів<br><span class="highlight">«Що тобі дозволено робити?»</span></p>
-                            <p style="font-size:0.75em; color:#888;">Приклад: дозвіл читати S3-бакет</p>
+                            <p style="font-size:0.78em;">Визначення дозволів — <span class="highlight">«Що тобі дозволено робити?»</span></p>
+                            <p style="font-size:0.72em; color:#888;">Приклад: дозвіл читати S3-бакет</p>
                         </div>
                         <div class="box">
                             <h3>📋 Облік (Accounting)</h3>
-                            <p style="font-size:0.8em;">Реєстрація та аудит дій<br><span class="highlight">«Що ти зробив?»</span></p>
-                            <p style="font-size:0.75em; color:#888;">Приклад: CloudTrail, журнали подій</p>
+                            <p style="font-size:0.78em;">Реєстрація та аудит дій — <span class="highlight">«Що ти зробив?»</span></p>
+                            <p style="font-size:0.72em; color:#888;">Приклад: CloudTrail, журнали подій</p>
                         </div>
                     </div>
                 </div>
@@ -122,7 +123,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <p style="font-size:0.7em; color:#888; margin-top:0.8em;">AWS IAM підтримує як RBAC (через ролі), так і ABAC (через теги ресурсів та умови в політиках)</p>
+                <p style="font-size:0.68em; color:#888; margin-top:0.4em;">AWS IAM підтримує як RBAC (через ролі), так і ABAC (через теги ресурсів та умови в політиках)</p>
             </section>
 
             <!-- ===== СЛАЙД 5: AWS IAM — огляд ===== -->
@@ -793,7 +794,13 @@
         Reveal.initialize({
             hash: true,
             transition: 'slide',
-            slideNumber: 'c/t'
+            slideNumber: 'c/t',
+            center: false,
+            width: 1100,
+            height: 700,
+            margin: 0.04,
+            minScale: 0.2,
+            maxScale: 2.0
         });
     </script>
 </body>
