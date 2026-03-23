@@ -1,0 +1,957 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Презентація: Безпека обчислювальних сервісів і контейнерів</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/black.css">
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <style>
+        .reveal h1 { font-size: 1.5em; }
+        .reveal h2 { font-size: 1.2em; color: #58a6ff; }
+        .reveal h3 { font-size: 0.9em; color: #e8b04b; margin: 0.3em 0 0.2em; }
+        .reveal ul, .reveal ol { text-align: left; }
+        .reveal li { margin-bottom: 0.15em; }
+        .reveal p { margin: 0.25em 0; }
+        .two-col { display: flex; gap: 1.2em; }
+        .two-col > div { flex: 1; min-width: 0; }
+        .highlight { color: #e8b04b; font-weight: bold; }
+        .tag { background: #1f6feb; border-radius: 4px; padding: 1px 6px; font-size: 0.75em; margin: 1px; display: inline-block; }
+        .tag-green { background: #238636; border-radius: 4px; padding: 1px 6px; font-size: 0.75em; margin: 1px; display: inline-block; }
+        .tag-red { background: #da3633; border-radius: 4px; padding: 1px 6px; font-size: 0.75em; margin: 1px; display: inline-block; }
+        .box { border: 1px solid #444; border-radius: 5px; padding: 0.3em 0.7em; margin: 0.2em 0; }
+        table { font-size: 0.7em; border-collapse: collapse; width: 100%; }
+        th { background: #1f6feb; padding: 4px 8px; }
+        td { padding: 4px 8px; border-bottom: 1px solid #444; }
+        code { background: #161b22; padding: 1px 5px; border-radius: 4px; font-size: 0.82em; color: #58a6ff; }
+        pre code { display: block; padding: 0.5em; font-size: 0.65em; color: #c9d1d9; line-height: 1.35; white-space: pre; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- ===== СЛАЙД 1: Титульний ===== -->
+            <section>
+                <h1>Безпека обчислювальних сервісів і контейнерів</h1>
+                <h2 style="color:#e8b04b;">Compute Security &amp; Containers</h2>
+                <p>Лекція 6 &nbsp;|&nbsp; Курс: Інформаційна безпека телекомунікаційних та хмарних технологій</p>
+                <hr style="border-color:#444; margin:1em 0;">
+                <p style="font-size:0.75em; color:#888;">Модуль 2: Захист сервісів, інциденти та відповідність</p>
+            </section>
+
+            <!-- ===== СЛАЙД 2: План лекції ===== -->
+            <section>
+                <h2>План лекції</h2>
+                <ol style="font-size:0.85em;">
+                    <li>Огляд обчислювальних сервісів AWS</li>
+                    <li>Безпека віртуальних машин (EC2)</li>
+                    <li>Основи контейнеризації та Docker</li>
+                    <li>Безпека Docker-образів і реєстрів</li>
+                    <li>Оркестрація: Kubernetes та Amazon EKS</li>
+                    <li>Amazon ECS та AWS Fargate</li>
+                    <li>Serverless-безпека: AWS Lambda</li>
+                    <li>Типові загрози та вразливості</li>
+                    <li>Кращі практики та практичне завдання</li>
+                </ol>
+            </section>
+
+            <!-- ===== СЛАЙД 3: Обчислювальні сервіси AWS ===== -->
+            <section>
+                <h2>Обчислювальні сервіси AWS — огляд</h2>
+                <table>
+                    <thead>
+                        <tr><th>Сервіс</th><th>Тип</th><th>Рівень управління</th><th>Приклад використання</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="highlight">EC2</span></td>
+                            <td>Віртуальні машини</td>
+                            <td>Повний контроль над ОС</td>
+                            <td>Телеком-платформи, бази даних</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight">ECS</span></td>
+                            <td>Контейнери (керовані)</td>
+                            <td>Контейнерний рівень</td>
+                            <td>Мікросервіси, API-шлюзи</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight">EKS</span></td>
+                            <td>Kubernetes (керований)</td>
+                            <td>Pod / Node</td>
+                            <td>Масштабовані хмарні застосунки</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight">Fargate</span></td>
+                            <td>Serverless-контейнери</td>
+                            <td>Тільки код / образ</td>
+                            <td>Задачі без управління серверами</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight">Lambda</span></td>
+                            <td>Serverless-функції</td>
+                            <td>Тільки код</td>
+                            <td>Event-driven обробка, автоматизація</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="font-size:0.68em; color:#888; margin-top:0.4em;">Кожен рівень абстракції змінює модель безпеки: менше контролю = менша поверхня атаки, але нові ризики</p>
+            </section>
+
+            <!-- ===== СЛАЙД 4: Модель спільної відповідальності — Compute ===== -->
+            <section>
+                <h2>Модель спільної відповідальності для Compute</h2>
+                <div class="two-col">
+                    <div>
+                        <div class="box" style="border-color:#1f6feb;">
+                            <h3>☁️ AWS відповідає за:</h3>
+                            <ul style="font-size:0.78em;">
+                                <li>Фізичну безпеку дата-центрів</li>
+                                <li>Гіпервізор та ізоляцію VM</li>
+                                <li>Мережеву інфраструктуру</li>
+                                <li>Управління платформою ECS/EKS/Lambda</li>
+                                <li>Патчі ядра Fargate-середовища</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="box" style="border-color:#238636;">
+                            <h3>🧑‍💻 Клієнт відповідає за:</h3>
+                            <ul style="font-size:0.78em;">
+                                <li>Операційну систему EC2 (патчі, конфігурація)</li>
+                                <li>Security Groups та мережеві правила</li>
+                                <li>Вміст та конфігурацію контейнерів</li>
+                                <li>IAM-ролі для сервісів</li>
+                                <li>Шифрування даних у стані спокою і в русі</li>
+                                <li>Код Lambda-функцій та залежності</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <p style="font-size:0.7em; color:#888; margin-top:0.4em;">⚠️ Fargate &amp; Lambda — AWS бере більше відповідальності, але клієнт досі відповідає за код і права доступу</p>
+            </section>
+
+            <!-- ===== СЛАЙД 5: Безпека EC2 — огляд ===== -->
+            <section>
+                <h2>Безпека Amazon EC2</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🖥️ Ключові заходи безпеки</h3>
+                        <ul style="font-size:0.8em;">
+                            <li>Вибір перевіреного AMI (Amazon Machine Image)</li>
+                            <li>Регулярне оновлення ОС та пакетів</li>
+                            <li>Мінімальна поверхня атаки (вимкнути зайві сервіси)</li>
+                            <li>SSH-доступ тільки через ключові пари</li>
+                            <li>Використання AWS Systems Manager Session Manager замість SSH</li>
+                            <li>Instance Metadata Service v2 (IMDSv2)</li>
+                        </ul>
+                        <h3 style="margin-top:0.4em;">🔑 IMDSv2 — захист метаданих</h3>
+                        <ul style="font-size:0.78em;">
+                            <li>Вимагає токен для доступу до <code>/latest/meta-data/</code></li>
+                            <li>Захист від SSRF-атак на ролі IAM</li>
+                            <li>Обов'язково вмикати на нових інстансах</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="box" style="border-color:#da3633;">
+                            <h3 style="color:#da3633;">⚠️ Типові помилки EC2</h3>
+                            <ul style="font-size:0.78em;">
+                                <li>Відкритий порт 22 (SSH) для 0.0.0.0/0</li>
+                                <li>Використання IMDSv1 (вразливий до SSRF)</li>
+                                <li>Надмірні IAM-права для EC2-ролі</li>
+                                <li>Незашифровані EBS-томи</li>
+                                <li>Публічний S3-бакет для скриптів user-data</li>
+                                <li>Відсутність моніторингу та алертів</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 6: Security Groups та NACL ===== -->
+            <section>
+                <h2>Мережева ізоляція EC2: Security Groups &amp; NACL</h2>
+                <table>
+                    <thead>
+                        <tr><th>Характеристика</th><th>Security Group</th><th>Network ACL</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Рівень</td>
+                            <td>Інстанс (EC2, RDS…)</td>
+                            <td>Підмережа (Subnet)</td>
+                        </tr>
+                        <tr>
+                            <td>Стан</td>
+                            <td>Stateful (відповіді дозволені автоматично)</td>
+                            <td>Stateless (правила для IN і OUT окремо)</td>
+                        </tr>
+                        <tr>
+                            <td>Правила</td>
+                            <td>Тільки дозволяючі (Allow)</td>
+                            <td>Дозволяючі та заборонні (Allow/Deny)</td>
+                        </tr>
+                        <tr>
+                            <td>Порядок</td>
+                            <td>Всі правила застосовуються</td>
+                            <td>Номер правила (нижчий = пріоритет)</td>
+                        </tr>
+                        <tr>
+                            <td>Застосування</td>
+                            <td>Основний механізм контролю</td>
+                            <td>Додатковий рівень блокування</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="box" style="margin-top:0.4em; font-size:0.75em; border-color:#238636;">
+                    <strong>🛡️ Принцип Defense in Depth:</strong> SG + NACL + VPC Flow Logs + WAF = багаторівневий захист
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 7: Основи контейнеризації ===== -->
+            <section>
+                <h2>Основи контейнеризації</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>📦 Що таке контейнер?</h3>
+                        <ul style="font-size:0.8em;">
+                            <li>Ізольований процес з власним файловим простором</li>
+                            <li>Спільне ядро з хост-системою</li>
+                            <li>Швидше за ВМ, легше переносити</li>
+                            <li>Образ (Image) = незмінний шаблон</li>
+                            <li>Контейнер = запущений екземпляр образу</li>
+                        </ul>
+                        <h3 style="margin-top:0.4em;">🔄 VM vs Container</h3>
+                        <table style="font-size:0.68em;">
+                            <tr><th></th><th>VM</th><th>Container</th></tr>
+                            <tr><td>Ізоляція</td><td>Повна (гіпервізор)</td><td>Часткова (namespaces)</td></tr>
+                            <tr><td>Запуск</td><td>Хвилини</td><td>Секунди</td></tr>
+                            <tr><td>Розмір</td><td>ГБ</td><td>МБ</td></tr>
+                            <tr><td>ОС</td><td>Окрема ОС</td><td>Спільне ядро</td></tr>
+                        </table>
+                    </div>
+                    <div>
+                        <h3>🔒 Механізми ізоляції Linux</h3>
+                        <div class="box">
+                            <p style="font-size:0.78em;"><span class="tag">Namespaces</span> Ізоляція PID, мережі, файлової системи, користувачів</p>
+                        </div>
+                        <div class="box">
+                            <p style="font-size:0.78em;"><span class="tag">cgroups</span> Обмеження ресурсів CPU, пам'яті, I/O</p>
+                        </div>
+                        <div class="box">
+                            <p style="font-size:0.78em;"><span class="tag">seccomp</span> Фільтрація системних викликів</p>
+                        </div>
+                        <div class="box">
+                            <p style="font-size:0.78em;"><span class="tag">AppArmor/SELinux</span> Профілі обов'язкового контролю доступу</p>
+                        </div>
+                        <p style="font-size:0.7em; color:#888; margin-top:0.3em;">⚠️ Shared kernel = якщо ядро скомпрометоване — всі контейнери під загрозою</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 8: Docker — архітектура безпеки ===== -->
+            <section>
+                <h2>Docker: архітектура та безпека</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🐳 Компоненти Docker</h3>
+                        <ul style="font-size:0.8em;">
+                            <li><code>dockerd</code> — демон (root-права!)</li>
+                            <li><code>containerd</code> — runtime контейнерів</li>
+                            <li><code>runc</code> — низькорівневий OCI-runtime</li>
+                            <li>Docker socket: <code>/var/run/docker.sock</code></li>
+                        </ul>
+                        <div class="box" style="border-color:#da3633; margin-top:0.3em;">
+                            <h3 style="color:#da3633;">⚠️ Монтування docker.sock</h3>
+                            <p style="font-size:0.75em;">Доступ до сокету = повний контроль над хост-системою. Ніколи не монтуйте його в недовірені контейнери!</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>🛡️ Запуск без root</h3>
+                        <pre><code># Запуск як non-root user
+docker run --user 1000:1000 nginx
+
+# Rootless Docker (демон без root)
+dockerd-rootless-setuptool.sh install
+
+# Read-only filesystem
+docker run --read-only nginx</code></pre>
+                        <h3 style="margin-top:0.3em;">Обмеження capabilities</h3>
+                        <pre><code># Видалити всі capabilities, додати лише потрібні
+docker run --cap-drop ALL \
+           --cap-add NET_BIND_SERVICE nginx</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 9: Dockerfile — безпечні практики ===== -->
+            <section>
+                <h2>Безпечний Dockerfile</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>✅ Правильний Dockerfile</h3>
+                        <pre><code># Використовувати конкретний тег образу
+FROM python:3.12-slim
+
+# Не запускати від root
+RUN addgroup --system app \
+ && adduser --system --ingroup app app
+
+WORKDIR /app
+
+# Копіювати тільки потрібні файли
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY --chown=app:app . .
+
+# Перемкнутися на non-root
+USER app
+
+# Не відкривати зайвих портів
+EXPOSE 8080
+
+CMD ["python", "app.py"]</code></pre>
+                    </div>
+                    <div>
+                        <h3 style="color:#da3633;">❌ Типові помилки</h3>
+                        <pre><code># Погано: використання latest
+FROM ubuntu:latest
+
+# Погано: запуск від root (за замовчуванням)
+# (відсутній USER)
+
+# Погано: секрети в ENV
+ENV DB_PASSWORD=secret123
+
+# Погано: весь контекст у образі
+COPY . .
+
+# Погано: привілейований режим
+# docker run --privileged ...</code></pre>
+                        <div class="box" style="border-color:#e8b04b; margin-top:0.3em; font-size:0.75em;">
+                            <strong>Multi-stage build</strong> — зменшує розмір образу та поверхню атаки: білд-інструменти не потрапляють у production-образ
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 10: Сканування образів ===== -->
+            <section>
+                <h2>Сканування вразливостей Docker-образів</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🔍 Інструменти сканування</h3>
+                        <table style="font-size:0.72em;">
+                            <tr><th>Інструмент</th><th>Тип</th><th>Особливість</th></tr>
+                            <tr><td><span class="highlight">Amazon ECR</span></td><td>Вбудований</td><td>Автосканування при push</td></tr>
+                            <tr><td><span class="highlight">Trivy</span></td><td>Open Source</td><td>OS + бібліотеки + IaC</td></tr>
+                            <tr><td><span class="highlight">Snyk</span></td><td>SaaS</td><td>CI/CD інтеграція</td></tr>
+                            <tr><td><span class="highlight">Grype</span></td><td>Open Source</td><td>Швидкий, SBOM-підтримка</td></tr>
+                            <tr><td><span class="highlight">Clair</span></td><td>Open Source</td><td>API-орієнтований</td></tr>
+                        </table>
+                        <h3 style="margin-top:0.4em;">Pipeline сканування</h3>
+                        <div class="box" style="font-size:0.75em;">
+                            <p>Build → <span class="tag">Scan</span> → Registry → Deploy</p>
+                            <p>Блокувати деплой при CRITICAL вразливостях</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>📦 Amazon ECR — безпека реєстру</h3>
+                        <ul style="font-size:0.78em;">
+                            <li>Приватні репозиторії з IAM-контролем</li>
+                            <li>Image scanning (Basic і Enhanced через Inspector)</li>
+                            <li>Lifecycle policies — автовидалення старих образів</li>
+                            <li>Image signing (sigstore/cosign)</li>
+                            <li>Реплікація між регіонами</li>
+                        </ul>
+                        <pre><code># Сканування образу Trivy
+trivy image myapp:latest
+
+# Тільки критичні та HIGH
+trivy image --severity HIGH,CRITICAL \
+  123456789.dkr.ecr.eu-west-1\
+  .amazonaws.com/myapp:latest</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 11: Kubernetes — архітектура ===== -->
+            <section>
+                <h2>Kubernetes: архітектура та компоненти безпеки</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>⚙️ Control Plane</h3>
+                        <ul style="font-size:0.78em;">
+                            <li><code>kube-apiserver</code> — точка входу, автентифікація</li>
+                            <li><code>etcd</code> — сховище стану кластера (шифрувати!)</li>
+                            <li><code>kube-scheduler</code> — розподіл Pod-ів</li>
+                            <li><code>controller-manager</code> — підтримка стану</li>
+                        </ul>
+                        <h3 style="margin-top:0.3em;">🔑 Автентифікація в K8s</h3>
+                        <ul style="font-size:0.78em;">
+                            <li>Сертифікати X.509</li>
+                            <li>Service Account токени</li>
+                            <li>OIDC (OpenID Connect)</li>
+                            <li>AWS IAM → IRSA для EKS</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>🛡️ Авторизація: RBAC</h3>
+                        <pre><code>apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: read-pods
+subjects:
+- kind: ServiceAccount
+  name: myapp-sa
+roleRef:
+  kind: Role
+  name: pod-reader</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 12: Pod Security та Network Policies ===== -->
+            <section>
+                <h2>Kubernetes: Pod Security &amp; Network Policies</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🔒 Pod Security Standards (K8s 1.25+)</h3>
+                        <table style="font-size:0.7em;">
+                            <tr><th>Профіль</th><th>Опис</th></tr>
+                            <tr><td><span class="tag-green">Privileged</span></td><td>Без обмежень (тільки для системних Pod-ів)</td></tr>
+                            <tr><td><span class="tag">Baseline</span></td><td>Мінімальні обмеження, блокує підвищення прав</td></tr>
+                            <tr><td><span class="tag-red">Restricted</span></td><td>Найсуворіший, non-root, read-only FS</td></tr>
+                        </table>
+                        <pre style="margin-top:0.3em;"><code># Мітка namespace для PSS
+kubectl label namespace prod \
+  pod-security.kubernetes.io/enforce=restricted</code></pre>
+                    </div>
+                    <div>
+                        <h3>🌐 Network Policy</h3>
+                        <pre><code>apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+---
+# Дозволити тільки frontend → backend
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend</code></pre>
+                        <p style="font-size:0.7em; color:#888;">За замовчуванням K8s дозволяє весь трафік між Pod-ами!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 13: Amazon EKS ===== -->
+            <section>
+                <h2>Amazon EKS — безпека керованого Kubernetes</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>☁️ Що управляє AWS</h3>
+                        <ul style="font-size:0.78em;">
+                            <li>Control Plane (kube-apiserver, etcd)</li>
+                            <li>Патчі control plane</li>
+                            <li>Multi-AZ розгортання control plane</li>
+                            <li>Шифрування etcd за замовчуванням</li>
+                        </ul>
+                        <h3 style="margin-top:0.3em;">🔑 IRSA — IAM Roles for Service Accounts</h3>
+                        <div class="box" style="font-size:0.75em;">
+                            <p>Pod отримує IAM-роль через Service Account.</p>
+                            <p>Дрібнозернистий доступ до AWS API без постійних ключів.</p>
+                            <pre><code>eksctl create iamserviceaccount \
+  --name s3-reader \
+  --namespace myapp \
+  --cluster my-cluster \
+  --attach-policy-arn \
+    arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess \
+  --approve</code></pre>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>🛡️ EKS Security Best Practices</h3>
+                        <ul style="font-size:0.78em;">
+                            <li>Приватний endpoint для kube-apiserver</li>
+                            <li>Envelope encryption secrets через KMS</li>
+                            <li>Managed Node Groups (автопатчі)</li>
+                            <li>EKS Fargate — без EC2-вузлів</li>
+                            <li>GuardDuty EKS Runtime Monitoring</li>
+                            <li>Amazon Inspector для образів у ECR</li>
+                            <li>AWS Security Hub для агрегації алертів</li>
+                        </ul>
+                        <div class="box" style="border-color:#e8b04b; font-size:0.75em; margin-top:0.3em;">
+                            <strong>CIS Benchmark для EKS</strong> — перелік перевірок безпеки для K8s і EKS, автоматично перевіряється через kube-bench
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 14: Amazon ECS та Fargate ===== -->
+            <section>
+                <h2>Amazon ECS та AWS Fargate</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>📋 Amazon ECS — компоненти</h3>
+                        <ul style="font-size:0.78em;">
+                            <li><strong>Task Definition</strong> — конфігурація контейнерів</li>
+                            <li><strong>Service</strong> — підтримання N запущених Task</li>
+                            <li><strong>Cluster</strong> — логічна група ресурсів</li>
+                            <li><strong>Task Role</strong> — IAM-роль для контейнера</li>
+                        </ul>
+                        <h3 style="margin-top:0.3em;">🔒 Безпека Task Definition</h3>
+                        <pre><code>{
+  "containerDefinitions": [{
+    "name": "myapp",
+    "image": "123.dkr.ecr.../app:v1",
+    "readonlyRootFilesystem": true,
+    "user": "1000",
+    "linuxParameters": {
+      "capabilities": {
+        "drop": ["ALL"]
+      }
+    }
+  }]
+}</code></pre>
+                    </div>
+                    <div>
+                        <h3>⚡ Fargate — переваги безпеки</h3>
+                        <div class="box" style="border-color:#238636; font-size:0.78em;">
+                            <ul>
+                                <li>Немає доступу до хост-ОС</li>
+                                <li>AWS патчить runtime середовище</li>
+                                <li>Кожна Task має власний мікро-VM (gVisor)</li>
+                                <li>Немає спільного ядра між Tasks</li>
+                                <li>EphemeralStorage — тимчасова ізольована ФС</li>
+                            </ul>
+                        </div>
+                        <h3 style="margin-top:0.3em;">🔑 Secrets Management</h3>
+                        <ul style="font-size:0.78em;">
+                            <li>AWS Secrets Manager → inject at runtime</li>
+                            <li>AWS SSM Parameter Store (SecureString)</li>
+                            <li>Ніколи не передавати секрети через ENV у Dockerfile!</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 15: Serverless безпека — Lambda ===== -->
+            <section>
+                <h2>Serverless безпека: AWS Lambda</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>⚡ Модель виконання Lambda</h3>
+                        <ul style="font-size:0.78em;">
+                            <li>Ізольоване середовище (Firecracker MicroVM)</li>
+                            <li>Короткострокове виконання (max 15 хв)</li>
+                            <li>Автомасштабування AWS</li>
+                            <li>Cold start — нова ізольована VM</li>
+                        </ul>
+                        <h3 style="margin-top:0.3em;">🔒 Ключові ризики Lambda</h3>
+                        <div class="box" style="border-color:#da3633; font-size:0.75em;">
+                            <ul>
+                                <li><span class="tag-red">Ін'єкції</span> через event-дані (SQL, NoSQL, Command)</li>
+                                <li><span class="tag-red">Надмірні права IAM</span> у execution role</li>
+                                <li><span class="tag-red">Секрети в змінних середовища</span> (env vars)</li>
+                                <li><span class="tag-red">Залежності зі вразливостями</span> в пакетах</li>
+                                <li><span class="tag-red">Event injection</span> через API Gateway, SQS</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>✅ Безпечна Lambda</h3>
+                        <pre><code>import boto3, json, os
+
+def handler(event, context):
+    # Валідація вхідних даних
+    user_id = event.get("userId", "")
+    if not user_id.isalnum():
+        return {"statusCode": 400,
+                "body": "Invalid input"}
+
+    # Секрети — з Secrets Manager
+    secret = get_secret("prod/db/password")
+
+    # Принцип найменших привілеїв
+    # Execution Role має лише потрібні права
+    return {"statusCode": 200}</code></pre>
+                        <div class="box" style="font-size:0.73em; border-color:#238636; margin-top:0.2em;">
+                            <strong>Lambda Power Tuning</strong> + <strong>AWS Lambda Insights</strong> для моніторингу поведінки
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 16: Secrets Management ===== -->
+            <section>
+                <h2>Управління секретами у хмарних сервісах</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🔑 AWS Secrets Manager</h3>
+                        <ul style="font-size:0.78em;">
+                            <li>Зберігання паролів, ключів, токенів</li>
+                            <li>Автоматична ротація (RDS, Redshift, DocumentDB)</li>
+                            <li>Інтеграція з IAM (fine-grained access)</li>
+                            <li>Audit через CloudTrail</li>
+                            <li>Реплікація між регіонами</li>
+                        </ul>
+                        <h3 style="margin-top:0.3em;">📋 SSM Parameter Store</h3>
+                        <ul style="font-size:0.78em;">
+                            <li>Безкоштовний для Standard tier</li>
+                            <li>SecureString = зашифровано KMS</li>
+                            <li>Ієрархічна структура параметрів</li>
+                            <li>Підходить для конфігурацій (не тільки секретів)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>❌ Де НЕ зберігати секрети</h3>
+                        <table style="font-size:0.72em;">
+                            <tr><th>Місце</th><th>Ризик</th></tr>
+                            <tr><td>Dockerfile ENV</td><td>Видно в образі (<code>docker history</code>)</td></tr>
+                            <tr><td>Git-репозиторій</td><td>Назавжди в історії коду</td></tr>
+                            <tr><td>Логи застосунку</td><td>CloudWatch / S3 — доступні багатьом</td></tr>
+                            <tr><td>EC2 user-data</td><td>Видно через IMDS без автентифікації</td></tr>
+                            <tr><td>ECS env vars</td><td>Видно в Task Definition (plain text)</td></tr>
+                        </table>
+                        <pre style="margin-top:0.3em;"><code># Правильно: отримати секрет під час виконання
+import boto3
+client = boto3.client('secretsmanager')
+secret = client.get_secret_value(
+    SecretId='prod/myapp/db'
+)['SecretString']</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 17: Типові атаки на контейнери ===== -->
+            <section>
+                <h2>Типові атаки на контейнерні середовища</h2>
+                <table>
+                    <thead>
+                        <tr><th>Атака</th><th>Вектор</th><th>Наслідок</th><th>Захист</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="highlight">Container Escape</span></td>
+                            <td>Privileged mode, vol mounts</td>
+                            <td>Компроміс хост-ОС</td>
+                            <td>Non-root, seccomp, PSS Restricted</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight">Image Poisoning</span></td>
+                            <td>Підроблений образ у реєстрі</td>
+                            <td>Виконання шкідливого коду</td>
+                            <td>Image signing, приватний ECR</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight">Supply Chain Attack</span></td>
+                            <td>Вразлива залежність у образі</td>
+                            <td>RCE, витік даних</td>
+                            <td>Trivy/Inspector, SBOM</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight">SSRF → IMDS</span></td>
+                            <td>SSRF у застосунку → IMDSv1</td>
+                            <td>Крадіжка IAM-credentials</td>
+                            <td>IMDSv2, мінімальні IAM-ролі</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight">Cryptojacking</span></td>
+                            <td>Вразливий образ або deps</td>
+                            <td>Зловживання обчислювальними ресурсами</td>
+                            <td>GuardDuty, cgroups limits</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight">Lateral Movement</span></td>
+                            <td>Відсутні Network Policies</td>
+                            <td>Рух між Pod-ами/Task-ами</td>
+                            <td>Zero-trust networking, NetworkPolicy</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ===== СЛАЙД 18: Container Escape — деталі ===== -->
+            <section>
+                <h2>Container Escape — як це відбувається</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🔓 Вектори виходу з контейнера</h3>
+                        <div class="box" style="border-color:#da3633; font-size:0.78em;">
+                            <p><strong>1. Privileged Container</strong></p>
+                            <pre><code># Атаки через монтування хост-ФС
+docker run --privileged ubuntu \
+  bash -c "mkdir /mnt/host && \
+  mount /dev/xvda1 /mnt/host && \
+  chroot /mnt/host"</code></pre>
+                        </div>
+                        <div class="box" style="border-color:#da3633; font-size:0.78em; margin-top:0.3em;">
+                            <p><strong>2. Docker socket mount</strong></p>
+                            <pre><code>docker run -v /var/run/docker.sock:/var/run/docker.sock \
+  ubuntu docker run --privileged ...</code></pre>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>🛡️ Засоби захисту</h3>
+                        <ul style="font-size:0.8em;">
+                            <li><span class="tag-green">seccomp</span> — блокує небезпечні syscalls</li>
+                            <li><span class="tag-green">AppArmor</span> — профілі доступу до ФС</li>
+                            <li><span class="tag-green">SELinux</span> — мандатний контроль доступу</li>
+                            <li><span class="tag-green">gVisor</span> — додаткове ядро-пісочниця (Fargate)</li>
+                            <li><span class="tag-green">Kata Containers</span> — VM-ізоляція для контейнерів</li>
+                        </ul>
+                        <div class="box" style="border-color:#238636; margin-top:0.3em; font-size:0.75em;">
+                            <strong>CVE-2019-5736 (runc)</strong> — приклад критичної вразливості container escape через перезапис runc бінарника. Патч вийшов за 24 год.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 19: Моніторинг та виявлення загроз ===== -->
+            <section>
+                <h2>Моніторинг і виявлення загроз у Compute</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🔍 AWS-нативні інструменти</h3>
+                        <ul style="font-size:0.78em;">
+                            <li><strong>Amazon GuardDuty</strong> — виявлення аномалій EC2/EKS/Lambda</li>
+                            <li><strong>AWS CloudTrail</strong> — аудит API-викликів</li>
+                            <li><strong>Amazon Inspector</strong> — сканування CVE в EC2 та образах ECR</li>
+                            <li><strong>AWS Security Hub</strong> — агрегація знахідок</li>
+                            <li><strong>VPC Flow Logs</strong> — мережевий трафік</li>
+                            <li><strong>EKS Control Plane Logs</strong> → CloudWatch</li>
+                        </ul>
+                        <h3 style="margin-top:0.3em;">📊 Що відстежувати</h3>
+                        <ul style="font-size:0.78em;">
+                            <li>Незвичні API-виклики з EC2/Lambda</li>
+                            <li>Нові процеси в контейнерах (Falco)</li>
+                            <li>Мережеві з'єднання до незвичних IP</li>
+                            <li>Підвищення привілеїв</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>🦅 Falco — runtime security</h3>
+                        <div class="box" style="font-size:0.73em;">
+                            <p>Open Source runtime security для K8s і контейнерів</p>
+                            <pre><code># Правило Falco: shell у контейнері
+- rule: Terminal shell in container
+  desc: Container ran a shell
+  condition: >
+    container and
+    proc.name in (bash, sh, zsh) and
+    proc.tty != 0
+  output: >
+    Shell in container
+    (user=%user.name container=%container.name)
+  priority: WARNING</code></pre>
+                        </div>
+                        <div class="box" style="border-color:#238636; font-size:0.75em; margin-top:0.2em;">
+                            GuardDuty EKS Runtime Monitoring використовує схожий підхід — ebpf-агент на кожному вузлі
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 20: Compliance та CIS Benchmarks ===== -->
+            <section>
+                <h2>Відповідність стандартам та CIS Benchmarks</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>📋 Ключові стандарти</h3>
+                        <table style="font-size:0.7em;">
+                            <tr><th>Стандарт</th><th>Застосування</th></tr>
+                            <tr><td><span class="highlight">CIS Docker Benchmark</span></td><td>Конфігурація Docker host і daemon</td></tr>
+                            <tr><td><span class="highlight">CIS Kubernetes Benchmark</span></td><td>Кластер, Node, Pod, RBAC</td></tr>
+                            <tr><td><span class="highlight">NIST SP 800-190</span></td><td>Container Security Guide</td></tr>
+                            <tr><td><span class="highlight">AWS Foundational Security</span></td><td>Перевірки Security Hub</td></tr>
+                            <tr><td><span class="highlight">PCI DSS</span></td><td>Контейнери з платіжними даними</td></tr>
+                        </table>
+                        <h3 style="margin-top:0.3em;">🛠️ Автоматизовані перевірки</h3>
+                        <ul style="font-size:0.78em;">
+                            <li><code>kube-bench</code> — CIS K8s автоматично</li>
+                            <li><code>docker-bench-security</code> — CIS Docker</li>
+                            <li>AWS Config Rules — безперервний контроль</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>✅ Чек-лист безпеки контейнерів</h3>
+                        <ul style="font-size:0.78em;">
+                            <li>☐ Образи сканують в CI/CD pipeline</li>
+                            <li>☐ Non-root USER у Dockerfile</li>
+                            <li>☐ Read-only root filesystem</li>
+                            <li>☐ Capabilities drop ALL</li>
+                            <li>☐ Network Policies (deny-all default)</li>
+                            <li>☐ RBAC з мінімальними правами</li>
+                            <li>☐ Secrets через Secrets Manager / SSM</li>
+                            <li>☐ IMDSv2 увімкнено</li>
+                            <li>☐ GuardDuty активний</li>
+                            <li>☐ Image signing (cosign/ECR)</li>
+                            <li>☐ Логи → CloudWatch / SIEM</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 21: Кращі практики — зведення ===== -->
+            <section>
+                <h2>Кращі практики безпеки обчислювальних сервісів</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🖥️ EC2</h3>
+                        <ul style="font-size:0.8em;">
+                            <li>Systems Manager замість SSH (без відкритого 22)</li>
+                            <li>IMDSv2 обов'язково</li>
+                            <li>Patch Management через AWS SSM</li>
+                            <li>Amazon Inspector для CVE-моніторингу</li>
+                            <li>Мінімальні IAM Instance Profile права</li>
+                        </ul>
+                        <h3 style="margin-top:0.3em;">🐳 Контейнери (ECS/EKS)</h3>
+                        <ul style="font-size:0.8em;">
+                            <li>Multi-stage Dockerfile, мінімальний базовий образ</li>
+                            <li>Non-root, read-only FS, drop capabilities</li>
+                            <li>Приватний ECR + автосканування</li>
+                            <li>IRSA замість статичних ключів</li>
+                            <li>Network Policy: default deny</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>⚡ Lambda / Serverless</h3>
+                        <ul style="font-size:0.8em;">
+                            <li>Execution Role з мінімальними правами</li>
+                            <li>Валідація всіх вхідних даних</li>
+                            <li>Secrets Manager, не ENV vars</li>
+                            <li>VPC + Security Group для ізоляції</li>
+                            <li>X-Ray для трасування та аудиту</li>
+                        </ul>
+                        <h3 style="margin-top:0.3em;">🔍 Загальне</h3>
+                        <ul style="font-size:0.8em;">
+                            <li>Шифрування даних (KMS) у стані спокою і в русі</li>
+                            <li>GuardDuty + Security Hub + CloudTrail</li>
+                            <li>Автоматизовані Compliance-перевірки (AWS Config)</li>
+                            <li>Резервне копіювання та disaster recovery</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 22: Практичне завдання ===== -->
+            <section>
+                <h2>Практичне завдання</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🛠️ Завдання 1 — Docker безпека</h3>
+                        <ol style="font-size:0.78em;">
+                            <li>Написати безпечний Dockerfile для Python-застосунку: non-root, multi-stage, мінімальний образ</li>
+                            <li>Запустити Trivy: <code>trivy image myapp:latest</code></li>
+                            <li>Виправити критичні вразливості, зменшити кількість HIGH</li>
+                            <li>Задокументувати до/після сканування</li>
+                        </ol>
+                        <h3 style="margin-top:0.3em;">☁️ Завдання 2 — AWS ECS</h3>
+                        <ol style="font-size:0.78em;">
+                            <li>Розгорнути контейнер на AWS ECS Fargate</li>
+                            <li>Налаштувати Task Role з мінімальними IAM-правами</li>
+                            <li>Підключити секрет з AWS Secrets Manager</li>
+                            <li>Увімкнути логування в CloudWatch</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h3>🔑 Завдання 3 — EC2 Hardening</h3>
+                        <ol style="font-size:0.78em;">
+                            <li>Запустити EC2-інстанс (Amazon Linux 2023)</li>
+                            <li>Увімкнути IMDSv2, вимкнути IMDSv1</li>
+                            <li>Налаштувати Systems Manager Session Manager (без відкритого SSH)</li>
+                            <li>Запустити Inspector та переглянути знахідки</li>
+                        </ol>
+                        <div class="box" style="border-color:#e8b04b; margin-top:0.4em; font-size:0.75em;">
+                            <strong>Звіт включає:</strong>
+                            <ul>
+                                <li>Скріншоти налаштувань безпеки</li>
+                                <li>Результати сканування до/після</li>
+                                <li>Аналіз знайдених вразливостей</li>
+                                <li>Рекомендації щодо усунення</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 23: Підсумок ===== -->
+            <section>
+                <h2>Підсумок лекції</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Ключові концепції</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>Модель спільної відповідальності залежить від рівня сервісу (EC2 → Lambda)</li>
+                            <li>Контейнери ≠ повна ізоляція — shared kernel = спільний ризик</li>
+                            <li>Non-root, read-only FS, drop capabilities — базові заходи</li>
+                            <li>IMDSv2 захищає IAM-credentials від SSRF</li>
+                            <li>IRSA/Task Role — без статичних ключів у контейнерах</li>
+                            <li>Secrets Manager / SSM — жодних секретів у коді</li>
+                            <li>Сканування образів — обов'язкова частина CI/CD</li>
+                            <li>Network Policy: default deny → явний allow</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Зв'язок з іншими темами</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>← Лекція 5: Захист даних (KMS для шифрування томів, секретів)</li>
+                            <li>→ Лекція 7: Безпека веб- та телеком-застосунків (WAF, API Gateway)</li>
+                            <li>→ Лекція 8: Моніторинг (GuardDuty, CloudTrail, Falco)</li>
+                        </ul>
+                        <div class="box" style="margin-top:0.4em; border-color:#e8b04b; font-size:0.8em;">
+                            <strong>Запам'ятайте:</strong>
+                            <p>Безпека контейнерів — це не одна технологія, а <span class="highlight">ешелонована оборона</span>: від Dockerfile до мережевих політик і runtime-моніторингу.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 24: Питання ===== -->
+            <section>
+                <h1>Питання?</h1>
+                <p style="font-size:0.9em; color:#888;">Безпека обчислювальних сервісів і контейнерів</p>
+                <p style="font-size:0.8em; color:#888; margin-top:0.5em;">Лекція 6 — Модуль 2</p>
+                <hr style="border-color:#444; margin:1.5em 0;">
+                <p style="font-size:0.75em; color:#888;">Наступна лекція: <strong>Безпека веб- та телеком-застосунків</strong></p>
+            </section>
+
+        </div>
+    </div>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            slideNumber: 'c/t',
+            center: false,
+            width: 1100,
+            height: 900,
+            margin: 0.04,
+            minScale: 0.2,
+            maxScale: 2.0
+        });
+    </script>
+</body>
+</html>
