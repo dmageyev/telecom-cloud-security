@@ -1,0 +1,945 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Презентація: Захист даних і криптографія в AWS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/black.css">
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <style>
+        .reveal h1 { font-size: 1.5em; }
+        .reveal h2 { font-size: 1.2em; color: #58a6ff; }
+        .reveal h3 { font-size: 0.9em; color: #e8b04b; margin: 0.3em 0 0.2em; }
+        .reveal ul, .reveal ol { text-align: left; }
+        .reveal li { margin-bottom: 0.15em; }
+        .reveal p { margin: 0.25em 0; }
+        .two-col { display: flex; gap: 1.2em; }
+        .two-col > div { flex: 1; min-width: 0; }
+        .highlight { color: #e8b04b; font-weight: bold; }
+        .tag { background: #1f6feb; border-radius: 4px; padding: 1px 6px; font-size: 0.75em; margin: 1px; display: inline-block; }
+        .tag-green { background: #238636; border-radius: 4px; padding: 1px 6px; font-size: 0.75em; margin: 1px; display: inline-block; }
+        .tag-red { background: #da3633; border-radius: 4px; padding: 1px 6px; font-size: 0.75em; margin: 1px; display: inline-block; }
+        .box { border: 1px solid #444; border-radius: 5px; padding: 0.3em 0.7em; margin: 0.2em 0; }
+        table { font-size: 0.7em; border-collapse: collapse; width: 100%; }
+        th { background: #1f6feb; padding: 4px 8px; }
+        td { padding: 4px 8px; border-bottom: 1px solid #444; }
+        code { background: #161b22; padding: 1px 5px; border-radius: 4px; font-size: 0.82em; color: #58a6ff; }
+        pre code { display: block; padding: 0.5em; font-size: 0.65em; color: #c9d1d9; line-height: 1.35; white-space: pre; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- ===== СЛАЙД 1: Титульний ===== -->
+            <section>
+                <h1>Захист даних і криптографія в AWS</h1>
+                <h2 style="color:#e8b04b;">Data Protection &amp; Cryptography</h2>
+                <p>Лекція 5 &nbsp;|&nbsp; Курс: Інформаційна безпека телекомунікаційних та хмарних технологій</p>
+                <hr style="border-color:#444; margin:1em 0;">
+                <p style="font-size:0.75em; color:#888;">Модуль 1: Основи безпеки телекомунікацій та AWS</p>
+            </section>
+
+            <!-- ===== СЛАЙД 2: План лекції ===== -->
+            <section>
+                <h2>План лекції</h2>
+                <ol style="font-size:0.85em;">
+                    <li>Основи захисту даних: в спокої, у русі, у використанні</li>
+                    <li>Симетрична та асиметрична криптографія</li>
+                    <li>Конвертне шифрування (Envelope Encryption)</li>
+                    <li>AWS Key Management Service (KMS)</li>
+                    <li>Шифрування сховищ: S3, EBS, RDS</li>
+                    <li>Захист даних у русі: TLS/SSL та ACM</li>
+                    <li>AWS Secrets Manager та Parameter Store</li>
+                    <li>AWS CloudHSM</li>
+                    <li>Класифікація даних та модель спільної відповідальності</li>
+                    <li>Захист даних у телекомунікаціях та кращі практики</li>
+                </ol>
+            </section>
+
+            <!-- ===== СЛАЙД 3: Три стани даних ===== -->
+            <section>
+                <h2>Три стани даних та їх захист</h2>
+                <div class="two-col">
+                    <div>
+                        <div class="box" style="border-color:#1f6feb;">
+                            <h3>💾 Дані в спокої (at rest)</h3>
+                            <p style="font-size:0.78em;">Збережені на носіях: диски, бази даних, архіви</p>
+                            <p style="font-size:0.72em; color:#888;">Захист: шифрування дисків, БД, об'єктних сховищ</p>
+                        </div>
+                        <div class="box" style="border-color:#238636;">
+                            <h3>🔄 Дані у русі (in transit)</h3>
+                            <p style="font-size:0.78em;">Передаються мережею між системами або компонентами</p>
+                            <p style="font-size:0.72em; color:#888;">Захист: TLS/SSL, VPN, HTTPS, mTLS</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="box" style="border-color:#e8b04b;">
+                            <h3>⚙️ Дані у використанні (in use)</h3>
+                            <p style="font-size:0.78em;">Обробляються в пам'яті (RAM) або CPU</p>
+                            <p style="font-size:0.72em; color:#888;">Захист: Confidential Computing, AWS Nitro Enclaves</p>
+                        </div>
+                        <div class="box" style="margin-top:0.3em;">
+                            <h3>🎯 Мета захисту</h3>
+                            <ul style="font-size:0.78em;">
+                                <li><span class="highlight">Конфіденційність</span> — лише авторизовані можуть читати</li>
+                                <li><span class="highlight">Цілісність</span> — дані не змінено несанкціоновано</li>
+                                <li><span class="highlight">Доступність</span> — дані доступні, коли потрібно</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 4: Симетрична криптографія ===== -->
+            <section>
+                <h2>Симетрична криптографія</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Принцип роботи</h3>
+                        <div class="box">
+                            <p style="font-size:0.8em;">Один і той самий ключ використовується для <span class="highlight">шифрування</span> і <span class="highlight">дешифрування</span></p>
+                        </div>
+                        <h3 style="margin-top:0.4em;">Алгоритми</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><span class="tag">AES-128/256</span> Advanced Encryption Standard — стандарт для захисту даних</li>
+                            <li><span class="tag">ChaCha20</span> Сучасний потоковий шифр</li>
+                            <li><span class="tag-red">DES/3DES</span> Застарілі, не рекомендуються</li>
+                        </ul>
+                        <h3 style="margin-top:0.4em;">Режими роботи AES</h3>
+                        <ul style="font-size:0.8em;">
+                            <li><code>AES-GCM</code> — шифрування + автентифікація (AWS KMS)</li>
+                            <li><code>AES-CBC</code> — блоковий, потребує padding</li>
+                            <li><code>AES-CTR</code> — потоковий режим</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Переваги та недоліки</h3>
+                        <div class="box" style="border-color:#238636;">
+                            <strong style="color:#58a6ff;">✅ Переваги</strong>
+                            <ul style="font-size:0.8em;">
+                                <li>Висока швидкість шифрування</li>
+                                <li>Ефективний для великих обсягів даних</li>
+                                <li>Апаратна підтримка (AES-NI в CPU)</li>
+                            </ul>
+                        </div>
+                        <div class="box" style="border-color:#da3633; margin-top:0.3em;">
+                            <strong style="color:#da3633;">⚠️ Недоліки</strong>
+                            <ul style="font-size:0.8em;">
+                                <li>Проблема розповсюдження ключів</li>
+                                <li>N сторін → N*(N-1)/2 ключів</li>
+                                <li>Безпечний обмін ключем — складне завдання</li>
+                            </ul>
+                        </div>
+                        <p style="font-size:0.72em; color:#888; margin-top:0.3em;">AWS KMS використовує AES-256-GCM для шифрування даних</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 5: Асиметрична криптографія ===== -->
+            <section>
+                <h2>Асиметрична криптографія</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Принцип роботи</h3>
+                        <div class="box">
+                            <p style="font-size:0.8em;"><span class="highlight">Відкритий ключ</span> (public key) — для шифрування або перевірки підпису</p>
+                            <p style="font-size:0.8em; margin-top:0.2em;"><span class="highlight">Закритий ключ</span> (private key) — для дешифрування або підпису</p>
+                        </div>
+                        <h3 style="margin-top:0.4em;">Алгоритми</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><span class="tag">RSA-2048/4096</span> Класичний алгоритм, сертифікати TLS</li>
+                            <li><span class="tag">ECDSA/ECDH</span> Еліптичні криві — компактніші ключі</li>
+                            <li><span class="tag">Ed25519</span> Сучасний, швидкий, безпечний</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Застосування</h3>
+                        <table>
+                            <thead>
+                                <tr><th>Завдання</th><th>Механізм</th><th>AWS-сервіс</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Обмін ключами</td><td>ECDH/RSA</td><td>TLS handshake</td></tr>
+                                <tr><td>Цифровий підпис</td><td>RSA/ECDSA</td><td>AWS KMS Sign</td></tr>
+                                <tr><td>Сертифікати</td><td>X.509</td><td>ACM</td></tr>
+                                <tr><td>SSH-доступ</td><td>RSA/Ed25519</td><td>EC2 Key Pairs</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="box" style="margin-top:0.3em; font-size:0.78em;">
+                            <strong>Алгоритм Діффі-Геллмана:</strong> дозволяє двом сторонам виробити спільний секрет через незахищений канал, не передаючи сам секрет
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 6: Конвертне шифрування ===== -->
+            <section>
+                <h2>Конвертне шифрування (Envelope Encryption)</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Чому не шифрувати KMS-ключем напряму?</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>KMS обмежує розмір даних (max 4 КБ)</li>
+                            <li>Кожен виклик KMS API — платний і повільний</li>
+                            <li>Величезні файли неможливо передати в KMS</li>
+                        </ul>
+                        <h3 style="margin-top:0.4em;">Рішення: дворівневе шифрування</h3>
+                        <div class="box" style="border-color:#1f6feb;">
+                            <ol style="font-size:0.8em;">
+                                <li>Генерується <span class="highlight">Data Key (DEK)</span> — симетричний AES-ключ</li>
+                                <li>Дані шифруються DEK (локально, швидко)</li>
+                                <li>DEK шифрується <span class="highlight">Key Encryption Key (KEK)</span> в KMS</li>
+                                <li>Зашифровані дані + зашифрований DEK зберігаються разом</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Схема роботи</h3>
+                        <div class="box" style="font-size:0.78em;">
+                            <p><strong>🔒 Шифрування:</strong></p>
+                            <p><code>Plaintext Data</code> → зашифровано DEK → <code>Ciphertext</code></p>
+                            <p><code>DEK</code> → зашифровано KMS CMK → <code>Encrypted DEK</code></p>
+                            <p style="margin-top:0.5em;"><strong>🔓 Дешифрування:</strong></p>
+                            <p><code>Encrypted DEK</code> → KMS розшифровує → <code>DEK</code></p>
+                            <p><code>Ciphertext</code> → розшифровано DEK → <code>Plaintext Data</code></p>
+                        </div>
+                        <p style="font-size:0.72em; color:#888; margin-top:0.3em;">💡 Цей підхід використовується в S3, EBS, RDS та інших AWS-сервісах автоматично</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 7: AWS KMS — Огляд ===== -->
+            <section>
+                <h2>AWS Key Management Service (KMS)</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Що таке AWS KMS?</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>Централізований сервіс управління ключами шифрування</li>
+                            <li>Підтримує симетричні та асиметричні ключі</li>
+                            <li>Інтегрований з &gt;100 сервісами AWS</li>
+                            <li>Автоматична ротація ключів</li>
+                            <li>FIPS 140-2 Level 3 HSM-підтримка</li>
+                            <li>Повний аудит через CloudTrail</li>
+                        </ul>
+                        <h3 style="margin-top:0.4em;">Типи ключів KMS (KMS Keys)</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><span class="tag-green">Customer Managed Key</span> — ви створюєте та керуєте</li>
+                            <li><span class="tag">AWS Managed Key</span> — AWS керує, ви не маєте доступу до матеріалу</li>
+                            <li><span class="tag" style="background:#555;">AWS Owned Key</span> — лише AWS, безкоштовно, приховано</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Порівняння типів ключів</h3>
+                        <table>
+                            <thead>
+                                <tr><th>Параметр</th><th>CMK</th><th>AWS Managed</th><th>AWS Owned</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Ціна</td><td>$1/міс</td><td>Безкоштовно</td><td>Безкоштовно</td></tr>
+                                <tr><td>Ротація</td><td>Ручна/авто</td><td>Авто (1 рік)</td><td>Авто</td></tr>
+                                <tr><td>Ваша політика</td><td>✅</td><td>❌</td><td>❌</td></tr>
+                                <tr><td>CloudTrail</td><td>✅</td><td>✅</td><td>❌</td></tr>
+                                <tr><td>Крос-акаунт</td><td>✅</td><td>❌</td><td>❌</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 8: KMS — Операції та політики ===== -->
+            <section>
+                <h2>KMS — Операції та керування доступом</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Основні операції KMS API</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><code>GenerateDataKey</code> — генерація DEK (plaintext + encrypted)</li>
+                            <li><code>GenerateDataKeyWithoutPlaintext</code> — тільки encrypted DEK</li>
+                            <li><code>Encrypt</code> — зашифрувати до 4 КБ</li>
+                            <li><code>Decrypt</code> — розшифрувати</li>
+                            <li><code>Sign</code> / <code>Verify</code> — цифровий підпис</li>
+                            <li><code>ReEncrypt</code> — перешифрувати під новий ключ</li>
+                        </ul>
+                        <h3 style="margin-top:0.4em;">Ротація ключів</h3>
+                        <div class="box" style="font-size:0.8em;">
+                            <p>При ротації: новий матеріал ключа для нових шифрувань. Старий матеріал <strong>зберігається</strong> для дешифрування раніше зашифрованих даних.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Key Policy — контроль доступу до ключа</h3>
+                        <pre><code>{
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::123:root"
+      },
+      "Action": "kms:*",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::123:role/AppRole"
+      },
+      "Action": [
+        "kms:Decrypt",
+        "kms:GenerateDataKey"
+      ],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 9: Шифрування S3 ===== -->
+            <section>
+                <h2>Шифрування даних у Amazon S3</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Серверне шифрування (SSE)</h3>
+                        <div class="box" style="border-color:#1f6feb;">
+                            <h3>SSE-S3</h3>
+                            <ul style="font-size:0.78em;">
+                                <li>AWS керує ключами повністю</li>
+                                <li>AES-256, включений за замовчуванням</li>
+                                <li>Безкоштовно, без видимості ключів</li>
+                            </ul>
+                        </div>
+                        <div class="box" style="border-color:#238636; margin-top:0.2em;">
+                            <h3>SSE-KMS</h3>
+                            <ul style="font-size:0.78em;">
+                                <li>KMS-ключ (AWS Managed або CMK)</li>
+                                <li>Аудит через CloudTrail</li>
+                                <li>Крос-акаунт підтримка, додаткова вартість API</li>
+                            </ul>
+                        </div>
+                        <div class="box" style="border-color:#e8b04b; margin-top:0.2em;">
+                            <h3>SSE-C</h3>
+                            <ul style="font-size:0.78em;">
+                                <li>Клієнт надає власний ключ при кожному запиті</li>
+                                <li>AWS не зберігає ключ</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Клієнтське шифрування (CSE)</h3>
+                        <div class="box" style="border-color:#da3633;">
+                            <ul style="font-size:0.8em;">
+                                <li>Дані шифруються <strong>до відправки</strong> в S3</li>
+                                <li>AWS ніколи не бачить дані в plaintext</li>
+                                <li>Потребує AWS Encryption SDK або власної реалізації</li>
+                                <li>Максимальний контроль</li>
+                            </ul>
+                        </div>
+                        <h3 style="margin-top:0.4em;">Додаткові механізми захисту S3</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><span class="tag">Versioning</span> — захист від перезапису</li>
+                            <li><span class="tag">MFA Delete</span> — MFA для видалення версій</li>
+                            <li><span class="tag">Object Lock</span> — WORM-захист (write once, read many)</li>
+                            <li><span class="tag">Block Public Access</span> — заборона публічного доступу</li>
+                            <li><span class="tag">S3 Replication</span> — резервування в інших регіонах</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 10: Шифрування EBS та RDS ===== -->
+            <section>
+                <h2>Шифрування EBS та RDS</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Amazon EBS Encryption</h3>
+                        <div class="box" style="border-color:#1f6feb;">
+                            <ul style="font-size:0.82em;">
+                                <li>Шифрується весь том (boot volume, data volumes)</li>
+                                <li>Використовує AES-256 через KMS</li>
+                                <li>Прозоро для EC2 (без впливу на продуктивність)</li>
+                                <li>Шифруються також snapshot та копії</li>
+                                <li>Можна увімкнути шифрування за замовчуванням в регіоні</li>
+                            </ul>
+                        </div>
+                        <div class="box" style="margin-top:0.3em; font-size:0.78em;">
+                            <p>⚠️ Незашифрований том <strong>не можна</strong> зашифрувати напряму. Спосіб: зробити snapshot → зашифрувати snapshot → створити новий том.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Amazon RDS Encryption</h3>
+                        <div class="box" style="border-color:#238636;">
+                            <ul style="font-size:0.82em;">
+                                <li>Шифрування вмикається при створенні БД</li>
+                                <li>Шифруються: storage, automated backups, snapshots, read replicas</li>
+                                <li>Використовує KMS CMK</li>
+                                <li>Підтримується всіма рушіями: MySQL, PostgreSQL, Oracle, MSSQL, Aurora</li>
+                            </ul>
+                        </div>
+                        <h3 style="margin-top:0.3em;">Шифрування in-transit для RDS</h3>
+                        <div class="box" style="font-size:0.8em;">
+                            <p>Примусовий SSL/TLS через параметри БД:</p>
+                            <p><code>rds.force_ssl = 1</code> (PostgreSQL)</p>
+                            <p><code>require_secure_transport = ON</code> (MySQL)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 11: TLS/SSL — дані у русі ===== -->
+            <section>
+                <h2>Захист даних у русі: TLS/SSL</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>TLS Handshake (спрощено)</h3>
+                        <div class="box" style="font-size:0.78em; border-color:#1f6feb;">
+                            <ol>
+                                <li><strong>ClientHello</strong> — підтримувані cipher suites, версії</li>
+                                <li><strong>ServerHello</strong> — обраний cipher suite + сертифікат</li>
+                                <li><strong>Key Exchange</strong> — ECDH для спільного секрету</li>
+                                <li><strong>Finished</strong> — підтвердження шифрованого каналу</li>
+                                <li>Дані передаються зашифровано (AES-GCM)</li>
+                            </ol>
+                        </div>
+                        <h3 style="margin-top:0.4em;">Версії та рекомендації</h3>
+                        <table>
+                            <tr><th>Версія</th><th>Статус</th></tr>
+                            <tr><td>SSL 2.0 / 3.0</td><td><span class="tag-red">Заборонено</span></td></tr>
+                            <tr><td>TLS 1.0 / 1.1</td><td><span class="tag-red">Застаріло</span></td></tr>
+                            <tr><td>TLS 1.2</td><td><span class="tag">Допустимо</span></td></tr>
+                            <tr><td>TLS 1.3</td><td><span class="tag-green">Рекомендовано</span></td></tr>
+                        </table>
+                    </div>
+                    <div>
+                        <h3>Mutual TLS (mTLS)</h3>
+                        <div class="box" style="border-color:#e8b04b;">
+                            <p style="font-size:0.8em;">Обидві сторони (клієнт <strong>і</strong> сервер) пред'являють сертифікати</p>
+                            <ul style="font-size:0.78em;">
+                                <li>Критично для API між мікросервісами</li>
+                                <li>Використовується в 5G (мережа оператора)</li>
+                                <li>AWS App Mesh, API Gateway підтримують mTLS</li>
+                            </ul>
+                        </div>
+                        <h3 style="margin-top:0.4em;">AWS-сервіси що забезпечують TLS</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><span class="tag">ALB / NLB</span> — termination TLS на балансувальнику</li>
+                            <li><span class="tag">CloudFront</span> — TLS до кінцевих користувачів</li>
+                            <li><span class="tag">API Gateway</span> — TLS для REST/HTTP API</li>
+                            <li><span class="tag">ACM</span> — безкоштовні сертифікати</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 12: AWS Certificate Manager ===== -->
+            <section>
+                <h2>AWS Certificate Manager (ACM)</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Що надає ACM?</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>Безкоштовні публічні SSL/TLS-сертифікати</li>
+                            <li>Автоматичне оновлення (без ручного втручання)</li>
+                            <li>Інтеграція з ALB, CloudFront, API Gateway, AppRunner</li>
+                            <li>Підтримка wildcard-сертифікатів (<code>*.example.com</code>)</li>
+                            <li>DNS або Email-валідація домену</li>
+                        </ul>
+                        <h3 style="margin-top:0.4em;">ACM Private CA</h3>
+                        <div class="box" style="border-color:#1f6feb; font-size:0.8em;">
+                            <p>Власний Центр Сертифікації (CA) для внутрішніх сертифікатів:</p>
+                            <ul>
+                                <li>Для внутрішніх мікросервісів, VPN, mTLS</li>
+                                <li>Інтеграція з IoT (телеком-пристрої)</li>
+                                <li>Вартість: ~$400/міс за CA</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Типи сертифікатів</h3>
+                        <table>
+                            <thead>
+                                <tr><th>Тип</th><th>Рівень</th><th>Використання</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>DV</td><td>Domain Validated</td><td>Базові HTTPS-сайти</td></tr>
+                                <tr><td>OV</td><td>Organization Validated</td><td>Корпоративні сайти</td></tr>
+                                <tr><td>EV</td><td>Extended Validation</td><td>Банки, критична інфра</td></tr>
+                                <tr><td>Wildcard</td><td>DV/OV</td><td>Піддомени (*.example.com)</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="box" style="margin-top:0.3em; font-size:0.78em;">
+                            <p>⚠️ ACM-сертифікати <strong>не можна</strong> завантажити (private key залишається в ACM). Для EC2 — завантажте сертифікат власноруч.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 13: AWS Secrets Manager ===== -->
+            <section>
+                <h2>AWS Secrets Manager</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Призначення</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>Зберігання та управління секретами (паролі, ключі API, рядки з'єднання)</li>
+                            <li>Автоматична ротація секретів</li>
+                            <li>Шифрування через KMS</li>
+                            <li>Аудит доступу через CloudTrail</li>
+                            <li>Fine-grained IAM-контроль</li>
+                        </ul>
+                        <h3 style="margin-top:0.4em;">Автоматична ротація</h3>
+                        <div class="box" style="border-color:#238636; font-size:0.8em;">
+                            <ol>
+                                <li>Lambda-функція генерує новий секрет</li>
+                                <li>Оновлює значення в цільовому сервісі (наприклад RDS)</li>
+                                <li>Тестує новий секрет</li>
+                                <li>Встановлює як активний</li>
+                            </ol>
+                            <p style="font-size:0.85em;">Вбудована підтримка ротації для RDS, Redshift, DocumentDB</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Приклад: отримання секрету</h3>
+                        <pre><code>import boto3, json
+
+client = boto3.client(
+    'secretsmanager',
+    region_name='eu-west-1'
+)
+
+response = client.get_secret_value(
+    SecretId='prod/telecom/db-password'
+)
+
+secret = json.loads(
+    response['SecretString']
+)
+db_password = secret['password']</code></pre>
+                        <p style="font-size:0.72em; color:#888; margin-top:0.2em;">💡 Ніколи не зберігайте секрети у коді, env-файлах або git-репозиторіях</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 14: Parameter Store vs Secrets Manager ===== -->
+            <section>
+                <h2>Parameter Store vs Secrets Manager</h2>
+                <table>
+                    <thead>
+                        <tr><th>Критерій</th><th>SSM Parameter Store</th><th>Secrets Manager</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ціна</td>
+                            <td>Безкоштовно (Standard) / $0.05/параметр (Advanced)</td>
+                            <td>$0.40/секрет/міс + API</td>
+                        </tr>
+                        <tr>
+                            <td>Автоматична ротація</td>
+                            <td>❌ (потребує Lambda)</td>
+                            <td>✅ Вбудована</td>
+                        </tr>
+                        <tr>
+                            <td>Типи даних</td>
+                            <td>String, StringList, SecureString</td>
+                            <td>JSON або текст</td>
+                        </tr>
+                        <tr>
+                            <td>Шифрування</td>
+                            <td>KMS (SecureString)</td>
+                            <td>KMS (завжди)</td>
+                        </tr>
+                        <tr>
+                            <td>Версіонування</td>
+                            <td>Обмежено</td>
+                            <td>Повне (з мітками)</td>
+                        </tr>
+                        <tr>
+                            <td>Крос-акаунт</td>
+                            <td>❌</td>
+                            <td>✅</td>
+                        </tr>
+                        <tr>
+                            <td>Рекомендація</td>
+                            <td>Конфігурації, нечутливі параметри</td>
+                            <td>Паролі БД, ключі API</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="font-size:0.68em; color:#888; margin-top:0.4em;">💡 Для зберігання паролів та автоматичної ротації — Secrets Manager. Для конфігурацій — Parameter Store.</p>
+            </section>
+
+            <!-- ===== СЛАЙД 15: AWS CloudHSM ===== -->
+            <section>
+                <h2>AWS CloudHSM</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Що таке HSM?</h3>
+                        <div class="box">
+                            <p style="font-size:0.8em;"><span class="highlight">Hardware Security Module</span> — спеціалізований фізичний пристрій для безпечного зберігання та використання криптографічних ключів</p>
+                        </div>
+                        <h3 style="margin-top:0.4em;">AWS CloudHSM</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>Виділений HSM-пристрій у вашій VPC</li>
+                            <li>FIPS 140-2 Level 3 сертифікований</li>
+                            <li>Лише ви маєте доступ до ключів (не AWS)</li>
+                            <li>Підтримує PKCS#11, JCE, OpenSSL</li>
+                            <li>Кластер для HA (мін. 2 HSM)</li>
+                        </ul>
+                        <p style="font-size:0.75em; color:#888; margin-top:0.3em;">Вартість: ~$1.45/год за HSM (~$1050/міс)</p>
+                    </div>
+                    <div>
+                        <h3>KMS vs CloudHSM</h3>
+                        <table>
+                            <thead>
+                                <tr><th>Параметр</th><th>KMS</th><th>CloudHSM</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Управління</td><td>AWS керує</td><td>Ви керуєте</td></tr>
+                                <tr><td>Доступ до ключів</td><td>AWS + ви</td><td>Тільки ви</td></tr>
+                                <tr><td>FIPS рівень</td><td>140-2 L3</td><td>140-2 L3</td></tr>
+                                <tr><td>Продуктивність</td><td>Стандартна</td><td>Висока</td></tr>
+                                <tr><td>Ціна</td><td>Дешево</td><td>Дорого</td></tr>
+                                <tr><td>Застосування</td><td>Загальне</td><td>Регуляторні вимоги</td></tr>
+                            </tbody>
+                        </table>
+                        <p style="font-size:0.72em; color:#888; margin-top:0.3em;">CloudHSM підходить для PKI-інфраструктури операторів зв'язку, де потрібен повний контроль над ключами</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 16: Класифікація даних ===== -->
+            <section>
+                <h2>Класифікація даних та модель відповідальності</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Рівні класифікації даних</h3>
+                        <div class="box" style="border-color:#da3633;">
+                            <h3 style="color:#da3633;">🔴 Критичні / Таємні</h3>
+                            <p style="font-size:0.78em;">Ключі шифрування, паролі адміністраторів, PII, фінансові дані</p>
+                        </div>
+                        <div class="box" style="border-color:#e8b04b; margin-top:0.2em;">
+                            <h3>🟡 Конфіденційні</h3>
+                            <p style="font-size:0.78em;">Внутрішня документація, конфіги мережі, метадані клієнтів</p>
+                        </div>
+                        <div class="box" style="border-color:#238636; margin-top:0.2em;">
+                            <h3 style="color:#58a6ff;">🟢 Публічні / Внутрішні</h3>
+                            <p style="font-size:0.78em;">Публічна документація, загальна конфігурація</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Модель спільної відповідальності</h3>
+                        <div class="box" style="border-color:#1f6feb;">
+                            <strong>AWS відповідає за:</strong>
+                            <ul style="font-size:0.78em;">
+                                <li>Фізичну безпеку дата-центрів</li>
+                                <li>Шифрування даних між зонами/регіонами</li>
+                                <li>Безпеку інфраструктури KMS/HSM</li>
+                            </ul>
+                        </div>
+                        <div class="box" style="border-color:#238636; margin-top:0.3em;">
+                            <strong>Ви відповідаєте за:</strong>
+                            <ul style="font-size:0.78em;">
+                                <li>Увімкнення шифрування для ваших ресурсів</li>
+                                <li>Управління ключами (ротація, доступ)</li>
+                                <li>Класифікацію та маркування даних</li>
+                                <li>Відповідність регуляторним вимогам</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 17: Amazon Macie ===== -->
+            <section>
+                <h2>Amazon Macie — виявлення чутливих даних</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Що таке Amazon Macie?</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>ML-сервіс для виявлення та захисту чутливих даних в S3</li>
+                            <li>Автоматично знаходить PII, фінансові дані, облікові дані</li>
+                            <li>Оцінює ризики безпеки: публічні бакети, незашифровані дані</li>
+                            <li>Сповіщення через EventBridge</li>
+                        </ul>
+                        <h3 style="margin-top:0.4em;">Типи знайдених даних</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><span class="tag-red">PII</span> Імена, Email, номери телефонів</li>
+                            <li><span class="tag-red">Credentials</span> AWS-ключі, паролі у файлах</li>
+                            <li><span class="tag-red">Financial</span> Номери кредитних карт, IBAN</li>
+                            <li><span class="tag">Health</span> Медичні записи (HIPAA)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Типові сценарії в телекомі</h3>
+                        <div class="box" style="font-size:0.8em;">
+                            <h3>📋 Аудит S3 бакетів на наявність:</h3>
+                            <ul>
+                                <li>MSISDN (номери абонентів)</li>
+                                <li>IMSI / IMEI пристроїв</li>
+                                <li>CDR (Call Detail Records)</li>
+                                <li>Особисті дані клієнтів (GDPR)</li>
+                                <li>Незашифрованих конфігураційних файлів</li>
+                            </ul>
+                        </div>
+                        <p style="font-size:0.72em; color:#888; margin-top:0.3em;">Macie допомагає відповідати вимогам GDPR, PCI DSS, HIPAA</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 18: Захист даних у телекомі ===== -->
+            <section>
+                <h2>Захист даних у телекомунікаційних системах</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Специфічні вимоги телекому</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><span class="highlight">GDPR/CCPA</span> — захист персональних даних абонентів</li>
+                            <li><span class="highlight">CALEA</span> — законний перехват комунікацій (LI)</li>
+                            <li><span class="highlight">3GPP TS 33.501</span> — безпека 5G (шифрування сигналізації)</li>
+                            <li><span class="highlight">GSMA FS.16</span> — безпека хмарних телеком-систем</li>
+                            <li><span class="highlight">NIS2</span> — захист критичної телеком-інфраструктури</li>
+                        </ul>
+                        <h3 style="margin-top:0.4em;">Чутливі категорії даних</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>CDR / xDR (деталі дзвінків та сесій)</li>
+                            <li>Ідентифікатори абонентів (MSISDN, IMSI)</li>
+                            <li>Геолокаційні дані</li>
+                            <li>Контент повідомлень (якщо зберігається)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Архітектура захисту телеком-даних в AWS</h3>
+                        <div class="box" style="font-size:0.78em; border-color:#1f6feb;">
+                            <h3>Рівень сигналізації (Control Plane)</h3>
+                            <p>TLS 1.3 + mTLS для SIP, Diameter, HTTP/2 (5G SBI)</p>
+                        </div>
+                        <div class="box" style="font-size:0.78em; border-color:#238636; margin-top:0.2em;">
+                            <h3>Рівень даних (User Plane)</h3>
+                            <p>SRTP для голосу, DTLS для WebRTC, IPsec для GTP-тунелів</p>
+                        </div>
+                        <div class="box" style="font-size:0.78em; border-color:#e8b04b; margin-top:0.2em;">
+                            <h3>Зберігання (CDR, білінг)</h3>
+                            <p>S3 SSE-KMS + Object Lock, RDS шифрування, Macie-аудит</p>
+                        </div>
+                        <div class="box" style="font-size:0.78em; margin-top:0.2em;">
+                            <h3>Управління ключами</h3>
+                            <p>CloudHSM для PKI оператора, KMS CMK для хмарних ресурсів</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 19: AWS Config та Security Hub ===== -->
+            <section>
+                <h2>Перевірка відповідності шифрування: Config &amp; Security Hub</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>AWS Config — правила шифрування</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><code>s3-bucket-server-side-encryption-enabled</code></li>
+                            <li><code>encrypted-volumes</code> (EBS)</li>
+                            <li><code>rds-storage-encrypted</code></li>
+                            <li><code>kms-cmk-not-scheduled-for-deletion</code></li>
+                            <li><code>acm-certificate-expiration-check</code></li>
+                        </ul>
+                        <div class="box" style="margin-top:0.3em; font-size:0.8em;">
+                            <p>Config відслідковує зміни конфігурацій та виявляє ресурси, що не відповідають політиці шифрування</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>AWS Security Hub — стандарти</h3>
+                        <div class="box" style="border-color:#1f6feb; font-size:0.8em;">
+                            <h3>AWS Foundational Security Best Practices</h3>
+                            <ul>
+                                <li>KMS.1: CMK rotation enabled</li>
+                                <li>S3.4: S3 encryption enabled</li>
+                                <li>EC2.3: EBS volumes encrypted</li>
+                                <li>RDS.3: RDS instances encrypted</li>
+                            </ul>
+                        </div>
+                        <div class="box" style="border-color:#238636; margin-top:0.3em; font-size:0.8em;">
+                            <h3>PCI DSS / CIS AWS Benchmark</h3>
+                            <p>Перевіряє відповідність платіжних систем та загальних вимог безпеки хмарного середовища</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 20: Кращі практики ===== -->
+            <section>
+                <h2>Кращі практики захисту даних в AWS</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🔑 Управління ключами</h3>
+                        <ul style="font-size:0.8em;">
+                            <li>Використовуйте Customer Managed Keys (CMK) для чутливих даних</li>
+                            <li>Увімкніть автоматичну ротацію ключів (1 рік)</li>
+                            <li>Розмежуйте ключі за середовищами (dev/staging/prod)</li>
+                            <li>Обмежте доступ до ключів через key policy + IAM</li>
+                            <li>Ніколи не вбудовуйте ключі в код або CI/CD змінні</li>
+                        </ul>
+                        <h3 style="margin-top:0.4em;">💾 Шифрування сховищ</h3>
+                        <ul style="font-size:0.8em;">
+                            <li>Увімкніть шифрування за замовчуванням для EBS у регіоні</li>
+                            <li>Використовуйте SSE-KMS для критичних S3 бакетів</li>
+                            <li>Увімкніть S3 Block Public Access на рівні акаунту</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>🌐 Транспортна безпека</h3>
+                        <ul style="font-size:0.8em;">
+                            <li>Мінімально TLS 1.2, рекомендовано TLS 1.3</li>
+                            <li>Використовуйте ACM для управління сертифікатами</li>
+                            <li>Налаштуйте нагадування про закінчення сертифікатів</li>
+                            <li>Увімкніть HSTS для веб-застосунків</li>
+                        </ul>
+                        <h3 style="margin-top:0.4em;">🔐 Секрети та конфігурації</h3>
+                        <ul style="font-size:0.8em;">
+                            <li>Зберігайте секрети у Secrets Manager, не в коді</li>
+                            <li>Увімкніть автоматичну ротацію для БД-паролів</li>
+                            <li>Налаштуйте Macie для виявлення витоків PII в S3</li>
+                            <li>Регулярно перевіряйте Config Rules на відповідність</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 21: Практичне завдання ===== -->
+            <section>
+                <h2>Практичне завдання</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Сценарій</h3>
+                        <div class="box" style="font-size:0.8em;">
+                            <p>Телеком-оператор переносить систему зберігання CDR в AWS. Система складається з:</p>
+                            <ul>
+                                <li>S3-бакет для зберігання CDR-файлів</li>
+                                <li>RDS PostgreSQL для білінгових даних</li>
+                                <li>REST API (EC2 або Lambda)</li>
+                                <li>Налаштувань конфігурації (рядки підключення, паролі)</li>
+                            </ul>
+                        </div>
+                        <h3 style="margin-top:0.4em;">Завдання</h3>
+                        <ol style="font-size:0.8em;">
+                            <li>Створити CMK в KMS для шифрування CDR</li>
+                            <li>Налаштувати SSE-KMS для S3-бакету</li>
+                            <li>Увімкнути шифрування RDS + примусовий SSL</li>
+                            <li>Зберегти пароль БД у Secrets Manager з ротацією</li>
+                            <li>Видати сертифікат ACM для HTTPS API</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h3>Очікуваний результат</h3>
+                        <div class="box" style="border-color:#238636; font-size:0.82em;">
+                            <ul>
+                                <li>✅ CDR-дані зашифровані в S3 (SSE-KMS)</li>
+                                <li>✅ БД зашифрована, з'єднання через SSL</li>
+                                <li>✅ Пароль БД у Secrets Manager (авторотація)</li>
+                                <li>✅ HTTPS API з ACM-сертифікатом</li>
+                                <li>✅ KMS CloudTrail: всі операції з ключем логуються</li>
+                                <li>✅ Config Rules: всі ресурси відповідають вимогам</li>
+                            </ul>
+                        </div>
+                        <div class="box" style="margin-top:0.3em; font-size:0.78em;">
+                            <p>💡 <strong>Рекомендований інструмент:</strong> AWS Console або Terraform для автоматизованого розгортання інфраструктури</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 22: Типові вразливості ===== -->
+            <section>
+                <h2>Типові вразливості та атаки на дані</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Вразливості конфігурації</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>🪣 <strong>Відкриті S3-бакети</strong> — публічний доступ без шифрування</li>
+                            <li>🔑 <strong>Hardcoded secrets</strong> — ключі API та паролі в коді/git</li>
+                            <li>📋 <strong>Незашифровані snapshots</strong> — копії БД без захисту</li>
+                            <li>🔄 <strong>Відсутність ротації</strong> — старі ключі та паролі</li>
+                            <li>📉 <strong>Слабкий TLS</strong> — TLS 1.0/1.1, застарілі cipher suites</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Реальні інциденти</h3>
+                        <table>
+                            <thead>
+                                <tr><th>Компанія</th><th>Тип витоку</th><th>Причина</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Capital One (2019)</td><td>100M+ клієнтів</td><td>SSRF + відкритий S3 (неправильні IAM-дозволи)</td></tr>
+                                <tr><td>Twitch (2021)</td><td>Вихідний код</td><td>Неправильні ACL S3</td></tr>
+                                <tr><td>Toyota (2023)</td><td>2.15M авто</td><td>Відкритий S3-бакет (10 років)</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="box" style="margin-top:0.3em; font-size:0.78em;">
+                            <p>🛡️ <strong>Захист:</strong> S3 Block Public Access на рівні акаунту, регулярні аудити через Macie та AWS Config, заборона <code>s3:GetObject</code> без умов</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 23: Підсумок ===== -->
+            <section>
+                <h2>Підсумок лекції</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>Ключові концепції</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>Три стани даних: at rest, in transit, in use</li>
+                            <li>Симетрична (AES) та асиметрична (RSA, ECDH) криптографія</li>
+                            <li>Конвертне шифрування: DEK + KEK</li>
+                            <li>AWS KMS: CMK, AWS Managed Key, автоматична ротація</li>
+                            <li>S3: SSE-S3, SSE-KMS, SSE-C, CSE</li>
+                            <li>EBS та RDS: шифрування при створенні</li>
+                            <li>ACM: безкоштовні TLS-сертифікати з авторенуванням</li>
+                            <li>Secrets Manager: зберігання та ротація секретів</li>
+                            <li>CloudHSM: повний контроль над ключами</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>AWS-сервіси лекції</h3>
+                        <div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:0.3em;">
+                            <span class="tag">AWS KMS</span>
+                            <span class="tag">Amazon S3</span>
+                            <span class="tag">Amazon EBS</span>
+                            <span class="tag">Amazon RDS</span>
+                            <span class="tag">AWS ACM</span>
+                            <span class="tag">Secrets Manager</span>
+                            <span class="tag">SSM Parameter Store</span>
+                            <span class="tag">CloudHSM</span>
+                            <span class="tag">Amazon Macie</span>
+                            <span class="tag">AWS Config</span>
+                            <span class="tag">Security Hub</span>
+                        </div>
+                        <div class="box" style="margin-top:0.5em; font-size:0.8em; border-color:#238636;">
+                            <p>🎯 <strong>Золоте правило:</strong> Шифруйте все за замовчуванням, керуйте ключами через KMS, зберігайте секрети в Secrets Manager, перевіряйте відповідність через Config.</p>
+                        </div>
+                    </div>
+                </div>
+                <p style="font-size:0.9em; color:#888; margin-top:0.5em;">Захист даних і криптографія в AWS</p>
+                <p style="font-size:0.8em; color:#888; margin-top:0.5em;">Лекція 5 — Модуль 1</p>
+                <hr style="border-color:#444; margin:1.5em 0;">
+                <p style="font-size:0.75em; color:#888;">Наступна лекція: <strong>Безпека обчислювальних сервісів і контейнерів</strong></p>
+            </section>
+
+        </div>
+    </div>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            slideNumber: 'c/t',
+            center: false,
+            width: 1100,
+            height: 900,
+            margin: 0.04,
+            minScale: 0.2,
+            maxScale: 2.0
+        });
+    </script>
+</body>
+</html>
