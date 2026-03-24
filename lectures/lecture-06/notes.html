@@ -255,7 +255,7 @@
 
 curl -H "X-aws-ec2-metadata-token: $TOKEN" \
   http://169.254.169.254/latest/meta-data/iam/security-credentials/</code></pre>
-<p>SSRF-атаки зазвичай не можуть виконати PUT-запит, тому IMDSv2 повністю блокує цей вектор.</p>
+<p>SSRF-атаки зазвичай не можуть виконати PUT-запит або додати довільні HTTP-заголовки, тому IMDSv2 значно ускладнює цей вектор і знижує ризик витоку credentials. Водночас потужні SSRF-примітиви, що дозволяють довільні методи й заголовки, усе ще можуть обійти цей захист.</p>
 
 <h3>Примусове вмикання IMDSv2</h3>
 <pre><code>aws ec2 modify-instance-metadata-options \
