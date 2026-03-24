@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Конспект Лекції 5 — Захист даних і криптографія в AWS</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+        .wrapper { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+        /* Navigation */
+        nav {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        nav strong { color: #58a6ff; margin-right: 0.5rem; }
+        nav a { color: #58a6ff; text-decoration: none; font-size: 0.9em; padding: 3px 8px; background: #1f2937; border-radius: 4px; }
+        nav a:hover { background: #1f6feb; }
+        /* Headers */
+        h1 { color: #e6edf3; font-size: 2em; margin-bottom: 0.3em; border-bottom: 2px solid #1f6feb; padding-bottom: 0.4em; }
+        h2 { color: #58a6ff; font-size: 1.4em; margin: 2rem 0 0.6rem; padding-left: 0.5em; border-left: 3px solid #1f6feb; }
+        h3 { color: #e8b04b; font-size: 1.1em; margin: 1.2rem 0 0.4rem; }
+        h4 { color: #a5d6ff; font-size: 1em; margin: 1rem 0 0.3rem; }
+        /* Text elements */
+        p { margin-bottom: 0.8em; }
+        ul, ol { padding-left: 1.5em; margin-bottom: 0.8em; }
+        li { margin-bottom: 0.3em; }
+        strong { color: #e6edf3; }
+        em { color: #ffa657; font-style: italic; }
+        a { color: #58a6ff; }
+        /* Code */
+        code {
+            background: #161b22;
+            color: #58a6ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.88em;
+        }
+        pre {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 0.8em 0;
+        }
+        pre code {
+            background: none;
+            color: #c9d1d9;
+            padding: 0;
+            font-size: 0.85em;
+            line-height: 1.5;
+        }
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.8em 0;
+            font-size: 0.9em;
+        }
+        th {
+            background: #1f6feb;
+            color: #fff;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        td { padding: 7px 12px; border-bottom: 1px solid #21262d; }
+        tr:hover td { background: #161b22; }
+        /* Blockquotes / Notes */
+        blockquote {
+            border-left: 4px solid #e8b04b;
+            background: #161b22;
+            padding: 0.8em 1.2em;
+            margin: 0.8em 0;
+            border-radius: 0 6px 6px 0;
+            color: #e8b04b;
+        }
+        /* Info boxes */
+        .note {
+            background: #0d2137;
+            border: 1px solid #1f6feb;
+            border-radius: 6px;
+            padding: 0.8em 1.2em;
+            margin: 0.8em 0;
+            font-size: 0.92em;
+        }
+        .warning {
+            background: #2d1a0e;
+            border: 1px solid #e8b04b;
+            border-radius: 6px;
+            padding: 0.8em 1.2em;
+            margin: 0.8em 0;
+            font-size: 0.92em;
+        }
+        .danger {
+            background: #2d0f0f;
+            border: 1px solid #da3633;
+            border-radius: 6px;
+            padding: 0.8em 1.2em;
+            margin: 0.8em 0;
+            font-size: 0.92em;
+        }
+        .success {
+            background: #0d2c1a;
+            border: 1px solid #238636;
+            border-radius: 6px;
+            padding: 0.8em 1.2em;
+            margin: 0.8em 0;
+            font-size: 0.92em;
+        }
+        /* TOC */
+        .toc {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1.2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .toc h3 { color: #58a6ff; margin-bottom: 0.6rem; }
+        .toc ol { padding-left: 1.2em; }
+        .toc a { color: #c9d1d9; text-decoration: none; }
+        .toc a:hover { color: #58a6ff; }
+        /* Tags */
+        .tag {
+            background: #1f6feb;
+            border-radius: 3px;
+            padding: 1px 6px;
+            font-size: 0.75em;
+            color: #fff;
+            display: inline-block;
+        }
+        .tag-green { background: #238636; border-radius: 3px; padding: 1px 6px; font-size: 0.75em; color: #fff; display: inline-block; }
+        .tag-red { background: #da3633; border-radius: 3px; padding: 1px 6px; font-size: 0.75em; color: #fff; display: inline-block; }
+        /* Back to top */
+        .back-top { display: block; text-align: right; color: #888; font-size: 0.85em; margin-top: 1.5rem; }
+        hr { border: none; border-top: 1px solid #21262d; margin: 2rem 0; }
+        @media (max-width: 600px) {
+            .wrapper { padding: 1rem; }
+            h1 { font-size: 1.5em; }
+            h2 { font-size: 1.2em; }
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+<nav>
+    <strong>Лекція 5</strong>
+    <a href="presentation.html">📊 Презентація</a>
+    <a href="notes.md">📝 Markdown-версія</a>
+    <a href="references.md">📚 Джерела</a>
+    <a href="../lecture-04/presentation.html">← Лекція 4</a>
+    <a href="../../README.md">🏠 Курс</a>
+</nav>
+
+<h1>Захист даних і криптографія в AWS</h1>
+<p style="color:#888;">Лекція 5 | Модуль 1: Основи безпеки телекомунікацій та AWS</p>
+
+<div class="toc">
+    <h3>📋 Зміст</h3>
+    <ol>
+        <li><a href="#s1">Три стани даних та їх захист</a></li>
+        <li><a href="#s2">Симетрична криптографія</a></li>
+        <li><a href="#s3">Асиметрична криптографія</a></li>
+        <li><a href="#s4">Хешування та цілісність даних</a></li>
+        <li><a href="#s5">Конвертне шифрування (Envelope Encryption)</a></li>
+        <li><a href="#s6">AWS Key Management Service (KMS)</a></li>
+        <li><a href="#s7">Шифрування Amazon S3</a></li>
+        <li><a href="#s8">AWS Encryption SDK</a></li>
+        <li><a href="#s9">Шифрування EBS та RDS</a></li>
+        <li><a href="#s10">Шифрування DynamoDB, SQS/SNS, Kinesis</a></li>
+        <li><a href="#s11">Шифрування Lambda та середовищ виконання</a></li>
+        <li><a href="#s12">AWS Nitro Enclaves — Confidential Computing</a></li>
+        <li><a href="#s13">Захист даних у русі: TLS/SSL</a></li>
+        <li><a href="#s14">AWS Certificate Manager (ACM)</a></li>
+        <li><a href="#s15">AWS Secrets Manager та Parameter Store</a></li>
+        <li><a href="#s16">AWS CloudHSM</a></li>
+        <li><a href="#s17">Класифікація даних та модель відповідальності</a></li>
+        <li><a href="#s18">Amazon Macie</a></li>
+        <li><a href="#s19">Post-Quantum Cryptography</a></li>
+        <li><a href="#s20">Zero Trust та криптографія</a></li>
+        <li><a href="#s21">Захист даних у телекомунікаційних системах</a></li>
+        <li><a href="#s22">Аудит та моніторинг KMS операцій</a></li>
+        <li><a href="#s23">Відповідність регуляторним вимогам</a></li>
+        <li><a href="#s24">Типові вразливості та кращі практики</a></li>
+        <li><a href="#s25">Defence in Depth</a></li>
+    </ol>
+</div>
+
+<hr>
+
+<h2 id="s1">1. Три стани даних та їх захист</h2>
+
+<p>Кожні дані в системі існують в одному з трьох станів, і для кожного стану існують специфічні механізми захисту.</p>
+
+<h3>1.1 Дані в спокої (Data at Rest)</h3>
+<p><strong>Визначення:</strong> Дані, що зберігаються на фізичних або логічних носіях і наразі не передаються.</p>
+<p><strong>Приклади:</strong> файли на дисках, записи в БД, архіви, резервні копії, snapshots.</p>
+<p><strong>Механізми захисту:</strong> шифрування дисків, шифрування на рівні файлів або об'єктів, управління ключами (KMS, CloudHSM).</p>
+
+<h3>1.2 Дані у русі (Data in Transit)</h3>
+<p><strong>Визначення:</strong> Дані, що передаються мережею між компонентами, сервісами або кінцевими точками.</p>
+<p><strong>Механізми захисту:</strong> TLS/SSL, VPN, HTTPS, mTLS (Mutual TLS).</p>
+<p><strong>Ризики без захисту:</strong> man-in-the-middle атаки, прослуховування трафіку, replay attacks.</p>
+
+<h3>1.3 Дані у використанні (Data in Use)</h3>
+<p><strong>Визначення:</strong> Дані, що активно обробляються процесором або завантажені в оперативну пам'ять.</p>
+<p><strong>Механізми захисту:</strong> Confidential Computing (TEE), AWS Nitro Enclaves, Intel SGX, AMD SEV.</p>
+
+<div class="note">
+    <strong>💡 Тріада CIA:</strong> Конфіденційність (шифрування), Цілісність (хешування/підписи), Доступність (резервування).
+</div>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s2">2. Симетрична криптографія</h2>
+
+<p>Симетрична криптографія використовує <strong>один і той самий ключ</strong> для шифрування та дешифрування.</p>
+
+<h3>2.1 AES (Advanced Encryption Standard)</h3>
+<p>AES — міжнародний стандарт симетричного шифрування (NIST FIPS 197, 2001). Блоковий шифр з розміром блоку 128 біт, ключі 128/192/256 біт.</p>
+
+<h3>2.2 Режими роботи AES</h3>
+<table>
+    <tr><th>Режим</th><th>Особливості</th><th>Застосування</th></tr>
+    <tr><td><strong>AES-GCM</strong></td><td>Шифрування + автентифікація (AEAD)</td><td>AWS KMS, TLS 1.3 <span class="tag-green">✅ Рекомендований</span></td></tr>
+    <tr><td>AES-CBC</td><td>Блоковий, потребує padding</td><td>Старі реалізації TLS 1.2</td></tr>
+    <tr><td>AES-CTR</td><td>Потоковий режим, паралелізується</td><td>Disk encryption</td></tr>
+    <tr><td><s>DES/3DES</s></td><td>Застарілий стандарт</td><td><span class="tag-red">❌ Заборонено</span></td></tr>
+</table>
+
+<div class="warning">
+    <strong>⚠️ Проблема розповсюдження ключів:</strong> N сторін потребують N×(N-1)/2 унікальних ключів. Для 100 сторін — 4950 ключів. Вирішується асиметричною криптографією (ECDH).
+</div>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s3">3. Асиметрична криптографія</h2>
+
+<p>Використовує <strong>пару ключів</strong>: публічний (відкритий) та приватний (закритий). Публічний ключ можна поширювати відкрито; приватний — ніколи не передається.</p>
+
+<h3>3.1 Алгоритми</h3>
+<table>
+    <tr><th>Алгоритм</th><th>Основа</th><th>Застосування</th><th>Статус</th></tr>
+    <tr><td>RSA-2048/4096</td><td>Факторизація чисел</td><td>TLS, підпис</td><td><span class="tag">Допустимо</span></td></tr>
+    <tr><td>ECDSA/ECDH (P-256)</td><td>Еліптичні криві</td><td>TLS 1.3, підпис</td><td><span class="tag-green">✅ Рекомендовано</span></td></tr>
+    <tr><td>Ed25519</td><td>Edwards curves</td><td>SSH, JWT</td><td><span class="tag-green">✅ Найсучасніший</span></td></tr>
+</table>
+
+<h3>3.2 Алгоритм Діффі-Геллмана (ECDH)</h3>
+<p>Дозволяє двом сторонам виробити спільний секрет через незахищений канал без передачі самого секрету. ECDH (Elliptic Curve DH) — ефективніша версія на еліптичних кривих, що використовується в TLS 1.3 для Perfect Forward Secrecy.</p>
+
+<div class="note">
+    <strong>💡 Perfect Forward Secrecy (PFS):</strong> Кожна TLS-сесія використовує <em>ефемерні</em> ECDH-ключі. Навіть якщо довгостроковий приватний ключ сервера скомпрометовано, раніше захоплений трафік не може бути розшифрований.
+</div>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s4">4. Хешування та цілісність даних</h2>
+
+<h3>4.1 Властивості криптографічних хеш-функцій</h3>
+<ul>
+    <li><strong>Детермінованість:</strong> однакові вхідні дані → однаковий хеш</li>
+    <li><strong>Необоротність:</strong> з хешу практично неможливо відновити вхідні дані</li>
+    <li><strong>Лавинний ефект:</strong> 1 біт зміни вхідних даних → ~50% бітів хешу змінюються</li>
+    <li><strong>Стійкість до колізій:</strong> практично неможливо знайти два різних входи з однаковим хешем</li>
+</ul>
+
+<h3>4.2 HMAC — автентифікований хеш</h3>
+<p>HMAC (Hash-based MAC) поєднує хешування з симетричним ключем, гарантуючи і цілісність, і автентичність.</p>
+<p><strong>AWS SigV4:</strong> кожен API-запит до AWS підписується HMAC-SHA256 з включенням timestamp, що запобігає replay-атакам.</p>
+
+<h3>4.3 Де AWS використовує хеші</h3>
+<table>
+    <tr><th>Сервіс</th><th>Механізм</th><th>Призначення</th></tr>
+    <tr><td>AWS SigV4</td><td>HMAC-SHA256</td><td>Підпис API-запитів</td></tr>
+    <tr><td>S3 ETag</td><td>MD5 / SHA256</td><td>Перевірка цілісності об'єктів</td></tr>
+    <tr><td>CloudTrail</td><td>SHA-256 chain</td><td>Валідація лог-файлів</td></tr>
+    <tr><td>KMS Sign</td><td>RSA/ECDSA</td><td>Цифровий підпис</td></tr>
+</table>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s5">5. Конвертне шифрування (Envelope Encryption)</h2>
+
+<p>Envelope Encryption — дворівнева схема шифрування, що вирішує проблему ефективного шифрування великих обсягів даних при централізованому управлінні ключами.</p>
+
+<h3>5.1 Чому не шифрувати KMS-ключем напряму?</h3>
+<ul>
+    <li>KMS обмежує розмір даних: <strong>максимум 4 КБ</strong></li>
+    <li>Кожен виклик KMS API платний (~$0.03/10K викликів)</li>
+    <li>Мережева затримка: 5-20 мс на виклик</li>
+</ul>
+
+<h3>5.2 Схема шифрування</h3>
+<pre><code>--- ШИФРУВАННЯ ---
+1. KMS.GenerateDataKey(CMK) → (PlaintextDEK, EncryptedDEK)
+2. AES_256_GCM.Encrypt(PlaintextDEK, PlaintextData) → CiphertextData
+3. Видалити PlaintextDEK з пам'яті!
+4. Зберегти: CiphertextData + EncryptedDEK
+
+--- ДЕШИФРУВАННЯ ---
+1. KMS.Decrypt(CMK, EncryptedDEK) → PlaintextDEK
+2. AES_256_GCM.Decrypt(PlaintextDEK, CiphertextData) → PlaintextData
+3. Видалити PlaintextDEK з пам'яті!</code></pre>
+
+<div class="success">
+    <strong>✅ Переваги:</strong> Дані будь-якого розміру шифруються локально (швидко). KMS викликається лише 1 раз на дешифрування. Цей підхід автоматично використовується в S3 SSE-KMS, EBS, RDS.
+</div>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s6">6. AWS Key Management Service (KMS)</h2>
+
+<h3>6.1 Типи ключів KMS</h3>
+<table>
+    <tr><th>Тип</th><th>Хто керує</th><th>Ротація</th><th>Key Policy</th><th>CloudTrail</th><th>Ціна</th></tr>
+    <tr><td><span class="tag-green">Customer Managed Key</span></td><td>Ви</td><td>Ручна / авто (1 рік)</td><td>✅</td><td>✅</td><td>$1/міс</td></tr>
+    <tr><td><span class="tag">AWS Managed Key</span></td><td>AWS</td><td>Авто (1 рік)</td><td>❌</td><td>✅</td><td>Безкоштовно</td></tr>
+    <tr><td>AWS Owned Key</td><td>AWS (внутрішній)</td><td>Авто</td><td>❌</td><td>❌</td><td>Безкоштовно</td></tr>
+</table>
+
+<h3>6.2 Ротація ключів</h3>
+<p>При ротації AWS генерує <strong>новий матеріал ключа</strong>, але Key ID залишається незмінним. Старий матеріал зберігається для дешифрування раніше зашифрованих даних. Не потрібно перешифровувати існуючі дані.</p>
+
+<h3>6.3 KMS Multi-Region Keys</h3>
+<p>Один логічний ключ, матеріал якого реплікується в кілька регіонів. Дані, зашифровані в одному регіоні, розшифровуються в будь-якому регіоні з реплікою — без необхідності перешифрування.</p>
+
+<h3>6.4 Key Policy — приклад</h3>
+<pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Enable IAM User Permissions",
+      "Effect": "Allow",
+      "Principal": { "AWS": "arn:aws:iam::123456789012:root" },
+      "Action": "kms:*",
+      "Resource": "*"
+    },
+    {
+      "Sid": "Allow App to use the key for S3 only",
+      "Effect": "Allow",
+      "Principal": { "AWS": "arn:aws:iam::123456789012:role/AppRole" },
+      "Action": ["kms:Decrypt", "kms:GenerateDataKey"],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "kms:ViaService": "s3.eu-west-1.amazonaws.com"
+        }
+      }
+    }
+  ]
+}</code></pre>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s7">7. Шифрування Amazon S3</h2>
+
+<h3>7.1 Опції серверного шифрування</h3>
+<table>
+    <tr><th>Тип SSE</th><th>Управління ключами</th><th>CloudTrail</th><th>Ціна</th><th>Рекомендація</th></tr>
+    <tr><td>SSE-S3</td><td>AWS (повністю)</td><td>❌</td><td>Безкоштовно</td><td>Базовий захист</td></tr>
+    <tr><td><strong>SSE-KMS</strong></td><td>KMS (CMK або AWS Managed)</td><td>✅</td><td>+KMS API costs</td><td>Рекомендований для чутливих даних</td></tr>
+    <tr><td>SSE-C</td><td>Ви (передаєте ключ)</td><td>❌</td><td>Безкоштовно</td><td>Особливі випадки</td></tr>
+    <tr><td>CSE</td><td>Ви (до S3)</td><td>❌</td><td>Безкоштовно</td><td>Максимальний контроль</td></tr>
+</table>
+
+<h3>7.2 Оптимізація вартості SSE-KMS: Bucket Key</h3>
+<p>Параметр <code>BucketKeyEnabled: true</code> генерує тимчасовий ключ на рівні бакету, що зменшує кількість KMS API-викликів на ~99% при шифруванні багатьох об'єктів.</p>
+
+<h3>7.3 S3 Object Lock (WORM)</h3>
+<ul>
+    <li><strong>Governance mode:</strong> захист від видалення, але адміністратори можуть обійти</li>
+    <li><strong>Compliance mode:</strong> ніхто (навіть root) не може видалити до закінчення retention period</li>
+</ul>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s8">8. AWS Encryption SDK</h2>
+
+<p>Клієнтська бібліотека (Python, Java, JavaScript, Go, C) для реалізації envelope encryption на стороні клієнта.</p>
+
+<pre><code>import aws_encryption_sdk
+from aws_encryption_sdk.identifiers import CommitmentPolicy
+
+client = aws_encryption_sdk.EncryptionSDKClient(
+    commitment_policy=CommitmentPolicy.REQUIRE_ENCRYPT_REQUIRE_DECRYPT
+)
+kms_key_provider = aws_encryption_sdk.StrictAwsKmsMasterKeyProvider(
+    key_ids=['arn:aws:kms:eu-west-1:123:key/abc']
+)
+ciphertext, header = client.encrypt(
+    source=b'sensitive CDR data',
+    key_provider=kms_key_provider
+)</code></pre>
+
+<div class="note">
+    <strong>💡 Key Commitment:</strong> Гарантує, що зашифровані дані можуть бути розшифровані лише тим ключем, яким були зашифровані. Захист від key confusion attacks.
+</div>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s9">9. Шифрування EBS та RDS</h2>
+
+<h3>EBS Encryption</h3>
+<ul>
+    <li>Шифрується весь том, snapshots та копії</li>
+    <li>Прозоро для EC2 (без впливу на продуктивність)</li>
+    <li>Можна увімкнути за замовчуванням у регіоні</li>
+    <li>Не можна зашифрувати існуючий том — потрібен snapshot → зашифрувати → новий том</li>
+</ul>
+
+<h3>RDS Encryption</h3>
+<ul>
+    <li>Вмикається при створенні, не може бути змінено пізніше</li>
+    <li>Шифруються: storage, backups, snapshots, read replicas</li>
+</ul>
+
+<h3>Примусовий TLS для RDS</h3>
+<pre><code>-- PostgreSQL (Parameter Group):
+rds.force_ssl = 1
+
+-- MySQL/Aurora (Parameter Group):
+require_secure_transport = ON</code></pre>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s10">10. Шифрування DynamoDB, SQS/SNS, Kinesis</h2>
+
+<table>
+    <tr><th>Сервіс</th><th>Тип шифрування</th><th>Ключ</th><th>Примітка</th></tr>
+    <tr><td>DynamoDB</td><td>SSE (at rest)</td><td>AWS Owned / CMK</td><td>За замовчуванням, клієнтське шифрування атрибутів через DDB Encryption Client</td></tr>
+    <tr><td>SQS</td><td>SSE</td><td>AWS Managed / CMK</td><td>Повідомлення шифруються при збереженні в черзі</td></tr>
+    <tr><td>SNS</td><td>SSE</td><td>AWS Managed / CMK</td><td>Шифрування теми</td></tr>
+    <tr><td>Kinesis</td><td>SSE</td><td>CMK</td><td>Шифрування шардів; для CDR streaming</td></tr>
+    <tr><td>MSK (Kafka)</td><td>SSE + TLS</td><td>CMK</td><td>In-transit TLS між брокерами, mTLS для клієнтів</td></tr>
+</table>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s11">11. Шифрування Lambda та середовищ виконання</h2>
+
+<h3>Захист змінних середовища Lambda</h3>
+<ul>
+    <li><strong>За замовчуванням:</strong> env vars зашифровані AWS Managed Key</li>
+    <li><strong>Рекомендовано:</strong> CMK для додаткового контролю</li>
+    <li><strong>Найкращий підхід:</strong> не зберігати секрети в env vars — використовувати Secrets Manager</li>
+</ul>
+
+<h3>Патерн: Lambda + Secrets Manager з кешуванням</h3>
+<pre><code>from functools import lru_cache
+import boto3, json
+
+@lru_cache(maxsize=1)
+def get_secret(secret_name: str) -> dict:
+    client = boto3.client('secretsmanager')
+    return json.loads(
+        client.get_secret_value(SecretId=secret_name)['SecretString']
+    )
+
+def handler(event, context):
+    config = get_secret('prod/telecom/rds')  # кешується в execution env
+    # use config['host'], config['password']</code></pre>
+
+<h3>AWS Lambda Code Signing</h3>
+<p>Підпис deployment пакету через AWS Signer. Lambda перевіряє підпис перед виконанням — захист від розгортання скомпрометованого коду.</p>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s12">12. AWS Nitro Enclaves — Confidential Computing</h2>
+
+<p>Nitro Enclaves — ізольоване обчислювальне середовище всередині EC2 без збереженого сховища, без інтерактивного доступу, без зовнішньої мережі. Базується на AWS Nitro Hypervisor.</p>
+
+<h3>Механізм Attestation</h3>
+<p>Кожен Enclave генерує криптографічний атестаційний документ (signed by AWS Nitro Attestation PKI), що містить PCR-вимірювання образу. AWS KMS може видати ключ лише після верифікації цього документу — гарантія незміненості коду.</p>
+
+<h3>Сценарії для телекому</h3>
+<ul>
+    <li>Обробка MSISDN, IMSI, CDR без доступу для операторів AWS</li>
+    <li>Генерація ключів SIM/eSIM та аутентифікаційних векторів 5G (SQN, AK, IK, CK, RAND)</li>
+    <li>Обробка платіжних транзакцій без витоку PAN</li>
+</ul>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s13">13. Захист даних у русі: TLS/SSL</h2>
+
+<h3>TLS версії</h3>
+<table>
+    <tr><th>Версія</th><th>Статус</th><th>Причина</th></tr>
+    <tr><td>SSL 2.0/3.0</td><td><span class="tag-red">Заборонено</span></td><td>Критичні вразливості (POODLE, DROWN)</td></tr>
+    <tr><td>TLS 1.0/1.1</td><td><span class="tag-red">Застаріло</span></td><td>BEAST, POODLE, слабкі cipher suites</td></tr>
+    <tr><td>TLS 1.2</td><td><span class="tag">Допустимо</span></td><td>З Forward Secrecy cipher suites</td></tr>
+    <tr><td>TLS 1.3</td><td><span class="tag-green">Рекомендовано</span></td><td>PFS за замовчуванням, менший handshake</td></tr>
+</table>
+
+<h3>Mutual TLS (mTLS) у 5G</h3>
+<p>3GPP TS 33.501 вимагає, щоб кожна Network Function (NF) аутентифікувалась за сертифікатом при взаємодії через Service Based Interface (SBI). SEPP (Security Edge Protection Proxy) забезпечує mTLS між операторами при роумінгу.</p>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s14">14. AWS Certificate Manager (ACM)</h2>
+
+<p>Безкоштовні публічні TLS-сертифікати з автоматичним оновленням. Приватний ключ зберігається в ACM — <strong>не можна завантажити</strong>.</p>
+
+<h3>Підтримувані ресурси для автоматичного розгортання</h3>
+<p>ALB, NLB, CloudFront, API Gateway, App Runner, AppSync, Elastic Beanstalk, CloudFormation.</p>
+
+<h3>ACM Private CA</h3>
+<p>Власний ієрархічний PKI для внутрішніх сертифікатів (мікросервіси, VPN, IoT-пристрої, mTLS). Вартість: ~$400/міс за CA.</p>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s15">15. AWS Secrets Manager та Parameter Store</h2>
+
+<table>
+    <tr><th>Критерій</th><th>Secrets Manager</th><th>Parameter Store</th></tr>
+    <tr><td>Авторотація</td><td>✅ Вбудована (Lambda)</td><td>❌ Потрібна Lambda</td></tr>
+    <tr><td>Ціна</td><td>$0.40/секрет/міс + API</td><td>Безкоштовно (Standard)</td></tr>
+    <tr><td>Шифрування</td><td>KMS (завжди)</td><td>KMS (SecureString)</td></tr>
+    <tr><td>Крос-акаунт</td><td>✅</td><td>❌</td></tr>
+    <tr><td>Рекомендація</td><td>Паролі БД, ключі API</td><td>Конфігурації, прапорці</td></tr>
+</table>
+
+<div class="warning">
+    <strong>⚠️ Антипатерн:</strong> Зберігання секретів у змінних середовища, коді, .env-файлах або git-репозиторіях.
+</div>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s16">16. AWS CloudHSM</h2>
+
+<p>Виділений HSM-пристрій у вашій VPC. FIPS 140-2 Level 3. Лише ви маєте доступ до ключів — AWS не має. Підтримує PKCS#11, JCE (Java), OpenSSL.</p>
+
+<h3>Коли вибирати CloudHSM замість KMS</h3>
+<ul>
+    <li>Регуляторні вимоги повного контролю над ключовим матеріалом</li>
+    <li>Власна PKI-інфраструктура оператора зв'язку</li>
+    <li>Підписання кореневих сертифікатів (Root CA offline)</li>
+    <li>Захист ключів SIM/eSIM (Ki, OPc)</li>
+    <li>PCI DSS HSM для платіжних терміналів</li>
+</ul>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s17">17. Класифікація даних та модель відповідальності</h2>
+
+<h3>Рівні класифікації</h3>
+<table>
+    <tr><th>Рівень</th><th>Приклади</th><th>Мінімальні заходи</th></tr>
+    <tr><td><span class="tag-red">🔴 Критичні</span></td><td>Ключі шифрування, паролі root, PII, PAN</td><td>CMK + HSM + аудит + MFA</td></tr>
+    <tr><td style="color:#e8b04b;">🟡 Конфіденційні</td><td>Внутрішня документація, конфіги мережі</td><td>SSE-KMS + IAM + аудит</td></tr>
+    <tr><td style="color:#58a6ff;">🟢 Внутрішні</td><td>Звіти, логи</td><td>SSE-S3 + Block Public Access</td></tr>
+    <tr><td>⚪ Публічні</td><td>Публічна документація</td><td>Block Public Access</td></tr>
+</table>
+
+<h3>Модель спільної відповідальності для шифрування</h3>
+<ul>
+    <li><strong>AWS відповідає за:</strong> FIPS-сертифіковані HSM KMS, фізичну безпеку ЦОД, шифрування між зонами доступності</li>
+    <li><strong>Ви відповідаєте за:</strong> увімкнення шифрування ваших ресурсів, управління ключами та їх ротацію, класифікацію та маркування даних</li>
+</ul>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s18">18. Amazon Macie</h2>
+
+<p>ML-сервіс для автоматичного виявлення та класифікації чутливих даних в Amazon S3.</p>
+
+<h3>Типи знахідок</h3>
+<ul>
+    <li><code>SensitiveData:S3Object/Personal</code> — ПІБ, email, телефони, паспортні дані</li>
+    <li><code>SensitiveData:S3Object/Financial</code> — номери карток, IBAN</li>
+    <li><code>SensitiveData:S3Object/Credentials</code> — AWS Access Keys, паролі у файлах</li>
+    <li><code>Policy:IAMUser/S3BlockPublicAccessDisabled</code> — публічний доступ до бакету</li>
+</ul>
+
+<h3>Телеком-сценарії</h3>
+<p>Аудит S3 бакетів на наявність: MSISDN, IMSI/IMEI, CDR-файлів з персональними даними, незашифрованих конфігурацій. Допомагає відповідати вимогам GDPR, PCI DSS.</p>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s19">19. Post-Quantum Cryptography (PQC)</h2>
+
+<div class="danger">
+    <strong>⚠️ Загроза:</strong> Алгоритм Шора на квантовому комп'ютері (~4000 кубітів) зламає RSA-2048 та ECDH. AES-256 залишається безпечним (алгоритм Гровера лише знижує ефективну безпеку до AES-128).
+</div>
+
+<h3>NIST PQC Стандарти 2024</h3>
+<table>
+    <tr><th>Стандарт</th><th>Алгоритм</th><th>Призначення</th></tr>
+    <tr><td>FIPS 203</td><td>ML-KEM (Kyber)</td><td>Обмін ключами, KEM</td></tr>
+    <tr><td>FIPS 204</td><td>ML-DSA (Dilithium)</td><td>Цифровий підпис</td></tr>
+    <tr><td>FIPS 205</td><td>SLH-DSA (SPHINCS+)</td><td>Hash-based підпис</td></tr>
+</table>
+
+<div class="warning">
+    <strong>⚠️ "Harvest Now, Decrypt Later":</strong> Зловмисники записують зашифрований трафік сьогодні для розшифрування у майбутньому. Мігруйте до PQC вже зараз для довгострокових секретів!
+</div>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s20">20. Zero Trust та криптографія</h2>
+
+<p><strong>Принципи Zero Trust:</strong> "Ніколи не довіряй, завжди перевіряй." Кожне з'єднання та операція аутентифікується криптографічно — незалежно від того, чи запит надходить з корпоративної мережі чи Інтернету.</p>
+
+<h3>Криптографічні основи Zero Trust</h3>
+<ul>
+    <li><strong>mTLS</strong> — взаємна аутентифікація кожного з'єднання між сервісами</li>
+    <li><strong>SPIFFE/SPIRE</strong> — X.509 SVID-сертифікати для workload identity</li>
+    <li><strong>JWT/OIDC</strong> — підписані токени для API-авторизації</li>
+    <li><strong>Короткоживучі сертифікати</strong> — автоматична ротація через ACM Private CA</li>
+</ul>
+
+<h3>5G Zero Trust</h3>
+<p>3GPP TS 33.501: кожна Network Function аутентифікується за сертифікатом X.509 при взаємодії через HTTP/2 SBI. SEPP виконує міжоператорський захист (N32 інтерфейс) з mTLS.</p>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s21">21. Захист даних у телекомунікаційних системах</h2>
+
+<h3>Нормативно-правова база</h3>
+<table>
+    <tr><th>Стандарт</th><th>Область</th><th>Вимоги до шифрування</th></tr>
+    <tr><td>GDPR Art. 32</td><td>ЄС (персональні дані)</td><td>Шифрування PII абонентів</td></tr>
+    <tr><td>3GPP TS 33.501</td><td>5G Security</td><td>TLS для SBI, SUPI шифрування через SUCI</td></tr>
+    <tr><td>GSMA FS.16</td><td>Cloud Telecom</td><td>Ізоляція, шифрування в хмарі</td></tr>
+    <tr><td>NIS2 Directive</td><td>ЄС (критична інфра)</td><td>Шифрування + управління ризиками</td></tr>
+    <tr><td>CALEA</td><td>США (LI)</td><td>Lawful Intercept при збереженні шифрування</td></tr>
+</table>
+
+<h3>Архітектура рівнів захисту</h3>
+<ul>
+    <li><strong>Control Plane:</strong> TLS 1.3 + mTLS для SIP, Diameter, HTTP/2 (5G SBI)</li>
+    <li><strong>User Plane:</strong> SRTP для голосу, DTLS для WebRTC, IPsec для GTP-тунелів</li>
+    <li><strong>Зберігання (CDR/білінг):</strong> S3 SSE-KMS + Object Lock, RDS шифрування, Macie</li>
+    <li><strong>Ключі:</strong> CloudHSM для PKI оператора, KMS CMK для хмарних ресурсів</li>
+</ul>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s22">22. Аудит та моніторинг KMS операцій</h2>
+
+<h3>Ключові KMS-події для моніторингу</h3>
+<ul>
+    <li><code>ScheduleKeyDeletion</code> — плануване видалення ключа (30-дн. grace period)</li>
+    <li><code>DisableKey</code> — деактивація ключа</li>
+    <li><code>PutKeyPolicy</code> — зміна key policy</li>
+    <li><code>ImportKeyMaterial</code> — імпорт стороннього матеріалу</li>
+    <li>Аномальні обсяги <code>Decrypt</code> від нових IP-адрес</li>
+</ul>
+
+<h3>EventBridge Rule для критичних KMS-подій</h3>
+<pre><code>{
+  "source": ["aws.kms"],
+  "detail-type": ["AWS API Call via CloudTrail"],
+  "detail": {
+    "eventName": ["ScheduleKeyDeletion", "DisableKey", "PutKeyPolicy"]
+  }
+}</code></pre>
+
+<h3>GuardDuty + KMS</h3>
+<p>GuardDuty може виявляти: <code>UnauthorizedAccess:IAMUser/AnomalousBehavior</code>, масове дешифрування S3 об'єктів, використання ключів з незвичних IP-адрес.</p>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s23">23. Відповідність регуляторним вимогам</h2>
+
+<table>
+    <tr><th>Стандарт</th><th>Вимога</th><th>AWS-сервіс</th></tr>
+    <tr><td>GDPR Art. 32</td><td>Шифрування персональних даних "де доречно"</td><td>KMS, SSE-KMS, Macie</td></tr>
+    <tr><td>PCI DSS Req. 3</td><td>AES-256 для PAN at rest</td><td>KMS CMK, RDS encryption</td></tr>
+    <tr><td>PCI DSS Req. 4</td><td>TLS 1.2+ для передачі PAN</td><td>ACM, ALB security policy</td></tr>
+    <tr><td>HIPAA §164.312</td><td>Шифрування PHI</td><td>KMS, SSE, CloudHSM</td></tr>
+    <tr><td>ISO 27001:2022</td><td>A.8.24: Управління криптографічними ключами</td><td>KMS, CloudTrail, Config</td></tr>
+    <tr><td>FedRAMP</td><td>FIPS 140-2/3 модулі</td><td>CloudHSM (FIPS 140-2 L3)</td></tr>
+</table>
+
+<p><strong>AWS Artifact</strong> надає звіти SOC 1/2/3, PCI DSS AoC, GDPR DPA, FedRAMP ATO packages.</p>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s24">24. Типові вразливості та кращі практики</h2>
+
+<h3>Реальні інциденти витоку даних в AWS</h3>
+<table>
+    <tr><th>Компанія</th><th>Рік</th><th>Масштаб</th><th>Причина</th></tr>
+    <tr><td>Capital One</td><td>2019</td><td>100M+ клієнтів</td><td>SSRF + неправильні IAM-дозволи на S3</td></tr>
+    <tr><td>Twitch</td><td>2021</td><td>Вихідний код</td><td>Неправильні ACL S3-бакету</td></tr>
+    <tr><td>Toyota</td><td>2023</td><td>2.15M записів авто</td><td>S3-бакет відкритий 10 років</td></tr>
+</table>
+
+<h3>Кращі практики</h3>
+<ul>
+    <li>✅ S3 Block Public Access на рівні акаунту</li>
+    <li>✅ SSE-KMS для критичних бакетів + Bucket Key для оптимізації вартості</li>
+    <li>✅ EBS encryption by default у регіоні</li>
+    <li>✅ RDS + шифрування при створенні + примусовий SSL</li>
+    <li>✅ CMK з автоматичною ротацією (1 рік)</li>
+    <li>✅ Secrets Manager для паролів БД з авторотацією</li>
+    <li>✅ TLS 1.2+ мінімум, рекомендовано TLS 1.3</li>
+    <li>✅ Маркування даних тегами <code>DataClass: confidential</code></li>
+    <li>✅ Amazon Macie для виявлення PII в S3</li>
+    <li>✅ AWS Config Rules: <code>s3-bucket-server-side-encryption-enabled</code>, <code>encrypted-volumes</code>, <code>rds-storage-encrypted</code></li>
+    <li>✅ CloudTrail увімкнено в усіх регіонах + Log File Validation</li>
+    <li>✅ Terraform/CDK для автоматизації та забезпечення відповідності</li>
+</ul>
+
+<a href="#" class="back-top">↑ Вгору</a>
+<hr>
+
+<h2 id="s25">25. Defence in Depth — Ешелонована оборона</h2>
+
+<p>Жоден один механізм захисту не є достатнім. Кожен рівень захищає від різних векторів атак і є незалежним від інших.</p>
+
+<table>
+    <tr><th>Рівень</th><th>AWS-механізми</th><th>Захищає від</th></tr>
+    <tr><td>Ідентичність</td><td>IAM, MFA, SCP, IAM Roles Anywhere</td><td>Несанкціонованого доступу</td></tr>
+    <tr><td>Мережа</td><td>VPC, Security Groups, NACLs, PrivateLink, WAF</td><td>Мережевих атак</td></tr>
+    <tr><td>Шифрування</td><td>KMS, SSE, TLS/mTLS, ACM, CloudHSM</td><td>Витоку даних при скомпрометованому доступі</td></tr>
+    <tr><td>Застосунок</td><td>Валідація вхідних даних, parameterized queries</td><td>Injection, logic flaws</td></tr>
+    <tr><td>Виявлення</td><td>GuardDuty, Macie, CloudTrail, Config, Security Hub</td><td>Активних атак та невідповідностей</td></tr>
+    <tr><td>Відновлення</td><td>AWS Backup, Multi-region DR, Versioning</td><td>Ransomware, data loss</td></tr>
+</table>
+
+<div class="success">
+    <strong>🎯 Золоте правило:</strong> Шифруйте все за замовчуванням, керуйте ключами через KMS, зберігайте секрети в Secrets Manager, автоматизуйте через IaC, перевіряйте відповідність через Config та Security Hub.
+</div>
+
+<hr>
+<p style="color:#888; font-size:0.85em; text-align:center;">
+    Лекція 5 | Захист даних і криптографія в AWS | Модуль 1<br>
+    <a href="presentation.html">Презентація</a> · <a href="references.md">Джерела</a> · <a href="../../README.md">Курс</a>
+</p>
+
+</div>
+</body>
+</html>
