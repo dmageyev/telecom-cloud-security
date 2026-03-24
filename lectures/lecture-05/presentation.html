@@ -52,37 +52,37 @@
                             <li>Три стани даних та їх захист</li>
                             <li>Симетрична криптографія (AES)</li>
                             <li>Асиметрична криптографія (RSA, ECDH)</li>
-                            <li>Хешування та цілісність даних</li>
                             <li>Конвертне шифрування (Envelope Encryption)</li>
                             <li>AWS KMS — огляд і типи ключів</li>
                             <li>KMS — операції та Key Policy</li>
-                            <li>KMS Multi-Region Keys та DR</li>
                             <li>Шифрування Amazon S3</li>
-                            <li>AWS Encryption SDK</li>
                             <li>Шифрування EBS та RDS</li>
-                            <li>Шифрування DynamoDB, SQS/SNS, Kinesis</li>
-                            <li>Шифрування Lambda та середовищ виконання</li>
-                            <li>AWS Nitro Enclaves — Confidential Computing</li>
                             <li>Захист даних у русі: TLS/SSL</li>
                             <li>AWS Certificate Manager (ACM)</li>
                             <li>AWS Secrets Manager</li>
                             <li>Parameter Store vs Secrets Manager</li>
+                            <li>AWS CloudHSM</li>
+                            <li>Класифікація даних та модель відповідальності</li>
+                            <li>Amazon Macie — виявлення чутливих даних</li>
+                            <li>Захист даних у телекомунікаціях</li>
+                            <li>Config &amp; Security Hub — відповідність шифрування</li>
+                            <li>Кращі практики захисту даних в AWS</li>
                         </ol>
                     </div>
                     <div>
                         <ol style="font-size:0.82em;" start="19">
-                            <li>AWS CloudHSM</li>
-                            <li>Класифікація даних та модель відповідальності</li>
-                            <li>Amazon Macie — виявлення чутливих даних</li>
+                            <li>Практичне завдання — CDR система в AWS</li>
+                            <li>Типові вразливості та атаки на дані</li>
+                            <li>Хешування та цілісність даних</li>
+                            <li>AWS Encryption SDK</li>
+                            <li>Шифрування DynamoDB, SQS/SNS, Kinesis</li>
+                            <li>Шифрування Lambda та середовищ виконання</li>
+                            <li>AWS Nitro Enclaves — Confidential Computing</li>
                             <li>Post-Quantum Cryptography</li>
                             <li>Zero Trust та криптографія</li>
-                            <li>Захист даних у телекомунікаціях</li>
+                            <li>KMS Multi-Region Keys та DR</li>
                             <li>Аудит та моніторинг KMS операцій</li>
-                            <li>Config &amp; Security Hub — відповідність шифрування</li>
                             <li>Відповідність регуляторним вимогам</li>
-                            <li>Типові вразливості та атаки на дані</li>
-                            <li>Кращі практики захисту даних в AWS</li>
-                            <li>Практичне завдання — CDR система в AWS</li>
                             <li>Автоматизація шифрування через IaC (Terraform)</li>
                             <li>Defence in Depth — ешелонована оборона</li>
                             <li>Підсумок</li>
@@ -304,6 +304,7 @@
                     <div>
                         <h3>Key Policy — контроль доступу до ключа</h3>
                         <pre><code>{
+  "Version": "2012-10-17",
   "Statement": [
     {
       "Effect": "Allow",
@@ -915,7 +916,7 @@ db_password = secret['password']</code></pre>
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 24: Хешування та цілісність даних ===== -->
+            <!-- ===== СЛАЙД 23: Хешування та цілісність даних ===== -->
             <section>
                 <h2>Хешування та цілісність даних</h2>
                 <div class="two-col">
@@ -939,7 +940,7 @@ db_password = secret['password']</code></pre>
                     <div>
                         <h3>HMAC — хешування з ключем</h3>
                         <div class="box" style="border-color:#1f6feb; font-size:0.8em;">
-                            <p><strong>HMAC(key, message)</strong> = Hash(key || message)</p>
+                            <p><strong>HMAC(key, message)</strong></p>
                             <p style="margin-top:0.3em;">Гарантує і <span class="highlight">цілісність</span>, і <span class="highlight">автентичність</span> — лише власник ключа міг підписати</p>
                         </div>
                         <h3 style="margin-top:0.4em;">AWS: де використовуються хеші</h3>
@@ -956,7 +957,7 @@ db_password = secret['password']</code></pre>
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 25: AWS Encryption SDK ===== -->
+            <!-- ===== СЛАЙД 24: AWS Encryption SDK ===== -->
             <section>
                 <h2>AWS Encryption SDK та Crypto Tools</h2>
                 <div class="two-col">
@@ -1002,7 +1003,7 @@ ciphertext, header = client.encrypt(
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 26: Шифрування DynamoDB, SQS/SNS, Kinesis ===== -->
+            <!-- ===== СЛАЙД 25: Шифрування DynamoDB, SQS/SNS, Kinesis ===== -->
             <section>
                 <h2>Шифрування DynamoDB, SQS/SNS, Kinesis</h2>
                 <div class="two-col">
@@ -1047,7 +1048,7 @@ ciphertext, header = client.encrypt(
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 27: Шифрування Lambda та середовищ виконання ===== -->
+            <!-- ===== СЛАЙД 26: Шифрування Lambda та середовищ виконання ===== -->
             <section>
                 <h2>Шифрування Lambda та середовищ виконання</h2>
                 <div class="two-col">
@@ -1103,7 +1104,7 @@ def handler(event, context):
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 28: AWS Nitro Enclaves ===== -->
+            <!-- ===== СЛАЙД 27: AWS Nitro Enclaves ===== -->
             <section>
                 <h2>AWS Nitro Enclaves — Confidential Computing</h2>
                 <div class="two-col">
@@ -1142,7 +1143,7 @@ def handler(event, context):
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 29: Post-Quantum Cryptography ===== -->
+            <!-- ===== СЛАЙД 28: Post-Quantum Cryptography ===== -->
             <section>
                 <h2>Post-Quantum Cryptography (PQC)</h2>
                 <div class="two-col">
@@ -1152,7 +1153,7 @@ def handler(event, context):
                             <p><strong>Алгоритм Шора (Shor's Algorithm):</strong></p>
                             <ul>
                                 <li>Розкладає великі числа на множники за поліноміальний час</li>
-                                <li>破壞 RSA та ECDSA/ECDH (асиметричні алгоритми)</li>
+                                <li>Ламає RSA та ECDSA/ECDH (асиметричні алгоритми)</li>
                                 <li>Квантовий комп'ютер з ~4000 кубітів ≈ зламає RSA-2048</li>
                             </ul>
                         </div>
@@ -1188,7 +1189,7 @@ def handler(event, context):
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 30: Zero Trust та криптографія ===== -->
+            <!-- ===== СЛАЙД 29: Zero Trust та криптографія ===== -->
             <section>
                 <h2>Zero Trust та криптографія</h2>
                 <div class="two-col">
@@ -1232,7 +1233,7 @@ def handler(event, context):
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 31: KMS Multi-Region Keys та DR ===== -->
+            <!-- ===== СЛАЙД 30: KMS Multi-Region Keys та DR ===== -->
             <section>
                 <h2>KMS Multi-Region Keys та Disaster Recovery</h2>
                 <div class="two-col">
@@ -1273,7 +1274,7 @@ def handler(event, context):
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 32: Аудит та моніторинг KMS ===== -->
+            <!-- ===== СЛАЙД 31: Аудит та моніторинг KMS ===== -->
             <section>
                 <h2>Аудит та моніторинг криптографічних операцій</h2>
                 <div class="two-col">
@@ -1318,7 +1319,7 @@ def handler(event, context):
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 33: Регуляторна відповідність ===== -->
+            <!-- ===== СЛАЙД 32: Регуляторна відповідність ===== -->
             <section>
                 <h2>Відповідність регуляторним вимогам</h2>
                 <div class="two-col">
@@ -1358,7 +1359,7 @@ def handler(event, context):
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 34: Автоматизація через IaC ===== -->
+            <!-- ===== СЛАЙД 33: Автоматизація через IaC ===== -->
             <section>
                 <h2>Автоматизація шифрування через IaC (Terraform)</h2>
                 <div class="two-col">
@@ -1419,7 +1420,7 @@ resource "aws_s3_bucket_public_access_block" "cdr" {
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 35: Defence in Depth ===== -->
+            <!-- ===== СЛАЙД 34: Defence in Depth ===== -->
             <section>
                 <h2>Defence in Depth — Ешелонована оборона даних</h2>
                 <div class="two-col">
@@ -1461,6 +1462,7 @@ resource "aws_s3_bucket_public_access_block" "cdr" {
                     </div>
                 </div>
             </section>
+            <!-- ===== СЛАЙД 35: Підсумок ===== -->
             <section>
                 <h2>Підсумок лекції</h2>
                 <div class="two-col">

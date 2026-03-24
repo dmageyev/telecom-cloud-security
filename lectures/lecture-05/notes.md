@@ -386,7 +386,7 @@ Client                              Server
 
 ### 10.2 Cipher Suites для TLS 1.3
 
-TLS 1.3 підтримує лише 5 безпечних cipher suites (усі з Forward Secrecy):
+TLS 1.3 використовує обмежений набір безпечних cipher suites; нижче наведено найпоширеніші/рекомендовані (усі з Forward Secrecy):
 - `TLS_AES_256_GCM_SHA384`
 - `TLS_AES_128_GCM_SHA256`
 - `TLS_CHACHA20_POLY1305_SHA256`

@@ -28,7 +28,7 @@
 
 ### AWS Nitro Enclaves
 - [Nitro Enclaves User Guide](https://docs.aws.amazon.com/enclaves/latest/user/)
-- [AWS Nitro Enclaves с KMS](https://docs.aws.amazon.com/enclaves/latest/user/kms.html)
+- [AWS Nitro Enclaves з KMS](https://docs.aws.amazon.com/enclaves/latest/user/kms.html)
 
 ### Encryption SDK та Crypto Tools
 - [AWS Encryption SDK](https://docs.aws.amazon.com/encryption-sdk/latest/developer-guide/)
@@ -64,7 +64,7 @@
 - [ETSI TS 102 165-2 — TVRA Telecom Security](https://www.etsi.org/deliver/etsi_ts/102100_102199/10216502/)
 
 ### Регуляторні вимоги
-- [GDPR Офіційний текст](https://gdpr.eu/tag/gdpr/)
+- [GDPR Офіційний текст](https://eur-lex.europa.eu/eli/reg/2016/679/oj)
 - [PCI DSS v4.0](https://www.pcisecuritystandards.org/document_library/)
 - [ISO/IEC 27001:2022](https://www.iso.org/standard/82875.html)
 - [HIPAA Security Rule](https://www.hhs.gov/hipaa/for-professionals/security/index.html)
