@@ -27,7 +27,11 @@
         code { background: #161b22; padding: 1px 5px; border-radius: 4px; font-size: 0.82em; color: #58a6ff; }
         pre code { display: block; padding: 0.5em; font-size: 0.65em; color: #c9d1d9; line-height: 1.35; white-space: pre; }
         /* Allow slide content to scroll vertically when it overflows */
-        .reveal .slides section { overflow-y: auto; }
+        .reveal .slides section {
+            overflow-y: auto !important;
+            max-height: 100% !important;
+            box-sizing: border-box !important;
+        }
     </style>
 </head>
 <body>
@@ -1528,7 +1532,7 @@ resource "aws_s3_bucket_public_access_block" "cdr" {
             height: 900,
             margin: 0.04,
             minScale: 0.2,
-            maxScale: 2.0,
+            maxScale: 1.0,
             scrollActivationWidth: 700
         });
     </script>
