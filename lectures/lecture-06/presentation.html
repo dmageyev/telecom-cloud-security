@@ -25,7 +25,7 @@
         th { background: #1f6feb; padding: 3px 5px; }
         td { padding: 3px 7px; border-bottom: 1px solid #444; }
         code { background: #161b22; padding: 1px 4px; border-radius: 4px; font-size: 0.88em; color: #58a6ff; }
-        pre code { display: block; padding: 0.4em; font-size: 0.62em; color: #c9d1d9; line-height: 1.25; white-space: pre; }
+        pre code { display: block; padding: 0.4em; font-size: 0.85em; color: #c9d1d9; line-height: 1.2; white-space: pre; }
         /* Allow slide content to scroll vertically when it overflows */
         .reveal .slides section {
             overflow-y: auto !important;
@@ -424,7 +424,7 @@ COPY . .
 
 # Погано: привілейований режим
 # docker run --privileged ...</code></pre>
-                        <div class="box" style="border-color:#e8b04b; margin-top:0.3em; font-size:0.75em;">
+                        <div class="box" style="border-color:#e8b04b; margin-top:1em; font-size:0.75em;">
                             <strong>Multi-stage build</strong> — зменшує розмір образу та поверхню атаки: білд-інструменти не потрапляють у production-образ
                         </div>
                     </div>
@@ -790,14 +790,14 @@ spec:
                 <div class="two-col">
                     <div>
                         <h3>☁️ Що управляє AWS</h3>
-                        <ul style="font-size:0.78em;">
+                        <ul style="font-size:0.85em;">
                             <li>Control Plane (kube-apiserver, etcd)</li>
                             <li>Патчі control plane</li>
                             <li>Multi-AZ розгортання control plane</li>
                             <li>Шифрування etcd за замовчуванням</li>
                         </ul>
                         <h3 style="margin-top:0.3em;">🔑 IRSA — IAM Roles for Service Accounts</h3>
-                        <div class="box" style="font-size:0.75em;">
+                        <div class="box" >
                             <p>Pod отримує IAM-роль через Service Account.</p>
                             <p>Дрібнозернистий доступ до AWS API без постійних ключів.</p>
                             <pre><code>eksctl create iamserviceaccount \
@@ -811,7 +811,7 @@ spec:
                     </div>
                     <div>
                         <h3>🛡️ EKS Security Best Practices</h3>
-                        <ul style="font-size:0.78em;">
+                        <ul>
                             <li>Приватний endpoint для kube-apiserver</li>
                             <li>Envelope encryption secrets через KMS</li>
                             <li>Managed Node Groups (автопатчі)</li>
@@ -1144,7 +1144,7 @@ checkov -d ./terraform \
                 <div class="two-col">
                     <div>
                         <h3>🔓 Вектори виходу з контейнера</h3>
-                        <div class="box" style="border-color:#da3633; font-size:0.78em;">
+                        <div class="box" style="border-color:#da3633;">
                             <p><strong>1. Privileged Container</strong></p>
                             <pre><code># Атаки через монтування хост-ФС
 docker run --privileged ubuntu \
@@ -1152,7 +1152,7 @@ docker run --privileged ubuntu \
   mount /dev/xvda1 /mnt/host && \
   chroot /mnt/host"</code></pre>
                         </div>
-                        <div class="box" style="border-color:#da3633; font-size:0.78em; margin-top:0.3em;">
+                        <div class="box" style="border-color:#da3633; margin-top:0.3em;">
                             <p><strong>2. Docker socket mount</strong></p>
                             <pre><code>docker run -v /var/run/docker.sock:/var/run/docker.sock \
   ubuntu docker run --privileged ...</code></pre>
@@ -1260,14 +1260,14 @@ docker run --privileged ubuntu \
                 <div class="two-col">
                     <div>
                         <h3>🚨 IR для контейнерів — відмінності</h3>
-                        <ul style="font-size:0.78em;">
+                        <ul style="font-size:0.75em;">
                             <li><strong>Ефемерність</strong> — контейнер може зникнути до початку розслідування</li>
                             <li><strong>Immutable Infrastructure</strong> — не патчувати, а перерозгорнути</li>
                             <li><strong>Централізовані логи</strong> — CloudWatch, S3 (не в контейнері!)</li>
                             <li><strong>Forensic snapshot</strong> — зробити до завершення Pod</li>
                         </ul>
                         <h3 style="margin-top:0.3em;">🔍 Кроки при компрометації контейнера</h3>
-                        <ol style="font-size:0.78em;">
+                        <ol style="font-size:0.75em;">
                             <li>Ізолювати — відкликати мережевий доступ (NetworkPolicy / SG)</li>
                             <li>Зберегти артефакти (логи, стан ФС, memory dump)</li>
                             <li>Зупинити контейнер (не видаляти до розслідування)</li>
@@ -1520,7 +1520,7 @@ spec:
             transition: 'slide',
             slideNumber: 'c/t',
             center: false,
-            width: 1650,
+            width: 1750,
             height: 900,
             margin: 0.04,
             minScale: 0.2,
