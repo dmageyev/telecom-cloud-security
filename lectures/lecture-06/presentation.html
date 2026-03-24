@@ -50,32 +50,16 @@
             <!-- ===== СЛАЙД 2: План лекції ===== -->
             <section>
                 <h2>План лекції</h2>
-                <div class="two-col" style="font-size:0.85em;">
-                    <div>
-                        <ol>
-                            <li>Огляд обчислювальних сервісів AWS та модель відповідальності</li>
-                            <li>Безпека EC2: AMI, IMDSv2, SSM, патчування</li>
-                            <li>Мережева ізоляція: Security Groups, NACL, VPC</li>
-                            <li>Основи контейнеризації та Docker</li>
-                            <li>Безпечний Dockerfile та Multi-stage build</li>
-                            <li>Сканування образів, SBOM та DevSecOps pipeline</li>
-                            <li>Kubernetes: RBAC, Pod Security, Admission Controllers</li>
-                            <li>Secrets у Kubernetes: шифрування та External Secrets</li>
-                        </ol>
-                    </div>
-                    <div>
-                        <ol start="9">
-                            <li>Amazon EKS: безпека вузлів (Bottlerocket)</li>
-                            <li>Amazon ECS та AWS Fargate</li>
-                            <li>Serverless: AWS Lambda та VPC-ізоляція</li>
-                            <li>Управління секретами та IaC безпека</li>
-                            <li>Типові атаки: container escape, supply chain</li>
-                            <li>Моніторинг, виявлення загроз та IR</li>
-                            <li>Zero Trust, CIS Benchmarks та Compliance</li>
-                            <li>Кращі практики та практичне завдання</li>
-                        </ol>
-                    </div>
-                </div>
+                <ol style="font-size:0.9em; columns:2; column-gap:2em;">
+                    <li>Огляд сервісів AWS та модель відповідальності</li>
+                    <li>Безпека EC2: AMI, IMDSv2, SSM, патчування</li>
+                    <li>Мережева ізоляція: VPC, Security Groups, Endpoints</li>
+                    <li>Безпечний Docker: Dockerfile, multi-stage, SBOM</li>
+                    <li>Kubernetes: RBAC, Pod Security, Admission Controllers</li>
+                    <li>EKS / ECS / Fargate / Lambda — безпека платформ</li>
+                    <li>Типові атаки: container escape, supply chain, IR</li>
+                    <li>Zero Trust, IaC Security та Compliance</li>
+                </ol>
             </section>
 
             <!-- ===== СЛАЙД 3: Обчислювальні сервіси AWS ===== -->
