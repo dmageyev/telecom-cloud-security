@@ -10,15 +10,15 @@ style: |
     background-color: #0d1117;
     color: #c9d1d9;
   }
-  h1 { color: #58a6ff; font-size: 1.8em; }
-  h2 { color: #58a6ff; font-size: 1.4em; }
-  h3 { color: #e8b04b; font-size: 1.1em; }
+  h1 { color: #58a6ff; font-size: 1.45em; }
+  h2 { color: #58a6ff; font-size: 1.18em; }
+  h3 { color: #e8b04b; font-size: 0.9em; }
   strong { color: #e8b04b; }
-  code { background: #161b22; color: #58a6ff; padding: 2px 6px; border-radius: 4px; }
-  pre code { color: #c9d1d9; font-size: 0.85em; }
-  table { font-size: 0.82em; width: 100%; }
-  th { background: #1f6feb; padding: 4px 8px; }
-  td { padding: 3px 8px; border-bottom: 1px solid #30363d; }
+  code { background: #161b22; color: #58a6ff; padding: 1px 4px; border-radius: 4px; }
+  pre code { color: #c9d1d9; font-size: 0.8em; line-height: 1.25; }
+  table { font-size: 0.7em; width: 100%; }
+  th { background: #1f6feb; padding: 3px 5px; }
+  td { padding: 3px 7px; border-bottom: 1px solid #30363d; }
   .highlight { color: #e8b04b; font-weight: bold; }
   a { color: #58a6ff; }
   footer { color: #8b949e; font-size: 0.7em; }
@@ -42,12 +42,12 @@ style: |
 
 ## План лекції
 
-| # | Розділ | % | Слайди |
-|---|--------|---|--------|
-| 1 | **Безпека веб-застосунків** | 30% | 3–13 |
-| 2 | **Безпека телеком-застосунків** | 55% | 14–33 |
-| 3 | **Хмара та DevSecOps** | 15% | 34–37 |
-| — | Підсумок та питання | — | 38 |
+| # | Розділ | Слайди |
+|---|--------|--------|
+| 1 | **Безпека веб-застосунків** | 3–13 |
+| 2 | **Безпека телеком-застосунків** | 14–33 |
+| 3 | **Хмара та DevSecOps** |  34–37 |
+| — | Підсумок та питання | 38 |
 
 **Теми розділу 1:** OWASP Top 10, Injection, Auth, XSS, CSRF/SSRF, IDOR, WAF, TLS, API
 
@@ -1266,17 +1266,17 @@ aws cloudfront create-distribution \
 
 ### Ключові висновки
 
-**Безпека веб-застосунків (30%):**
+**Безпека веб-застосунків :**
 - OWASP Top 10 — основа знань розробника та аудитора
 - Injection, XSS, CSRF, SSRF — найпоширеніші вектори атак
 - WAF + TLS + DevSecOps — шари захисту в combination
 
-**Безпека телекому (55%):**
+**Безпека телекому :**
 - SS7/Diameter — старі протоколи з системними вразливостями → потрібні фаєрволи
 - 5G — кращий захист (SUCI, SEPP, OAuth 2.0), але нові вектори атак
 - Телеком-шахрайство: $38.95B/рік — реальна фінансова загроза
 
-**Хмара та DevSecOps (15%):**
+**Хмара та DevSecOps :**
 - AWS WAF + Shield + CloudFront — хмарний периметр
 - Shift-left: SAST+SCA в CI, DAST на staging
 - NIS2 + GSMA FS.11 — регуляторна відповідність
@@ -1295,4 +1295,4 @@ aws cloudfront create-distribution \
 > *"Security is not a product, but a process."*
 > — Bruce Schneier
 
-**Контакт для питань:** використовуйте навчальну платформу або LMS курсу
+
