@@ -25,7 +25,7 @@
         th { background: #1f6feb; padding: 3px 5px; }
         td { padding: 3px 7px; border-bottom: 1px solid #444; }
         code { background: #161b22; padding: 1px 4px; border-radius: 4px; font-size: 0.88em; color: #58a6ff; }
-        pre code { display: block; padding: 0.4em; font-size: 0.8em; color: #c9d1d9; line-height: 1.25; white-space: pre; }
+        pre code { display: block; padding: 0.4em; font-size: 0.62em; color: #c9d1d9; line-height: 1.25; white-space: pre; }
         /* Allow slide content to scroll vertically when it overflows */
         .reveal .slides section {
             overflow-y: auto !important;
@@ -1520,11 +1520,12 @@ spec:
             transition: 'slide',
             slideNumber: 'c/t',
             center: false,
-            width: 1100,
+            width: 1650,
             height: 900,
             margin: 0.04,
             minScale: 0.2,
-            maxScale: 2.0
+            maxScale: 1.0,
+            scrollActivationWidth: 700
         });
     </script>
 </body>
