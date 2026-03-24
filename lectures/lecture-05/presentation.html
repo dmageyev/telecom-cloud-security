@@ -8,24 +8,24 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/black.css">
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
     <style>
-        .reveal h1 { font-size: 1.3em; }
-        .reveal h2 { font-size: 1.05em; color: #58a6ff; }
-        .reveal h3 { font-size: 0.8em; color: #e8b04b; margin: 0.2em 0 0.15em; }
+        .reveal h1 { font-size: 1.45em; }
+        .reveal h2 { font-size: 1.18em; color: #58a6ff; }
+        .reveal h3 { font-size: 0.9em; color: #e8b04b; margin: 0.2em 0 0.15em; }
         .reveal ul, .reveal ol { text-align: left; }
-        .reveal li { margin-bottom: 0.1em; font-size: 0.88em; }
-        .reveal p { margin: 0.18em 0; font-size: 0.9em; }
+        .reveal li { margin-bottom: 0.1em; font-size: 1.0em; }
+        .reveal p { margin: 0.18em 0; font-size: 1.0em; }
         .two-col { display: flex; gap: 1em; }
         .two-col > div { flex: 1; min-width: 0; }
         .highlight { color: #e8b04b; font-weight: bold; }
-        .tag { background: #1f6feb; border-radius: 4px; padding: 1px 5px; font-size: 0.7em; margin: 1px; display: inline-block; }
-        .tag-green { background: #238636; border-radius: 4px; padding: 1px 5px; font-size: 0.7em; margin: 1px; display: inline-block; }
-        .tag-red { background: #da3633; border-radius: 4px; padding: 1px 5px; font-size: 0.7em; margin: 1px; display: inline-block; }
+        .tag { background: #1f6feb; border-radius: 4px; padding: 1px 5px; font-size: 0.75em; margin: 1px; display: inline-block; }
+        .tag-green { background: #238636; border-radius: 4px; padding: 1px 5px; font-size: 0.75em; margin: 1px; display: inline-block; }
+        .tag-red { background: #da3633; border-radius: 4px; padding: 1px 5px; font-size: 0.75em; margin: 1px; display: inline-block; }
         .box { border: 1px solid #444; border-radius: 5px; padding: 0.2em 0.6em; margin: 0.15em 0; }
-        table { font-size: 0.65em; border-collapse: collapse; width: 100%; }
+        table { font-size: 0.73em; border-collapse: collapse; width: 100%; }
         th { background: #1f6feb; padding: 3px 7px; }
         td { padding: 3px 7px; border-bottom: 1px solid #444; }
-        code { background: #161b22; padding: 1px 4px; border-radius: 4px; font-size: 0.78em; color: #58a6ff; }
-        pre code { display: block; padding: 0.4em; font-size: 0.6em; color: #c9d1d9; line-height: 1.3; white-space: pre; }
+        code { background: #161b22; padding: 1px 4px; border-radius: 4px; font-size: 0.88em; color: #58a6ff; }
+        pre code { display: block; padding: 0.4em; font-size: 0.72em; color: #c9d1d9; line-height: 1.35; white-space: pre; }
         /* Allow slide content to scroll vertically when it overflows */
         .reveal .slides section {
             overflow-y: auto !important;
@@ -52,44 +52,21 @@
                 <h2>План лекції</h2>
                 <div class="two-col">
                     <div>
-                        <ol style="font-size:0.82em;">
-                            <li>Три стани даних та їх захист</li>
-                            <li>Симетрична криптографія (AES)</li>
-                            <li>Асиметрична криптографія (RSA, ECDH)</li>
-                            <li>Конвертне шифрування (Envelope Encryption)</li>
-                            <li>AWS KMS — огляд і типи ключів</li>
-                            <li>KMS — операції та Key Policy</li>
-                            <li>Шифрування Amazon S3</li>
-                            <li>Шифрування EBS та RDS</li>
-                            <li>Захист даних у русі: TLS/SSL</li>
-                            <li>AWS Certificate Manager (ACM)</li>
-                            <li>AWS Secrets Manager</li>
-                            <li>Parameter Store vs Secrets Manager</li>
-                            <li>AWS CloudHSM</li>
-                            <li>Класифікація даних та модель відповідальності</li>
-                            <li>Amazon Macie — виявлення чутливих даних</li>
-                            <li>Захист даних у телекомунікаціях</li>
-                            <li>Config &amp; Security Hub — відповідність шифрування</li>
-                            <li>Кращі практики захисту даних в AWS</li>
+                        <ol>
+                            <li>Основи криптографії: симетрична, асиметрична, хешування</li>
+                            <li>Конвертне шифрування та AWS KMS</li>
+                            <li>Шифрування сервісів AWS (S3, EBS, RDS, DynamoDB, SQS, Lambda)</li>
+                            <li>Захист даних у русі: TLS 1.3, ACM, mTLS</li>
+                            <li>Управління секретами: Secrets Manager, Parameter Store</li>
                         </ol>
                     </div>
                     <div>
-                        <ol style="font-size:0.82em;" start="19">
-                            <li>Практичне завдання — CDR система в AWS</li>
-                            <li>Типові вразливості та атаки на дані</li>
-                            <li>Хешування та цілісність даних</li>
-                            <li>AWS Encryption SDK</li>
-                            <li>Шифрування DynamoDB, SQS/SNS, Kinesis</li>
-                            <li>Шифрування Lambda та середовищ виконання</li>
-                            <li>AWS Nitro Enclaves — Confidential Computing</li>
-                            <li>Post-Quantum Cryptography</li>
-                            <li>Zero Trust та криптографія</li>
-                            <li>KMS Multi-Region Keys та DR</li>
-                            <li>Аудит та моніторинг KMS операцій</li>
-                            <li>Відповідність регуляторним вимогам</li>
-                            <li>Автоматизація шифрування через IaC (Terraform)</li>
-                            <li>Defence in Depth — ешелонована оборона</li>
-                            <li>Підсумок</li>
+                        <ol start="6">
+                            <li>Класифікація даних: Macie, Config, Security Hub</li>
+                            <li>Сучасні загрози: Post-Quantum Crypto, Nitro Enclaves</li>
+                            <li>Zero Trust та захист у телекомунікаціях</li>
+                            <li>Регуляторна відповідність та IaC (Terraform)</li>
+                            <li>Аудит KMS, кращі практики, Defence in Depth</li>
                         </ol>
                     </div>
                 </div>
