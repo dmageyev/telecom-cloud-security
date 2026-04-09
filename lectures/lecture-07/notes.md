@@ -213,7 +213,7 @@ POST /api/fetch HTTP/1.1
 ### Приклад IDOR
 
 ```
-GET /api/orders/10001 → 200 OK (мій замовлення)
+GET /api/orders/10001 → 200 OK (моє замовлення)
 GET /api/orders/10002 → 200 OK (замовлення іншого клієнта!)
 
 Виправлення:

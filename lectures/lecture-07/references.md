@@ -91,7 +91,7 @@
 - [Amazon CloudFront Security](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/security.html)
 - [AWS API Gateway — Throttling and Quotas](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-request-throttling.html)
 - [AWS Security Best Practices](https://docs.aws.amazon.com/security/)
-- [AWS Well-Architected Framework — Security Pillar](https://docs.aws.amazon.com/wellarchirected/latest/security-pillar/)
+- [AWS Well-Architected Framework — Security Pillar](https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/)
 
 ---
 

