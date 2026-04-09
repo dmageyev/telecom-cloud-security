@@ -148,7 +148,7 @@ GET /api/v1/accounts/ACC002/transactions   ← чужий рахунок → 200
 **API4 (Unrestricted Resource Consumption)** — відсутність rate limiting:
 ```
 // Атакуючий може надіслати 10 000 запитів/сек
-// Тоді як легітимний użytkownik ← 10 запитів/хв
+// Тоді як легітимний користувач ← 10 запитів/хв
 ```
 
 **GraphQL-специфічні атаки:**
