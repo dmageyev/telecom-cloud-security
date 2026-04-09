@@ -82,9 +82,9 @@
 | Файл | Опис |
 |------|------|
 | [`presentation_cloud.html`](presentation_cloud.html) | Презентація Reveal.js (38 слайдів) |
-| [`notes.md`](notes.md) | Детальний конспект лекції (Markdown, ~40 000 знаків) |
-| [`notes.html`](notes.html) | Конспект лекції для перегляду в браузері |
-| [`references.md`](references.md) | Список рекомендованої літератури та джерел |
+| [`notes_cloud.md`](notes_cloud.md) | Детальний конспект лекції (Markdown, ~40 000 знаків) |
+| [`notes_cloud.html`](notes_cloud.html) | Конспект лекції для перегляду в браузері |
+| [`references_cloud.md`](references_cloud.md) | Список рекомендованої літератури та джерел |
 | [`PLAN.md`](PLAN.md) | Технічний план для ШІ-агентів (конвенції, слайд-план) |
 
 ---
