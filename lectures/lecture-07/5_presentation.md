@@ -198,10 +198,10 @@ $stmt->execute([$_GET['id']]);
 
 | Захід | Реалізація |
 |-------|-----------|
-| **Output Encoding** | `htmlspecialchars()`, DOMPurify |
+| **Output Encoding / Escaping** | `htmlspecialchars()`, безпечний templating, DOMPurify |
 | **CSP** | `Content-Security-Policy: script-src 'self'` |
 | **HttpOnly** | Cookie недоступні для JS |
-| **X-XSS-Protection** | HTTP-заголовок захисту |
+| **X-XSS-Protection** | Legacy-заголовок; застарілий і не рекомендований як основний захист |
 
 ---
 
