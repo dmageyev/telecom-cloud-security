@@ -1,63 +1,73 @@
 # Лекція 7 — Безпека веб- та телеком-застосунків: Детальний конспект
 
 > **Курс:** Інформаційна безпека телекомунікаційних та хмарних технологій  
-> **Лекція:** 7 | **Модуль:** 2 — Захист сервісів, інциденти та відповідність
+> **Лекція:** 7 з 11 | **Модуль:** 2 — Захист сервісів, інциденти та відповідність
 
 ---
 
-## 1. Чому веб-застосунки є ціллю №1
+## 1. Безпека веб-застосунків
 
-Веб-застосунки відкриті для Internet 24/7, містять бізнес-логіку та дані мільйонів користувачів. За даними Verizon DBIR 2023, 43% усіх кібератак спрямовані на веб-застосунки.
+### 1.1 Ландшафт загроз
 
-**Ключові чинники ризику:**
-- Публічна доступність з будь-якого куточка світу
-- Постійно зростаюча складність (мікросервіси, SPA, GraphQL API)
-- Швидкий цикл розробки (CI/CD) без достатнього security review
-- Залежність від третіх сторін (npm, pip, Maven)
+Веб-застосунки є найбільшою поверхнею атаки для більшості організацій. За даними Verizon DBIR 2023, 43% порушень даних пов'язані з атаками на веб-застосунки. Для телеком-операторів веб-вектор особливо критичний, оскільки вони обслуговують:
+
+- **Self-care портали** — управління тарифами, балансом, послугами
+- **Білінгові системи** — виставлення рахунків, платіжні шлюзи
+- **OSS/BSS системи** — операційні та бізнес-підтримуючі системи
+- **REST/SOAP API** для інтеграції з партнерами
+- **Адміністративні панелі** мережевих елементів
+
+Вектори атак поділяються на три категорії:
+
+| Вектор | Приклади |
+|--------|---------|
+| **Client-side** | XSS, CSRF, Clickjacking, DOM manipulation |
+| **Server-side** | SQL Injection, SSRF, Deserialization, RCE |
+| **Infrastructure** | DDoS, TLS Downgrade, DNS Hijacking, MITM |
 
 ---
 
-## 2. OWASP Top 10 — 2021
+### 1.2 OWASP Top 10 (2021)
 
 OWASP (Open Web Application Security Project) публікує Top 10 найпоширеніших вразливостей кожні кілька років на основі реальних даних аудитів.
 
-### A01 — Broken Access Control (Зламаний контроль доступу)
+#### A01 — Broken Access Control (Зламаний контроль доступу)
 Піднявся з 5-го місця на 1-е. Охоплює IDOR, обхід авторизації, CORS-помилки.
 
 **Приклад:** `GET /api/users/1042` повертає дані іншого користувача без перевірки прав.
 
-### A02 — Cryptographic Failures (Криптографічні збої)
+#### A02 — Cryptographic Failures (Криптографічні збої)
 Раніше "Sensitive Data Exposure". Слабке шифрування, HTTP замість HTTPS, MD5 для паролів.
 
-### A03 — Injection (Ін'єкція)
+#### A03 — Injection (Ін'єкція)
 SQL Injection, Command Injection, LDAP Injection, NoSQL Injection. Вхідні дані потрапляють до інтерпретатора без санації.
 
-### A04 — Insecure Design (Небезпечна архітектура)
+#### A04 — Insecure Design (Небезпечна архітектура)
 Нова категорія. Відсутність threat modeling, security requirements, перевірки бізнес-логіки.
 
-### A05 — Security Misconfiguration (Хибна конфігурація)
+#### A05 — Security Misconfiguration (Хибна конфігурація)
 Дефолтні паролі, відкриті S3 bucket, XML External Entity (XXE), непотрібні функції.
 
-### A06 — Vulnerable and Outdated Components
+#### A06 — Vulnerable and Outdated Components
 Log4Shell (CVE-2021-44228) — яскравий приклад катастрофічних наслідків вразливості в залежності.
 
-### A07 — Identification and Authentication Failures
+#### A07 — Identification and Authentication Failures
 Слабкі паролі, брутфорс без блокування, відсутність MFA.
 
-### A08 — Software and Data Integrity Failures
+#### A08 — Software and Data Integrity Failures
 Компрометація CI/CD pipeline, неперевірені оновлення, десеріалізація.
 
-### A09 — Security Logging and Monitoring Failures
+#### A09 — Security Logging and Monitoring Failures
 Відсутність логів для виявлення атак, неповне логування, невчасне реагування.
 
-### A10 — Server-Side Request Forgery (SSRF)
+#### A10 — Server-Side Request Forgery (SSRF)
 Сервер виконує запити за адресою, вказаною зловмисником, отримуючи доступ до внутрішніх ресурсів.
 
 ---
 
-## 3. SQL Injection — детальний розбір
+### 1.3 SQL Injection — детальний розбір
 
-### Механізм атаки
+#### Механізм атаки
 
 ```sql
 -- Код застосунку (PHP)
@@ -69,7 +79,7 @@ SELECT * FROM users WHERE username='admin' --'
 -- Коментар -- ігнорує решту умов → вхід без пароля!
 ```
 
-### Типи SQL Injection
+#### Типи SQL Injection
 
 | Тип | Характеристика |
 |-----|---------------|
@@ -78,7 +88,7 @@ SELECT * FROM users WHERE username='admin' --'
 | Blind Time-based | Затримка відповіді (`SLEEP(5)`) |
 | Out-of-band | Дані надсилаються до зовнішнього сервера (DNS) |
 
-### Захист
+#### Захист
 
 1. **Parameterized queries** (prepared statements) — єдиний надійний метод
 2. **ORM** — але уважно з raw queries та string interpolation
@@ -86,11 +96,91 @@ SELECT * FROM users WHERE username='admin' --'
 4. **Least privilege** — обліковий запис БД без DROP, CREATE
 5. **WAF** — додатковий рівень захисту (не заміна!)
 
+```java
+PreparedStatement ps = conn.prepareStatement(
+    "SELECT * FROM users WHERE username=? AND password=?"
+);
+ps.setString(1, username);
+ps.setString(2, password);
+```
+
 ---
 
-## 4. Автентифікація та JWT
+### 1.4 XSS — Cross-Site Scripting
 
-### Проблеми автентифікації
+XSS дозволяє атакуючому виконати довільний JavaScript у браузері жертви.
+
+**Типи:**
+1. **Reflected XSS** — скрипт передається у GET/POST і відображається у відповіді
+2. **Stored XSS** — скрипт зберігається в БД, виконується для всіх відвідувачів
+3. **DOM-based XSS** — маніпуляція DOM без запитів до сервера
+
+**DOM-based XSS приклад:**
+```javascript
+// Вразливий код:
+document.getElementById('output').innerHTML = location.hash.substring(1);
+// URL: https://app.example/#<img src=x onerror=alert(1)>
+```
+
+**Захист:**
+```html
+<!-- Content Security Policy -->
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'nonce-random123'">
+
+<!-- Output encoding у PHP -->
+echo htmlspecialchars($user_input, ENT_QUOTES, 'UTF-8');
+```
+
+```http
+Content-Security-Policy: default-src 'self';
+  script-src 'self' https://trusted-cdn.example;
+  style-src 'self' 'nonce-{random}';
+  img-src 'self' data:;
+  frame-ancestors 'none';
+```
+
+CSP різко ускладнює виконання ін'єктованих скриптів.
+
+---
+
+### 1.5 CSRF та SSRF
+
+#### CSRF (Cross-Site Request Forgery)
+
+Змушує браузер автентифікованого користувача виконати небажаний запит:
+
+```html
+<!-- Сторінка attacker.com -->
+<img src="https://bank.com/transfer?to=attacker&amount=5000">
+<!-- Браузер автоматично надсилає cookie сесії банку! -->
+```
+
+**Захист:**
+- **CSRF Token** — унікальний токен у кожній формі, перевіряється сервером
+- **SameSite=Strict** — браузер не надсилає cookie для cross-site запитів
+- Перевірка заголовків `Origin` та `Referer`
+
+#### SSRF (Server-Side Request Forgery)
+
+Сервер виконує HTTP-запит до URL, вказаного атакуючим:
+
+```
+POST /api/fetch-url
+Body: {"url": "http://169.254.169.254/latest/meta-data/iam/credentials"}
+
+Відповідь: {"AccessKeyId": "ASIA...", "SecretAccessKey": "...", "Token": "..."}
+```
+
+**Реальний інцидент:** Capital One (2019) — SSRF через WAF → AWS IMDS v1 → витік IAM ролі → 100M+ записів клієнтів.
+
+**IMDSv2** вирішує цю проблему: для отримання metadata спочатку потрібно отримати токен через `PUT` запит (не підробляється через SSRF).
+
+---
+
+### 1.6 Автентифікація та JWT
+
+#### Проблеми автентифікації
 
 - Слабкі паролі без обмежень (менше 8 символів, без спецсимволів)
 - Відсутність MFA для привілейованих операцій
@@ -98,7 +188,7 @@ SELECT * FROM users WHERE username='admin' --'
 - Витік сесійних токенів у URL (`https://app.example/reset?token=abc123`)
 - Відсутність блокування після N невдалих спроб (brute force)
 
-### JWT — поширені атаки
+#### JWT — поширені атаки
 
 **`alg: none` атака:**
 ```json
@@ -113,7 +203,7 @@ SELECT * FROM users WHERE username='admin' --'
 - Використовує публічний ключ RS256 як HMAC-секрет
 - Сервер перевіряє підпис публічним ключем → успіх!
 
-### Захист JWT
+#### Захист JWT
 
 - Строго перевіряти і фіксувати алгоритм (`alg` whitelist)
 - Секрет HMAC ≥ 256 біт, згенерований криптографічно
@@ -122,95 +212,14 @@ SELECT * FROM users WHERE username='admin' --'
 
 ---
 
-## 5. XSS — Cross-Site Scripting
+### 1.7 IDOR та Broken Access Control
 
-### Reflected XSS
-
-```
-1. Зловмисник надсилає жертві URL:
-   https://shop.example/search?q=<script>stealCookies()</script>
-
-2. Сервер відображає параметр без екранування:
-   <p>Результати пошуку: <script>stealCookies()</script></p>
-
-3. Браузер виконує скрипт у контексті shop.example
-4. Скрипт надсилає cookies на сервер зловмисника
-```
-
-### Stored XSS
-Зловмисник зберігає скрипт у БД (коментар, профіль). Скрипт виконується для кожного відвідувача.
-
-### DOM-based XSS
-```javascript
-// Вразливий код:
-document.getElementById('output').innerHTML = location.hash.substring(1);
-// URL: https://app.example/#<img src=x onerror=alert(1)>
-```
-
-### Content Security Policy (CSP)
-
-```http
-Content-Security-Policy: default-src 'self'; 
-  script-src 'self' https://trusted-cdn.example;
-  style-src 'self' 'nonce-{random}';
-  img-src 'self' data:;
-  frame-ancestors 'none';
-```
-
-CSP різко ускладнює виконання ін'єктованих скриптів.
-
----
-
-## 6. CSRF та SSRF
-
-### CSRF — Механізм атаки
-
-```html
-<!-- На сайті зловмисника evil.com -->
-<form action="https://bank.example/transfer" method="POST" id="csrf-form">
-  <input type="hidden" name="to" value="attacker-account">
-  <input type="hidden" name="amount" value="5000">
-</form>
-<script>document.getElementById('csrf-form').submit();</script>
-```
-
-Якщо користувач авторизований на bank.example і заходить на evil.com — запит надсилається з його cookies!
-
-### Захист від CSRF
-
-1. **Synchronizer Token Pattern** — унікальний токен у кожній формі
-2. **Double Submit Cookie** — токен у cookie та body; сервер порівнює
-3. **SameSite=Strict** — браузер не надсилає cookie для cross-site запитів
-4. **Перевірка Origin/Referer** — заголовок надсилається браузером
-
-### SSRF — Атаки на AWS Metadata
-
-```
-POST /api/fetch HTTP/1.1
-{"url": "http://169.254.169.254/latest/meta-data/iam/security-credentials/EC2Role"}
-
-Відповідь:
-{
-  "AccessKeyId": "ASIA...",
-  "SecretAccessKey": "...",
-  "Token": "..."
-}
-```
-
-Зловмисник отримує тимчасові AWS credentials і може виконувати дії від імені IAM ролі.
-
-**IMDSv2** вирішує цю проблему: для отримання metadata спочатку потрібно отримати токен через `PUT` запит (не підробляється через SSRF).
-
----
-
-## 7. IDOR та Broken Access Control
-
-### Горизонтальне vs Вертикальне підвищення привілеїв
+#### Горизонтальне vs Вертикальне підвищення привілеїв
 
 - **Горизонтальне:** Користувач A отримує доступ до даних Користувача B (однаковий рівень ролі)
 - **Вертикальне:** Звичайний користувач виконує адміністративні функції
 
-### Приклад IDOR
+#### Приклад IDOR
 
 ```
 GET /api/orders/10001 → 200 OK (моє замовлення)
@@ -221,99 +230,199 @@ if order.user_id != current_user.id:
     return 403 Forbidden
 ```
 
-### UUID vs числові ID
+#### UUID vs числові ID
 
 Використання UUID (v4) замість auto-increment ID ускладнює IDOR, але **не усуває** — авторизація на рівні сервера обов'язкова.
 
 ---
 
-## 8. SS7 — Деталі вразливостей
+### 1.8 Безпека API
 
-### Чому SS7 досі вразливий?
+#### OWASP API Security Top 10 (2023)
 
-SS7 розроблявся у 1975 році для закритих телефонних мереж між операторами, де всі учасники вважалися довіреними. З появою Інтернету та лібералізацією ринку доступ до SS7 отримали тисячі операторів по всьому світу, включаючи зловмисників.
+**API1 (BOLA)** — Broken Object Level Authorization:
+```http
+GET /api/v1/accounts/ACC001/transactions   ← свій рахунок
+GET /api/v1/accounts/ACC002/transactions   ← чужий рахунок → 200 OK (вразливість!)
+```
 
-### Відстеження місцезнаходження через SS7
+**API4 (Unrestricted Resource Consumption)** — відсутність rate limiting:
+```
+// Атакуючий може надіслати 10 000 запитів/сек
+// Тоді як легітимний користувач ← 10 запитів/хв
+```
+
+**GraphQL-специфічні атаки:**
+
+```graphql
+# Query depth attack — DoS через глибоко вкладені запити
+query {
+  user {
+    friends {
+      friends {
+        friends {
+          friends { ... }  # до нескінченності
+        }
+      }
+    }
+  }
+}
+```
+
+Захист: обмеження глибини запиту (`maxDepth: 5`), інтроспекцію відключити в продакшні.
+
+---
+
+## 2. Безпека телеком-застосунків
+
+### 2.1 SS7 — Signaling System 7
+
+#### Архітектура та передумови
+
+SS7 — протокол сигналізації, розроблений у 1975 році для телефонних мереж. Ключова проблема: **відсутність автентифікації між операторами**. Кожен учасник SS7-мережі довіряє повідомленням від будь-якого іншого учасника.
+
+Компоненти:
+- **MSC** (Mobile Switching Center) — комутація дзвінків
+- **HLR** (Home Location Register) — база даних абонентів оператора
+- **VLR** (Visitor Location Register) — тимчасові дані роумінгових абонентів
+- **SMSC** (SMS Center) — маршрутизація SMS
+
+#### SS7 Атаки
+
+**Атака відстеження локації (Location Tracking):**
 
 ```
-Зловмисник (з доступом до SS7) → MSC (мережа оператора)
-  1. Надсилає: SendRoutingInfoForSM (SRI-SM) → отримує IMSI + MSC address
-  2. Надсилає: ProvideSubscriberInfo (PSI) до MSC
-  3. Отримує: Cell ID → конвертує через відкриті бази до GPS-координат
+Зловмисник (з SS7 доступом):
+1. Надсилає: SendRoutingInfo (SRI) → HLR жертви
+   Відповідь: MSRN, IMSI (ідентифікатори)
+
+2. Надсилає: ProvideSubscriberInfo (PSI) → MSC де перебуває жертва
+   Відповідь: Cell ID (номер стільника) → GPS точність через базу Cell ID
 ```
 
 Точність: 50–300 метрів у міських районах.
 
-### Перехоплення SMS (2FA bypass)
+**Атака перехоплення SMS:**
 
 ```
-1. Зловмисник запускає SRI-SM → отримує IMSI жертви
-2. RegisterSS: переадресація SMS на власний номер
-3. Запитує "забув пароль" на банківському сайті
-4. Отримує OTP SMS → входить в акаунт
+1. Зловмисник надсилає: UpdateLocation → HLR жертви
+   (Фальшивий MSC/SGSN з адресою зловмисника)
+
+2. HLR оновлює VLR запис — SMS тепер йдуть на "MSC зловмисника"
+
+3. Всі вхідні SMS (включно з OTP для банку) → зловмисник
 ```
 
-### Захист від SS7 атак
+#### Захист SS7
 
-- **SS7 Firewall** — фільтрація аномальних MAP-повідомлень
-- **Аномалія-виявлення:** незвичайні SRI-SM, PSI, RegisterSS запити
-- **GSMA FS.11** — мінімальний базовий набір правил фільтрації
-- Перехід на Diameter (4G) та HTTP/2 SBI (5G) — не вирішує повністю
+```
+Рівень 1 — Базовий фільтрінг:
+  ✓ SMS Home Routing — всі SMS через SMSC оператора
+  ✓ Блокувати SRI/PSI від невідомих GTT (Global Title Translation)
+  ✓ Блокувати UpdateLocation від мереж-не-партнерів
+
+Рівень 2 — Аналітика:
+  ✓ Виявлення аномалій: UpdateLocation без попереднього Location Update
+  ✓ Кореляція SS7 подій з CDR
+  ✓ Сповіщення при підозрілих SRI → HLR запитах
+
+Рівень 3 — Машинне навчання:
+  ✓ ML-моделі поведінкового аналізу
+  ✓ Автоматичне блокування підозрілих джерел
+```
+
+Нормативна база: **GSMA FS.11** (SS7 Network Security), категорії загроз 1-7.
 
 ---
 
-## 9. 5G Security Architecture — деталі
+### 2.2 Diameter та GTP
 
-### SUCI — Subscription Concealed Identifier
+#### Diameter — 4G/LTE Signaling
 
-У 4G/LTE IMSI передавався відкрито → можливий перехоплення через IMSI catcher (Stingray).
+Diameter замінив SS7 MAP у LTE мережах для аутентифікації та авторизації. Хоча він кращий за SS7 (підтримує TLS/IPSec), на практиці більшість операторів не шифрують Diameter трафік між собою.
 
-У 5G IMSI (тепер SUPI) захищається:
+**Основні вразливості:**
+- Spoofing Origin-Host/Origin-Realm — видавати себе за інший вузол
+- `Cancel-Location-Request` (CLR) — примусово "відключити" абонента
+- `Update-Location-Request` (ULR) — аналог SS7 UpdateLocation
+
+**Захист:** Diameter Edge Agent (DEA) з фільтрацією + IPSec між вузлами.
+
+#### GTP — GPRS Tunneling Protocol
+
+GTP тунелює пакети між мобільним пристроєм та мережею. GTP-C (Control) — управління сесіями; GTP-U (User) — передача даних.
+
+**Вразливість Cell Spoofing:**
 ```
-SUPI: 255-01-1234567890
-SUCI: шифрується публічним ключем оператора (ECIES)
-→ Навіть базова станція не знає реального SUPI
-```
-
-### 5G Network Slicing
-
-Оператор може ділити мережу на ізольовані "слайси" для різних клієнтів (MBB, URLLC, mMTC).
-
-**Загрози ізоляції слайсів:**
-- Витік між слайсами через спільні NF (Network Functions)
-- SSRF через SBI API від одного слайсу до іншого
-- Атаки на NSSF (Network Slice Selection Function)
-
-### Service-Based Architecture (SBA) та безпека
-
-5G Core замінив Diameter на HTTP/2 + JSON/REST для взаємодії між NF:
-
-```
-AMF ←──── HTTP/2 + OAuth 2.0 ────→ SMF
-NRF ←──── HTTP/2 + mTLS ──────→ PCF
+Зловмисник надсилає підроблений GTP-C Create Session Request
+з IMSI жертви → Creates PDP context на ім'я жертви
+→ Інтернет трафік → тунелюється через зловмисника
 ```
 
-**Загрози SBI:**
-- JWT token forgery між NF
-- OAuth 2.0 misconfiguration
-- HTTP/2 DoS (HPACK bomb, RST flood)
-- Rogue NF — підробна мережева функція в ядрі
+Захист: GTP Firewall між GGSN та інтернетом, **GSMA IR.77**.
 
 ---
 
-## 10. Telecom Fraud — деталі
+### 2.3 VoIP та SIP безпека
 
-### IRSF (International Revenue Share Fraud)
+#### SIP Protocol
 
-Найдорожчий вид телеком-шахрайства: $6 млрд/рік (CFCA).
+SIP (Session Initiation Protocol, RFC 3261) — протокол сигналізації для VoIP. Використовує текстовий формат (схожий на HTTP), що робить його вразливим до різних атак.
 
-**Механізм:**
-1. Шахрай орендує premium-номер (наприклад, в Латвії, Сомалі)
-2. Отримує 60-80% від вартості дзвінка
-3. Генерує масові дзвінки: через ботів, компрометовані АТС, скомпрометовані акаунти
-4. Оператор жертви виплачує interconnect fees → шахрай отримує гроші
+**SIP Registration Hijacking:**
+```
+Легітимна реєстрація:
+REGISTER sip:telecom.ua SIP/2.0
+From: <sip:alice@telecom.ua>
+Contact: <sip:alice@192.168.1.100>
 
-### STIR/SHAKEN — захист від CLI Spoofing
+Hijacking attack:
+REGISTER sip:telecom.ua SIP/2.0
+From: <sip:alice@telecom.ua>
+Contact: <sip:alice@attacker.com>  ← підроблений Contact
+→ Тепер дзвінки для Alice йдуть до зловмисника!
+```
+
+**INVITE Flooding (SIP DoS):**
+```bash
+# SIPVicious — відомий інструмент атаки
+svwar -e100-200 192.168.1.1  # Enumerate extensions
+inviteflood eth0 target user 192.168.1.1 1000  # 1000 INVITE/сек
+```
+
+**Захист:**
+- **SBC (Session Border Controller)** — нормалізація SIP, rate limiting, topology hiding
+- **SIPS** (SIP over TLS) для шифрування сигналізації
+- **SRTP** для шифрування медіа (RTP)
+- **Digest Authentication** з перевіркою nonce
+
+---
+
+### 2.4 SMS-безпека та STIR/SHAKEN
+
+#### SIM Swapping — детальний розбір
+
+SIM Swap — одна з найнебезпечніших атак, що поєднує соціальну інженерію та технічні вектори:
+
+```
+Метод 1 — Соціальна інженерія:
+  1. Збір OSINT: ім'я, дата народження, адреса жертви
+  2. Дзвінок оператору: "Я загубив телефон, прошу перевипустити SIM"
+  3. Відповідь на "секретні питання" → новий SIM контролює зловмисник
+
+Метод 2 — SS7 (технічний):
+  1. Зловмисник має SS7 доступ
+  2. MO-Forward-SM перенаправляє SMS на власний SMSC
+  3. Отримує OTP без взаємодії з оператором
+
+Результат: контроль номера → 2FA bypass → банківський акаунт
+```
+
+**Статистика:** FBI IC3 2022 — SIM swap fraud: $72.7M збитків в США.
+
+**NIST SP 800-63B** рекомендує **уникати SMS OTP** для криптографічно чутливих операцій.
+
+#### STIR/SHAKEN — захист від CLI Spoofing
 
 Стандарти IETF RFC 8224/8226 та ATIS для верифікації Caller ID:
 
@@ -328,9 +437,111 @@ NRF ←──── HTTP/2 + mTLS ──────→ PCF
 
 ---
 
-## 11. AWS WAF — практична конфігурація
+### 2.5 5G безпека
 
-### Web ACL структура
+#### Архітектурні покращення 5G
+
+**SUCI (Subscription Concealed Identifier):**
+```
+4G: Телефон → BTS: IMSI = 255010123456789 (відкрито!)
+    → IMSI Catcher може перехопити
+
+5G: Телефон → gNB: SUCI = encrypted(SUPI, ephemeral_key)
+    → Навіть якщо перехоплено — SUPI (реальний IMSI) захищений
+    → Тільки HSS/UDM може розшифрувати SUCI → SUPI
+```
+
+**SEPP (Security Edge Protection Proxy):**
+```
+Оператор A (Україна) ←── N32 ──→ Оператор B (Польща)
+         SEPP-A                     SEPP-B
+
+N32 інтерфейс:
+  - TLS для транспорту
+  - JOSE (JSON Object Signing and Encryption) для application-layer
+  - Фільтрація та перевірка роумінгового трафіку
+  - Прихування топології мережі
+```
+
+**Service-Based Architecture (SBA):**
+```
+NRF (Network Repository Function):
+  AMF, SMF, PCF, UDM реєструються в NRF
+
+Взаємодія: OAuth 2.0 Client Credentials Grant
+  AMF запитує токен у NRF
+  AMF → токен → UDM (автентифікований запит)
+```
+
+```
+AMF ←──── HTTP/2 + OAuth 2.0 ────→ SMF
+NRF ←──── HTTP/2 + mTLS ──────→ PCF
+```
+
+**Загрози SBI:**
+- JWT token forgery між NF
+- OAuth 2.0 misconfiguration
+- HTTP/2 DoS (HPACK bomb, RST flood)
+- Rogue NF — підробна мережева функція в ядрі
+
+**Загрози ізоляції слайсів (Network Slicing):**
+- Витік між слайсами через спільні NF (Network Functions)
+- SSRF через SBI API від одного слайсу до іншого
+- Атаки на NSSF (Network Slice Selection Function)
+
+---
+
+### 2.6 Telecom Fraud
+
+Телеком-шахрайство — глобальна проблема з річними збитками **$38.95 мільярдів** (CFCA 2021).
+
+#### IRSF (International Revenue Share Fraud)
+
+Найдорожчий вид телеком-шахрайства: **$6.1B/рік** глобально.
+
+**Механізм:**
+1. Шахрай орендує premium-номер (наприклад, в Латвії, Сомалі)
+2. Отримує 60–80% від вартості дзвінка
+3. Генерує масові дзвінки: через ботів, компрометовані АТС, скомпрометовані акаунти
+4. Оператор жертви виплачує interconnect fees → шахрай отримує гроші
+
+```
+Схема:
+1. Зловмисник реєструє "premium" номери в країні X (+890XXXX)
+2. Оператор Y перераховує 70% вартості дзвінків → оператору X → зловмиснику
+3. Зловмисник використовує IRSF-as-a-service або ботнети для дзвінків
+4. Всі дзвінки — недійсні, але оплата вже перерахована
+```
+
+#### Wangiri Fraud
+
+```
+1. Зловмисник дзвонить на тисячі номерів, кидає після 1 дзвінку
+2. Жертва передзвонює (бачить пропущений дзвінок)
+3. Попадає на premium номер → рахунок за дзвінок
+4. Зловмисник отримує revenue share
+```
+
+#### Виявлення шахрайства
+
+```python
+# CDR-based IRSF detection (спрощений алгоритм)
+def detect_irsf(cdr_records):
+    # Velocity check: >10 дзвінків за 5 хвилин на один префікс
+    for subscriber, calls in group_by_subscriber(cdr_records):
+        per_prefix = group_by_destination_prefix(calls)
+        for prefix, calls_to_prefix in per_prefix.items():
+            if is_high_risk_prefix(prefix) and rate(calls_to_prefix) > 10:
+                flag_for_review(subscriber, f"IRSF_{prefix}")
+```
+
+---
+
+## 3. Хмара та DevSecOps
+
+### 3.1 AWS WAF та Shield
+
+#### Web ACL структура
 
 ```
 Web ACL
@@ -345,7 +556,33 @@ Web ACL
 └── Default Action: Allow
 ```
 
-### Інтеграція з CloudFront
+#### Кастомне правило (rate-based) — JSON
+
+```json
+{
+  "Name": "RateLimitLoginEndpoint",
+  "Priority": 1,
+  "Action": { "Block": {} },
+  "Statement": {
+    "RateBasedStatement": {
+      "Limit": 100,
+      "AggregateKeyType": "IP",
+      "ScopeDownStatement": {
+        "ByteMatchStatement": {
+          "FieldToMatch": { "UriPath": {} },
+          "PositionalConstraint": "STARTS_WITH",
+          "SearchString": "/api/auth/login",
+          "TextTransformations": [{"Type": "LOWERCASE", "Priority": 0}]
+        }
+      }
+    }
+  }
+}
+```
+
+Це правило обмежує 100 запитів/5хв на `/api/auth/login` з одного IP — захист від brute force.
+
+#### Інтеграція з CloudFront
 
 ```json
 {
@@ -359,11 +596,18 @@ Web ACL
 
 WAF на CloudFront діє **глобально** (CLOUDFRONT scope), на ALB — регіонально (REGIONAL scope).
 
+#### AWS Shield Advanced — ключові переваги
+
+- **SRT (Shield Response Team)** — 24/7 підтримка під час DDoS атак
+- **Cost Protection** — відшкодування scaled-up ресурсів під час атаки
+- **Proactive Engagement** — AWS сам звертається при виявленні атаки
+- **Real-time Attack Visibility** — дашборд DDoS метрик
+
 ---
 
-## 12. DevSecOps Pipeline — повний цикл
+### 3.2 DevSecOps Pipeline
 
-### Shift Left Security
+#### Shift Left Security
 
 Чим раніше виявлена вразливість, тим дешевше її виправити:
 - Код: $80
@@ -371,7 +615,7 @@ WAF на CloudFront діє **глобально** (CLOUDFRONT scope), на ALB �
 - Production: $960
 - Після інциденту: $7680
 
-### Приклад GitHub Actions pipeline
+#### Приклад GitHub Actions pipeline
 
 ```yaml
 name: Security Pipeline
@@ -418,11 +662,20 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
 ```
 
+#### Телеком-специфічне тестування
+
+| Фаза | Інструмент | Що тестується |
+|------|-----------|---------------|
+| Build | Codenomicon Defensics | SIP, Diameter, GTP fuzzing |
+| Test | SIPVicious | SIP security assessment |
+| Runtime | SS7 Monitor (FW logs) | Аномальні SS7 повідомлення |
+| Runtime | FMS | CDR anomaly detection |
+
 ---
 
-## 13. Відповідність — ключові вимоги
+### 3.3 Compliance
 
-### GDPR — вимоги до веб- та телеком-застосунків
+#### GDPR — вимоги до веб- та телеком-застосунків
 
 | Стаття | Вимога | Технічна реалізація |
 |--------|--------|---------------------|
@@ -431,14 +684,15 @@ jobs:
 | Art. 33 | Повідомлення про порушення | Процедура за 72 години |
 | Art. 35 | DPIA | Оцінка ризиків для privacy-чутливих систем |
 
-### PCI DSS v4.0 — Requirement 6 (Secure Software)
+#### PCI DSS v4.0 — Requirement 6 (Secure Software)
 
-- 6.2: Процес виявлення та управління вразливостями
-- 6.3: Захист від відомих вразливостей (патчинг ≤ 30 днів для критичних)
-- 6.4: Веб-застосунки захищені від OWASP Top 10
-- 6.4.2: WAF або автоматизований технічний засіб
+- **6.2:** Процес виявлення та управління вразливостями
+- **6.3:** Захист від відомих вразливостей (патчинг ≤ 30 днів для критичних)
+- **6.4:** Веб-застосунки захищені від OWASP Top 10
+- **6.4.2:** WAF або автоматизований технічний засіб
+- **11.6:** Перевірка HTTP заголовків на зміни
 
-### 3GPP TS 33.501 — ключові вимоги для 5G
+#### 3GPP TS 33.501 — ключові вимоги для 5G
 
 - 5G-AKA або EAP-AKA' для автентифікації абонента
 - SUPI concealment через SUCI (ECIES)
@@ -446,32 +700,49 @@ jobs:
 - Захист сигналізації між NF: TLS 1.2+ або DTLS 1.2+
 - OAuth 2.0 для авторизації між NF
 
+#### OWASP ASVS — рівні перевірки
+
+```
+L1 (Базовий) — автоматизовані перевірки:
+  → Відсутність ін'єкцій
+  → HTTPS скрізь
+  → Основна автентифікація
+
+L2 (Стандартний) — для більшості застосунків:
+  → MFA, управління сесіями
+  → Контроль доступу
+  → Логування безпекових подій
+
+L3 (Просунутий) — для критичних систем:
+  → Криптографічні вимоги
+  → Defense in Depth
+  → Threat modeling
+```
+
+#### NIS2 та телеком-оператори
+
+Директива NIS2 (Network and Information Security, 2022/2555) включає телеком-операторів до переліку **критичних суб'єктів**, що зобов'язані:
+
+- Впровадити **заходи управління ризиками кібербезпеки**
+- Повідомляти про значні інциденти протягом **24 годин** (початкове сповіщення) та **72 годин** (повне)
+- Призначити відповідального за кібербезпеку
+- Проводити регулярні оцінки ризиків
+
+Штрафи: до **€10 мільйонів** або **2% річного обороту** (подібно до GDPR).
+
 ---
 
-## 14. Підсумок та ключові висновки
+## 4. Підсумок
 
-### Безпека веб-застосунків (30%)
+### Ключові концепції лекції
 
-1. **OWASP Top 10** — стандартний каталог вразливостей, обов'язковий до вивчення
-2. **SQLi** — parameterized queries, ORM, least privilege
-3. **XSS** — output encoding, CSP, HttpOnly cookies
-4. **CSRF** — CSRF tokens, SameSite cookies
-5. **SSRF** — whitelist, IMDSv2, мережева сегментація
-6. **IDOR** — перевірка власника на кожному запиті
-
-### Безпека телеком-застосунків (55%)
-
-1. **SS7** — legacy-протокол з критичними вразливостями, потребує SS7 Firewall
-2. **Diameter** — захист роумінгових з'єднань, IPsec, GSMA FS.19
-3. **SIP/VoIP** — SIPS + SRTP + SBC
-4. **SMS** — ненадійний канал для 2FA, мігрувати на TOTP/FIDO2
-5. **GTP** — GTP Firewall, IPsec між SGW/PGW
-6. **5G** — нова архітектура (SBA, SUCI), нові ризики (rogue AMF, slice isolation)
-7. **Telecom APIs** — CAMARA, GSMA Open Gateway, OAuth 2.0, rate limiting
-
-### Хмара та DevSecOps (15%)
-
-1. **AWS WAF + Shield** — захист від L3-L7 атак
-2. **CloudFront** — CDN + безпека + TLS termination
-3. **Shift Left** — SAST + SCA + DAST в CI/CD pipeline
-4. **Compliance** — GDPR, PCI DSS, 3GPP TS 33.501
+| Тема | Основні поняття |
+|------|----------------|
+| **OWASP Top 10** | A01 Access Control, A03 Injection, A10 SSRF |
+| **SS7** | Location tracking, SMS interception, UpdateLocation attack |
+| **5G Security** | SUCI, SEPP, SBA + OAuth 2.0, Network Slicing |
+| **SIP/VoIP** | Registration hijacking, INVITE flood, SBC, SRTP |
+| **Telecom Fraud** | IRSF, SIM swap, Wangiri, CDR analysis |
+| **AWS WAF/Shield** | WebACL, managed rules, Shield Advanced SRT |
+| **DevSecOps** | SAST+SCA в CI, DAST на staging, shift-left |
+| **Compliance** | PCI DSS v4.0, NIS2, OWASP ASVS, GSMA FS.11 |
