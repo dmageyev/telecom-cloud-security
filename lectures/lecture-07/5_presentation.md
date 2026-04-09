@@ -1013,7 +1013,7 @@ IMSI Catcher (фіктивна вишка):
 | **SIP Flood** (INVITE/REGISTER) | SIP/UDP | SIPVicious, Metasploit | SBC rate limiting |
 | **SS7 Signal Flood** | SS7/SCTP | Кастомні інструменти | SS7 Firewall |
 | **GTP Flood** | GTP/UDP | EPC Attack toolkit | GTP Firewall |
-| **DNS Amplification** | DNS/UDP | Будь-який DNS resoler | RPF, rate limit |
+| **DNS Amplification** | DNS/UDP | Будь-який DNS resolver | RPF, rate limit |
 | **RTP Flood** | RTP/UDP | RTPFlood | Медіа rate limit |
 | **Volumetric** | IP | Ботнети | Anycast BGP, scrubbing |
 
