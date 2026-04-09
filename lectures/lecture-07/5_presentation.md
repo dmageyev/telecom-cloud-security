@@ -811,7 +811,7 @@ HTTP/200 OK {"lat": 50.4501, "lon": 30.5234}  ← BOLA!
 ### Інструменти тестування
 
 - **MobSF** (Mobile Security Framework) — статичний і динамічний аналіз
-- **Frida** — динаміна інструментація (hooking)
+- **Frida** — динамічна інструментація (hooking)
 - **apktool / jadx** — декомпіляція APK
 
 ---
