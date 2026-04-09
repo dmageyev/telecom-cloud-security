@@ -1601,7 +1601,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trivy Image Scan
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: 'telecom-api:${{ github.sha }}'
           severity: 'CRITICAL,HIGH'
@@ -1611,7 +1611,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkov IaC Scan
-        uses: bridgecrewio/checkov-action@master
+        uses: bridgecrewio/checkov-action@v12.2925.0
         with:
           directory: terraform/</code></pre>
                     </div>

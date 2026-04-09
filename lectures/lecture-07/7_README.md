@@ -91,11 +91,8 @@
 
 | Файл | Опис |
 |------|------|
-| [`presentation.html`](./presentation.html) | Reveal.js презентація (38 слайдів) |
-| [`README.md`](./README.md) | Цей файл — опис та навігація по лекції |
-| [`references.md`](./references.md) | Бібліографія, посилання, стандарти |
-| [`notes.md`](./notes.md) | Конспект лекції з детальними поясненнями (Markdown) |
-| [`notes.html`](./notes.html) | Конспект лекції у форматі HTML |
+| [`7_presentation.html`](./7_presentation.html) | Reveal.js презентація (38 слайдів) |
+| [`7_README.md`](./7_README.md) | Цей файл — опис та навігація по лекції |
 
 ---
 
@@ -105,10 +102,10 @@
 # Локальний HTTP-сервер (Python)
 cd lectures/lecture-07
 python3 -m http.server 8080
-# Відкрити: http://localhost:8080/presentation.html
+# Відкрити: http://localhost:8080/7_presentation.html
 ```
 
-Або відкрийте `presentation.html` безпосередньо в браузері.
+Або відкрийте `7_presentation.html` безпосередньо в браузері.
 
 **Навігація в презентації:**
 - `→` або `Space` — наступний слайд
