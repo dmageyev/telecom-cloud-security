@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/black.css">
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <style>
         .reveal h1 { font-size: 1.4em; }
         .reveal h2 { font-size: 1.12em; color: #58a6ff; }
@@ -27,6 +28,14 @@
         code { background: #161b22; padding: 1px 4px; border-radius: 4px; font-size: 0.86em; color: #58a6ff; }
         pre code { display: block; padding: 0.35em; font-size: 0.60em; color: #c9d1d9; line-height: 1.22; white-space: pre; }
         .reveal .slides section { box-sizing: border-box; }
+        /* Title slide */
+        .title-slide { display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%; text-align:center; }
+        .title-slide h1 { font-size:1.75em; margin-bottom:0.2em; }
+        .title-slide h2 { font-size:1.1em; margin-bottom:0.5em; }
+        .title-slide .meta { font-size:0.85em; color:#aaa; margin-top:0.5em; }
+        .title-slide .badge { display:inline-block; background:#1f6feb; border-radius:4px; padding:2px 8px; margin:2px; font-size:0.72em; }
+        /* Mermaid */
+        .mermaid { font-size: 0.55em; }
     </style>
 </head>
 <body>
@@ -35,11 +44,22 @@
 
             <!-- ===== СЛАЙД 1: Титульний ===== -->
             <section>
-                <h1>Безпека веб- та телеком-застосунків</h1>
-                <h2 style="color:#e8b04b;">Web &amp; Telecom Application Security</h2>
-                <p>Лекція 7 &nbsp;|&nbsp; Курс: Інформаційна безпека телекомунікаційних та хмарних технологій</p>
-                <hr style="border-color:#444; margin:1em 0;">
-                <p style="font-size:0.75em; color:#888;">Модуль 2: Захист сервісів, інциденти та відповідність</p>
+                <div class="title-slide">
+                    <h1>🔐 Безпека веб- та телеком-застосунків</h1>
+                    <h2 style="color:#e8b04b;">Web &amp; Telecom Application Security</h2>
+                    <hr style="border-color:#444; width:60%; margin:0.6em auto;">
+                    <p style="font-size:0.9em; color:#c9d1d9;">Лекція 7 &nbsp;|&nbsp; Курс: Інформаційна безпека телекомунікаційних та хмарних технологій</p>
+                    <p class="meta">Модуль 2: Захист сервісів, інциденти та відповідність</p>
+                    <div style="margin-top:1em;">
+                        <span class="badge">OWASP Top 10</span>
+                        <span class="badge">SS7 / 5G</span>
+                        <span class="badge">SIP / GTP</span>
+                        <span class="badge">AWS WAF</span>
+                        <span class="badge">DevSecOps</span>
+                        <span class="badge">Zero Trust</span>
+                    </div>
+                    <p style="margin-top:1.2em; font-size:0.72em; color:#666;">Магістри спеціальності «Кібербезпека» &nbsp;|&nbsp; 90 хвилин &nbsp;|&nbsp; 48 слайдів</p>
+                </div>
             </section>
 
             <!-- ===== СЛАЙД 2: План лекції ===== -->
@@ -48,37 +68,42 @@
                 <div class="two-col">
                     <div>
                         <h3>🌐 Частина 1 — Безпека веб-застосунків (~14 слайдів)</h3>
-                        <ol style="font-size:0.88em;">
-                            <li>Огляд загроз та OWASP Top 10</li>
-                            <li>Ін'єкції: SQL, NoSQL, Command</li>
-                            <li>Автентифікація, XSS, CSRF, SSRF, IDOR</li>
-                            <li>HTTPS/TLS та безпека транспорту</li>
-                            <li>Безпека REST/GraphQL API</li>
-                            <li>WAF, кращі практики, кейс AWS</li>
+                        <ol style="font-size:0.86em;">
+                            <li><strong>1.1</strong> Огляд загроз та OWASP Top 10</li>
+                            <li><strong>1.2</strong> Ін'єкції: SQL, NoSQL, Command</li>
+                            <li><strong>1.3</strong> Автентифікація, XSS, CSRF, SSRF, IDOR</li>
+                            <li><strong>1.4</strong> HTTPS/TLS та безпека транспорту</li>
+                            <li><strong>1.5</strong> Безпека REST/GraphQL API</li>
+                            <li><strong>1.6</strong> WAF, кращі практики, кейс AWS</li>
                         </ol>
-                        <h3 style="margin-top:0.5em;">☁️ Частина 3 — Cloud / DevSecOps (~8 слайдів)</h3>
-                        <ol start="7" style="font-size:0.88em;">
-                            <li>AWS WAF, Shield, CloudFront</li>
-                            <li>DevSecOps Pipeline (Shift-Left)</li>
-                            <li>Compliance: PCI DSS, GDPR, NIS2</li>
-                            <li>Чек-лист та підсумок</li>
+                        <h3 style="margin-top:0.4em;">📡 Частина 2 — Безпека телекому (~25 слайдів)</h3>
+                        <ol style="font-size:0.86em;">
+                            <li><strong>2.1</strong> Архітектура мережі та загрози</li>
+                            <li><strong>2.2</strong> SS7 — атаки та захист</li>
+                            <li><strong>2.3</strong> Diameter, GTP, VoIP, SIP, SMS</li>
+                            <li><strong>2.4</strong> 5G Security, Telecom API</li>
+                            <li><strong>2.5</strong> MVNO, роумінг, Fraud, DDoS</li>
+                            <li><strong>2.6</strong> BSS/OSS, IoT, Zero Trust, NFV</li>
                         </ol>
                     </div>
                     <div>
-                        <h3>📡 Частина 2 — Безпека телеком (~25 слайдів)</h3>
-                        <ol start="11" style="font-size:0.88em;">
-                            <li>Архітектура мережі та загрози</li>
-                            <li>SS7 — атаки та захист</li>
-                            <li>Diameter, GTP</li>
-                            <li>VoIP, SIP, SMS</li>
-                            <li>5G Security Architecture</li>
-                            <li>Telecom API, мобільні застосунки</li>
-                            <li>MVNO, роумінг, API Gateway</li>
-                            <li>Fraud, Signaling Firewall, LI</li>
-                            <li>DDoS, моніторинг, крипто</li>
-                            <li>BSS/OSS, IoT, Zero Trust, NFV</li>
-                            <li>Соціальна інженерія, тестування</li>
+                        <h3>☁️ Частина 3 — Cloud / DevSecOps (~8 слайдів)</h3>
+                        <ol style="font-size:0.86em;">
+                            <li><strong>3.1</strong> AWS WAF, Shield, CloudFront</li>
+                            <li><strong>3.2</strong> DevSecOps Pipeline (Shift-Left)</li>
+                            <li><strong>3.3</strong> Compliance: PCI DSS, GDPR, NIS2</li>
+                            <li><strong>3.4</strong> Чек-лист та підсумок</li>
                         </ol>
+                        <div class="box" style="border-color:#1f6feb; margin-top:0.5em;">
+                            <h3>📌 Цілі навчання</h3>
+                            <ul style="font-size:0.82em;">
+                                <li>Описати OWASP Top 10 та механізм захисту</li>
+                                <li>Пояснити атаки SS7/Diameter/SIP та захист</li>
+                                <li>Порівняти безпеку 4G та 5G</li>
+                                <li>Налаштовувати AWS WAF + API Gateway</li>
+                                <li>Будувати DevSecOps CI/CD pipeline</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -702,43 +727,42 @@ resource "aws_wafv2_web_acl" "app_waf" {
                 <div class="two-col">
                     <div>
                         <h3>🛡️ Три категорії захисту (GSMA FS.11)</h3>
-                        <pre><code>Категорія 1 (мінімум):
-  → Блокувати PSI/SRI від сторонніх мереж
-  → SMS Home Routing — всі SMS через SMSC оператора
-
-Категорія 2 (рекомендовано):
-  → Detect UpdateLocation з нерідних PLMN
-  → Виявлення аномалій у CDR-потоках
-
-Категорія 3 (просунутий):
-  → ML + поведінковий аналіз
-  → Кореляція SS7 + IP + CDR
-  → Автоматичне блокування підозрілих транзакцій</code></pre>
+                        <table>
+                            <thead><tr><th>Категорія</th><th>Рівень</th><th>Ключові заходи</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>Cat 1</strong></td><td>Мінімум</td><td>Блокувати PSI/SRI від чужих мереж; SMS Home Routing</td></tr>
+                                <tr><td><strong>Cat 2</strong></td><td>Рекомендовано</td><td>Detect UpdateLocation з нерідних PLMN; CDR-аномалії</td></tr>
+                                <tr><td><strong>Cat 3</strong></td><td>Просунутий</td><td>ML + поведінковий аналіз; кореляція SS7+IP+CDR</td></tr>
+                            </tbody>
+                        </table>
                         <h3 style="margin-top:0.3em;">📋 GSMA документи</h3>
                         <table>
-                            <thead><tr><th>Документ</th><th>Зміст</th></tr></thead>
+                            <thead><tr><th>Документ</th><th>Сфера</th></tr></thead>
                             <tbody>
-                                <tr><td><strong>GSMA FS.11</strong></td><td>SS7 — категорії загроз та контрзаходи</td></tr>
-                                <tr><td><strong>GSMA FS.19</strong></td><td>Diameter security guidelines</td></tr>
-                                <tr><td><strong>GSMA FS.07</strong></td><td>Захист HLR/HSS від несанкціонованого доступу</td></tr>
+                                <tr><td><strong>GSMA FS.11</strong></td><td>SS7 — загрози та контрзаходи</td></tr>
+                                <tr><td><strong>GSMA FS.19</strong></td><td>Diameter security</td></tr>
+                                <tr><td><strong>GSMA FS.07</strong></td><td>Захист HLR/HSS</td></tr>
                             </tbody>
                         </table>
                     </div>
                     <div>
                         <h3>🔧 Стратегічний захист</h3>
                         <ul style="font-size:0.85em;">
-                            <li><span class="highlight">SS7 Firewall</span> — фільтрація аномальних MAP-повідомлень на кордоні</li>
-                            <li><span class="highlight">SMS Home Routing</span> — обов'язковий мінімум для кожного оператора</li>
-                            <li><span class="highlight">Постійний моніторинг</span> — аналіз сигнального трафіку 24/7</li>
-                            <li><span class="highlight">Міграція на 5G</span> — захищена архітектура SEPP замінює SS7-роумінг</li>
+                            <li><span class="highlight">SS7 Firewall</span> — фільтрація аномальних MAP-повідомлень</li>
+                            <li><span class="highlight">SMS Home Routing</span> — обов'язковий мінімум</li>
+                            <li><span class="highlight">Постійний моніторинг</span> — 24/7 аналіз сигналізації</li>
+                            <li><span class="highlight">Міграція на 5G</span> — SEPP замінює SS7-роумінг</li>
                         </ul>
                         <div class="box" style="border-color:#e8b04b; margin-top:0.3em;">
-                            <h3>⚠️ Реальні збитки</h3>
-                            <p style="font-size:0.8em;">SS7-атаки на банки: крадіжка Bitcoin через 2FA (2017, Telefónica Германія). Прослуховування депутатів Бундестагу (2014). Злом акаунту конгресмена США (2016). Доступ до SS7: ~$1000/міс через сірих операторів.</p>
+                            <h3>⚠️ Реальні випадки</h3>
+                            <ul style="font-size:0.78em;">
+                                <li>Bitcoin 2FA крадіжка (2017, Telefónica DE)</li>
+                                <li>Прослуховування Бундестагу (2014)</li>
+                                <li>Злом акаунту конгресмена США (2016)</li>
+                            </ul>
                         </div>
                         <div class="box" style="border-color:#1f6feb; margin-top:0.25em;">
-                            <h3>📌 GSMA T-ISAC</h3>
-                            <p style="font-size:0.78em;">Telecom Information Sharing and Analysis Centre — обмін IOC між операторами для спільної боротьби з SS7-атаками в реальному часі.</p>
+                            <p style="font-size:0.78em;"><span class="highlight">GSMA T-ISAC</span> — Telecom ISAC: обмін IOC між операторами в реальному часі.</p>
                         </div>
                     </div>
                 </div>
@@ -838,44 +862,41 @@ resource "aws_wafv2_web_acl" "app_waf" {
                 <h2>SIP — Атаки та Session Border Controller</h2>
                 <div class="two-col">
                     <div>
-                        <h3>💥 Зведена таблиця атак на SIP</h3>
+                        <h3>💥 Атаки на SIP</h3>
                         <table>
-                            <thead><tr><th>Атака</th><th>Метод</th><th>Наслідок</th><th>Захист</th></tr></thead>
+                            <thead><tr><th>Атака</th><th>Наслідок</th><th>Захист</th></tr></thead>
                             <tbody>
-                                <tr><td><strong>Registration Hijacking</strong></td><td>REGISTER з підробленим From</td><td>Крадіжка ідентичності</td><td>Digest auth + TLS</td></tr>
-                                <tr><td><strong>INVITE Flooding</strong></td><td>Масові INVITE</td><td>DoS SIP proxy</td><td>Rate limiting, SBC</td></tr>
-                                <tr><td><strong>RTP Injection</strong></td><td>Вставка в медіа-потік</td><td>Спотворення аудіо</td><td>SRTP</td></tr>
-                                <tr><td><strong>Toll Fraud</strong></td><td>Несанкціонований INVITE</td><td>Фінансові втрати</td><td>Auth + ACL</td></tr>
-                                <tr><td><strong>Eavesdropping</strong></td><td>Пасивне прослуховування RTP</td><td>Запис дзвінків</td><td>SRTP + SIPS</td></tr>
-                                <tr><td><strong>SIP Scanning</strong></td><td>OPTIONS/REGISTER probe</td><td>Розкриття структури</td><td>Fail2ban, SBC</td></tr>
+                                <tr><td><strong>Registration Hijacking</strong></td><td>Крадіжка ідентичності</td><td>Digest auth + TLS</td></tr>
+                                <tr><td><strong>INVITE Flooding</strong></td><td>DoS SIP proxy</td><td>Rate limiting, SBC</td></tr>
+                                <tr><td><strong>RTP Injection</strong></td><td>Спотворення аудіо</td><td>SRTP</td></tr>
+                                <tr><td><strong>Toll Fraud</strong></td><td>Фінансові втрати</td><td>Auth + ACL</td></tr>
+                                <tr><td><strong>Eavesdropping</strong></td><td>Запис дзвінків</td><td>SRTP + SIPS</td></tr>
+                                <tr><td><strong>SIP Scanning</strong></td><td>Розкриття структури</td><td>Fail2ban, SBC</td></tr>
                             </tbody>
                         </table>
-                        <h3 style="margin-top:0.3em;">📋 Стандарти безпеки VoIP</h3>
+                        <h3 style="margin-top:0.3em;">📋 Ключові стандарти</h3>
                         <ul style="font-size:0.82em;">
-                            <li><strong>RFC 3261</strong> — базовий SIP протокол</li>
-                            <li><strong>RFC 5630</strong> — SIPS URI (SIP over TLS)</li>
-                            <li><strong>RFC 3711</strong> — SRTP (Secure RTP)</li>
-                            <li><strong>ETSI TS 133 203</strong> — 3GPP IMS безпека</li>
+                            <li><strong>RFC 3261</strong> — базовий SIP</li>
+                            <li><strong>RFC 5630</strong> — SIPS (SIP over TLS)</li>
+                            <li><strong>RFC 3711</strong> — SRTP</li>
+                            <li><strong>ETSI TS 133 203</strong> — IMS безпека</li>
                         </ul>
                     </div>
                     <div>
                         <h3>🔒 Session Border Controller (SBC)</h3>
-                        <p style="font-size:0.82em;">SBC — граничний елемент між внутрішньою SIP-мережею та зовнішнім світом. Аналог WAF для VoIP.</p>
+                        <p style="font-size:0.82em;">SBC — граничний елемент між SIP-мережею та зовнішнім світом. Аналог WAF для VoIP.</p>
                         <ul style="font-size:0.85em;">
                             <li><span class="highlight">Нормалізація SIP</span> — виправлення некоректних заголовків</li>
-                            <li><span class="highlight">Rate limiting та антифлуд</span> — блокування INVITE/REGISTER flood</li>
-                            <li><span class="highlight">TLS термінація</span> — шифрування SIP-сигналізації</li>
-                            <li><span class="highlight">Topology hiding</span> — приховування внутрішньої архітектури</li>
-                            <li><span class="highlight">Медіа relay</span> — транскодування, SRTP → RTP</li>
+                            <li><span class="highlight">Rate limiting / антифлуд</span></li>
+                            <li><span class="highlight">TLS термінація</span> SIP-сигналізації</li>
+                            <li><span class="highlight">Topology hiding</span></li>
+                            <li><span class="highlight">Медіа relay</span> (SRTP ↔ RTP)</li>
                         </ul>
-                        <div class="box" style="border-color:#238636; margin-top:0.3em;">
-                            <h3>SIPVicious — Інструмент пентесту</h3>
-                            <pre><code># Сканування SIP-пристроїв у мережі
-svmap.py 192.168.1.0/24
-# Enumeration розширень
-svwar.py -e100-200 192.168.1.100
-# Brute-force PIN
-svcrack.py -u100 192.168.1.100</code></pre>
+                        <div class="box" style="border-color:#e8b04b; margin-top:0.3em;">
+                            <h3>SIPVicious — Пентест SIP</h3>
+                            <pre><code>svmap.py 192.168.1.0/24   # scan
+svwar.py -e100-200 ip     # enumerate
+svcrack.py -u100 ip       # brute</code></pre>
                         </div>
                     </div>
                 </div>
@@ -935,39 +956,35 @@ svcrack.py -u100 192.168.1.100</code></pre>
                 <div class="two-col">
                     <div>
                         <h3>📦 GPRS Tunneling Protocol (GTP)</h3>
-                        <p style="font-size:0.82em;">GTP — протокол тунелювання пакетних даних між SGSN↔GGSN (3G) та eNodeB↔SGW↔PGW (4G). Дві версії:</p>
                         <ul style="font-size:0.82em;">
-                            <li><span class="highlight">GTP-C</span> (Control Plane) — управління PDP-контекстами, сесіями</li>
-                            <li><span class="highlight">GTP-U</span> (User Plane) — тунелювання даних абонентів</li>
+                            <li><span class="highlight">GTP-C</span> — Control Plane: управління сесіями (Create/Delete)</li>
+                            <li><span class="highlight">GTP-U</span> — User Plane: тунелювання даних абонентів</li>
                         </ul>
                         <h3 style="margin-top:0.3em;">💥 GTP атаки</h3>
-                        <div class="box" style="border-color:#da3633;">
-                            <ul style="font-size:0.82em;">
-                                <li><span class="highlight">GTP-C Flooding</span> — DoS на SGW/PGW через фальшиві Create Session Request</li>
-                                <li><span class="highlight">Tunnel Hijacking</span> — перехоплення GTP-U тунелю (TEID guessing)</li>
-                                <li><span class="highlight">IP Spoofing через GTP</span> — підмінний inner IP у GTP-U тунелі</li>
-                                <li><span class="highlight">Billing Fraud</span> — маніпуляція з MSISDN / IMSI у GTP-C запитах</li>
-                                <li><span class="highlight">Inter-PLMN атаки</span> — через роумінгові GTP-з'єднання</li>
-                            </ul>
-                        </div>
+                        <table>
+                            <thead><tr><th>Атака</th><th>Наслідок</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>GTP-C Flooding</strong></td><td>DoS на SGW/PGW</td></tr>
+                                <tr><td><strong>Tunnel Hijacking</strong></td><td>Перехоплення трафіку (TEID)</td></tr>
+                                <tr><td><strong>IP Spoofing via GTP-U</strong></td><td>Обхід firewall</td></tr>
+                                <tr><td><strong>Billing Fraud</strong></td><td>Маніпуляція MSISDN/IMSI</td></tr>
+                                <tr><td><strong>Inter-PLMN атаки</strong></td><td>Через роумінгові з'єднання</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div>
                         <h3>🛡️ Захист GTP</h3>
                         <ul style="font-size:0.85em;">
-                            <li><span class="highlight">GTP Firewall</span> — інспекція та фільтрація GTP-C повідомлень</li>
+                            <li><span class="highlight">GTP Firewall</span> — інспекція GTP-C запитів</li>
                             <li><span class="highlight">GSMA FS.20</span> — GTP Security Guidelines</li>
-                            <li>Whitelist SGW/PGW peer IP-адрес</li>
-                            <li>Rate limiting Create Session Request per source</li>
-                            <li>Перевірка відповідності IMSI/MSISDN/APN</li>
-                            <li>IPsec між PLMN вузлами для роумінгу</li>
-                            <li>Anomaly detection: нетипові APN, геолокаційні невідповідності</li>
+                            <li>Whitelist SGW/PGW IP-адрес</li>
+                            <li>Rate limiting Create Session per source</li>
+                            <li>Перевірка IMSI/MSISDN/APN відповідності</li>
+                            <li>IPsec між PLMN для роумінгу</li>
                         </ul>
                         <div class="box" style="border-color:#e8b04b; margin-top:0.3em;">
-                            <h3>GTP у 5G (GTP-U у N3/N9)</h3>
-                            <p style="font-size:0.78em;">У 5G GTP-U залишається для тунелювання між gNB та UPF (інтерфейс N3). Додатковий захист: PFCP (N4) для управління UPF від SMF з TLS. GSMA CLP.11 визначає вимоги безпеки для 5G User Plane.</p>
-                        </div>
-                        <div class="box" style="border-color:#1f6feb; margin-top:0.25em;">
-                            <p style="font-size:0.78em;"><span class="highlight">AWS Telecom:</span> AWS Outposts та AWS Private 5G надають ізольовану мережу з керованим GTP-ядром та вбудованим моніторингом трафіку через VPC Flow Logs та Network Firewall.</p>
+                            <h3>GTP у 5G (N3/N9)</h3>
+                            <p style="font-size:0.78em;">У 5G GTP-U зберігається між gNB та UPF (N3). SMF управляє UPF через PFCP (N4) з TLS. GSMA CLP.11 — вимоги безпеки 5G User Plane.</p>
                         </div>
                     </div>
                 </div>
@@ -1068,41 +1085,36 @@ svcrack.py -u100 192.168.1.100</code></pre>
                 <h2>Telecom API та відкриті інтерфейси</h2>
                 <div class="two-col">
                     <div>
-                        <h3>🔌 Нові відкриті Telecom API</h3>
-                        <div class="box" style="border-color:#1f6feb;">
-                            <p style="font-size:0.82em;"><span class="highlight">GSMA Open Gateway / CAMARA</span></p>
-                            <p style="font-size:0.78em;">Стандартизовані API для надання мережевих можливостей розробникам. Відкрито через CAMARA (Linux Foundation + операторська спільнота).</p>
-                            <ul style="font-size:0.78em;">
-                                <li>SIM Swap Detection API</li>
-                                <li>Number Verification API</li>
-                                <li>Device Location API</li>
-                                <li>Quality on Demand (QoD) API</li>
-                                <li>Network Slice Booking API</li>
-                            </ul>
-                        </div>
-                        <div class="box" style="border-color:#e8b04b; margin-top:0.3em;">
-                            <p style="font-size:0.82em;"><span class="highlight">3GPP NEF — Network Exposure Function</span></p>
-                            <p style="font-size:0.78em;">NEF є шлюзом між зовнішніми AF (Application Functions) та внутрішніми 5G NF. Контролює доступ через OAuth 2.0 та Policy-based filtering.</p>
-                        </div>
+                        <h3>🔌 GSMA Open Gateway / CAMARA</h3>
+                        <ul style="font-size:0.85em;">
+                            <li><span class="highlight">SIM Swap Detection</span> — чи змінювалась SIM нещодавно</li>
+                            <li><span class="highlight">Number Verification</span> — підтвердження MSISDN</li>
+                            <li><span class="highlight">Device Location</span> — геопозиція пристрою</li>
+                            <li><span class="highlight">Quality on Demand</span> — бронювання QoS</li>
+                            <li><span class="highlight">Network Slice Booking</span> — slice для B2B</li>
+                        </ul>
+                        <h3 style="margin-top:0.3em;">3GPP NEF — Network Exposure Function</h3>
+                        <p style="font-size:0.82em;">NEF — шлюз між AF (Application Functions) та 5G NF. Контролює доступ через OAuth 2.0.</p>
                     </div>
                     <div>
-                        <h3>⚠️ Ризики Telecom API</h3>
-                        <ul style="font-size:0.85em;">
-                            <li><span class="highlight">API Abuse</span> — масовий збір даних про абонентів через Location API</li>
-                            <li><span class="highlight">Broken Auth</span> — слабкі OAuth scopes, відсутність consent управління</li>
-                            <li><span class="highlight">Data Harvesting</span> — агрегація SIM Swap / Location для targeted attacks</li>
-                            <li><span class="highlight">Rate Limit Bypass</span> — обхід лімітів через кілька акаунтів</li>
-                            <li><span class="highlight">Fraudulent API Calls</span> — несанкціоновані дзвінки через Voice API</li>
-                        </ul>
-                        <h3 style="margin-top:0.4em;">🛡️ Захист Telecom API</h3>
-                        <ul style="font-size:0.85em;">
-                            <li>OAuth 2.0 з scope прив'язкою до конкретних абонентів</li>
-                            <li>Subscriber Consent Management — явна згода на використання Location/SIM API</li>
-                            <li>Rate limiting + anomaly detection per API key</li>
-                            <li>Audit log усіх API-звернень з метаданими</li>
-                            <li>AWS API Gateway + WAF як зовнішній шлюз</li>
-                            <li>GSMA FS.40 — API Security Guidelines</li>
-                        </ul>
+                        <h3>⚠️ Ризики та захист API</h3>
+                        <table>
+                            <thead><tr><th>Ризик</th><th>Захист</th></tr></thead>
+                            <tbody>
+                                <tr><td>API Abuse / Data Harvesting</td><td>Rate limit + consent mgmt</td></tr>
+                                <tr><td>Broken OAuth scopes</td><td>Scope прив'язка до абонента</td></tr>
+                                <tr><td>Rate Limit Bypass</td><td>Per API key anomaly detection</td></tr>
+                                <tr><td>Fraudulent API Calls</td><td>Audit log + WAF</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="box" style="border-color:#238636; margin-top:0.3em;">
+                            <h3>AWS для Telecom API</h3>
+                            <ul style="font-size:0.78em;">
+                                <li>API Gateway + Lambda Authorizer (JWT/IMSI)</li>
+                                <li>WAF + rate-based rules</li>
+                                <li>GSMA FS.40 — API Security Guidelines</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -1200,58 +1212,44 @@ svcrack.py -u100 192.168.1.100</code></pre>
                 <h2>AWS API Gateway для телекому</h2>
                 <div class="two-col">
                     <div>
-                        <h3>⚙️ Можливості AWS API Gateway</h3>
+                        <h3>⚙️ Ключові можливості</h3>
                         <ul style="font-size:0.85em;">
-                            <li><span class="highlight">REST / HTTP / WebSocket API</span> — три типи шлюзів для різних сценаріїв</li>
-                            <li><span class="highlight">Throttling</span> — Rate limit на рівні методу, ресурсу, API key</li>
-                            <li><span class="highlight">Usage Plans</span> — квоти та burst limits для партнерів/MVNO</li>
-                            <li><span class="highlight">Lambda / HTTP Authorizers</span> — кастомна авторизація (JWT, API Key, IMSI-based)</li>
-                            <li><span class="highlight">AWS WAF Integration</span> — L7 захист безпосередньо на шлюзі</li>
-                            <li><span class="highlight">Request Validation</span> — перевірка схеми JSON/OpenAPI до backend</li>
-                            <li><span class="highlight">VPC Link</span> — приватний доступ до telecom backend у VPC</li>
+                            <li><span class="highlight">REST / HTTP / WebSocket API</span></li>
+                            <li><span class="highlight">Throttling</span> — rate limit per метод/ресурс/key</li>
+                            <li><span class="highlight">Usage Plans</span> — квоти для партнерів/MVNO</li>
+                            <li><span class="highlight">Lambda Authorizer</span> — JWT, API Key, IMSI-based auth</li>
+                            <li><span class="highlight">AWS WAF Integration</span> — L7 захист на шлюзі</li>
+                            <li><span class="highlight">VPC Link</span> — приватний доступ до telecom VPC</li>
                         </ul>
-                        <div class="box" style="border-color:#1f6feb; margin-top:0.3em;">
-                            <h3>Архітектура для BSS/OSS API</h3>
-                            <p style="font-size:0.78em; text-align:center;">
-                                External App / Partner<br>↓ HTTPS + API Key + JWT<br>
-                                <strong>API Gateway</strong> (WAF + Authorizer + Throttling)<br>↓ VPC Link<br>
-                                <strong>NLB → BSS/OSS Microservices</strong> (Private VPC)<br>↓<br>
-                                <strong>RDS / ElastiCache / DynamoDB</strong>
-                            </p>
+                        <h3 style="margin-top:0.3em;">🏗️ Архітектура BSS/OSS API</h3>
+                        <div class="mermaid" style="font-size:0.5em;">
+graph LR
+    A[Partner / MVNO] -->|HTTPS + JWT| B[API Gateway<br/>WAF + Authorizer]
+    B -->|VPC Link| C[NLB]
+    C --> D[BSS Microservices<br/>ECS Fargate]
+    D --> E[(Aurora / DynamoDB)]
                         </div>
                     </div>
                     <div>
-                        <h3>📋 Конфігурація безпеки API Gateway</h3>
-                        <pre><code># Terraform — API GW з Authorizer + WAF
-resource "aws_api_gateway_rest_api" "telecom_api" {
-  name = "telecom-bss-api"
-}
-
-resource "aws_api_gateway_authorizer" "jwt_auth" {
-  name                   = "jwt-authorizer"
-  rest_api_id            = aws_api_gateway_rest_api.telecom_api.id
-  type                   = "TOKEN"
-  authorizer_uri         = aws_lambda_function.authorizer.invoke_arn
-  identity_source        = "method.request.header.Authorization"
+                        <h3>📋 Конфігурація (Terraform)</h3>
+                        <pre><code>resource "aws_api_gateway_authorizer" "jwt" {
+  name        = "jwt-authorizer"
+  type        = "TOKEN"
+  authorizer_uri = aws_lambda_function
+                   .authorizer.invoke_arn
+  identity_source = "method.request
+                     .header.Authorization"
   authorizer_result_ttl_in_seconds = 300
 }
-
 resource "aws_api_gateway_usage_plan" "partner" {
-  name = "partner-plan"
   throttle_settings {
     burst_limit = 100
     rate_limit  = 50
   }
   quota_settings {
-    limit  = 10000
-    period = "DAY"
+    limit = 10000; period = "DAY"
   }
 }</code></pre>
-                        <ul style="font-size:0.78em; margin-top:0.3em;">
-                            <li>CloudWatch Logs для кожного запиту: latency, status, IP</li>
-                            <li>X-Ray tracing для end-to-end діагностики</li>
-                            <li>Client certificates для mTLS (mutual TLS)</li>
-                        </ul>
                     </div>
                 </div>
             </section>
@@ -1569,38 +1567,36 @@ SSDP: 30B  запит → 300B   відповідь → 10x</code></pre>
                 <h2>Практичний кейс: захист BSS/OSS у AWS</h2>
                 <div class="two-col">
                     <div>
-                        <h3>🏗️ Типова BSS/OSS архітектура в хмарі</h3>
-                        <div class="box" style="border-color:#1f6feb;">
-                            <p style="font-size:0.8em; text-align:center;">
-                                🌐 <strong>Партнери / MVNO / Портал</strong><br>↓ HTTPS<br>
-                                🔥 <strong>AWS WAF</strong> + <span class="highlight">API Gateway</span><br>↓ JWT Auth + Rate Limit<br>
-                                🔒 <strong>AWS PrivateLink</strong> / VPC Link<br>↓<br>
-                                🖥️ <strong>BSS Microservices</strong> (ECS Fargate, Private VPC)<br>
-                                &nbsp;&nbsp;&nbsp;├── Billing / CRM / Provisioning<br>
-                                &nbsp;&nbsp;&nbsp;└── Mediation / Rating Engine<br>↓<br>
-                                🗄️ <strong>Aurora PostgreSQL</strong> (encrypted, Multi-AZ)<br>
-                                📦 <strong>S3</strong> (CDR archive, encrypted + VPC Endpoint)
-                            </p>
+                        <h3>🏗️ Архітектура в хмарі</h3>
+                        <div class="mermaid">
+flowchart TD
+    A[🌐 Партнери / MVNO\nПортал абонентів] -->|HTTPS| B[🔥 AWS WAF\nAPI Gateway]
+    B -->|JWT Auth\nRate Limit| C[🔒 AWS PrivateLink\nVPC Link]
+    C --> D[🖥️ BSS Microservices\nECS Fargate]
+    D --> E1[(Aurora PostgreSQL\nMulti-AZ, encrypted)]
+    D --> E2[(S3 CDR Archive\nKMS + VPC Endpoint)]
+    style A fill:#1f6feb,color:#fff
+    style B fill:#da3633,color:#fff
+    style C fill:#e8b04b,color:#000
+    style D fill:#238636,color:#fff
                         </div>
                     </div>
                     <div>
-                        <h3>🔐 Security Controls для BSS/OSS</h3>
+                        <h3>🔐 Security Controls</h3>
                         <ul style="font-size:0.85em;">
-                            <li><span class="highlight">VPC Isolation</span> — BSS/OSS у приватних підмережах, без публічних IP</li>
-                            <li><span class="highlight">AWS PrivateLink</span> — доступ до сервісів без виходу в інтернет</li>
-                            <li><span class="highlight">IAM Roles</span> — кожен мікросервіс має окрему IAM роль з мінімальними правами</li>
-                            <li><span class="highlight">Secrets Manager</span> — ротація DB credentials, API ключів</li>
-                            <li><span class="highlight">KMS</span> — шифрування CDR в S3, RDS storage</li>
-                            <li><span class="highlight">VPC Flow Logs</span> — аналіз мережевого трафіку</li>
+                            <li><span class="highlight">VPC Isolation</span> — BSS у приватних підмережах</li>
+                            <li><span class="highlight">AWS PrivateLink</span> — без виходу в інтернет</li>
+                            <li><span class="highlight">IAM Roles</span> — окрема роль для кожного мікросервісу</li>
+                            <li><span class="highlight">Secrets Manager</span> — ротація DB credentials</li>
+                            <li><span class="highlight">KMS</span> — шифрування CDR в S3 та RDS</li>
                             <li><span class="highlight">CloudTrail</span> — аудит усіх API-звернень</li>
                         </ul>
                         <div class="box" style="border-color:#238636; margin-top:0.3em;">
                             <h3>Compliance для BSS/OSS</h3>
                             <ul style="font-size:0.78em;">
-                                <li>PCI DSS — якщо обробляються платіжні картки</li>
-                                <li>GDPR / Закон про захист персональних даних — CDR містять персональні дані</li>
-                                <li>Telecom-specific: ETSI TS 102 232 (lawful interception)</li>
-                                <li>AWS compliance reports: SOC 2, ISO 27001 через Artifact</li>
+                                <li>PCI DSS — платіжні картки</li>
+                                <li>GDPR — CDR як персональні дані</li>
+                                <li>ETSI TS 102 232 — Lawful Interception</li>
                             </ul>
                         </div>
                     </div>
@@ -1656,39 +1652,35 @@ SSDP: 30B  запит → 300B   відповідь → 10x</code></pre>
                 <div class="two-col">
                     <div>
                         <h3>📡 IoT у телеком-мережах</h3>
-                        <p style="font-size:0.82em;">Телеком-оператори є основними провайдерами підключення для IoT: NB-IoT, LTE-M, Cat-M1 через ядро LTE/5G.</p>
-                        <h3 style="margin-top:0.3em;">⚠️ IoT ризики</h3>
-                        <ul style="font-size:0.82em;">
-                            <li><span class="highlight">Слабкі credentials</span> — default паролі на IoT-пристроях</li>
-                            <li><span class="highlight">Відсутність оновлень</span> — пристрої без OTA update механізму</li>
-                            <li><span class="highlight">Незахищений транспорт</span> — дані передаються без TLS</li>
-                            <li><span class="highlight">SIM misuse</span> — викрадені IoT SIM для шахрайських дзвінків</li>
-                            <li><span class="highlight">Botnet через IoT</span> — Mirai-подібні атаки через незахищені пристрої</li>
-                            <li><span class="highlight">Physical tampering</span> — несанкціонований доступ до пристрою</li>
-                        </ul>
-                        <div class="box" style="border-color:#da3633; margin-top:0.3em;">
-                            <p style="font-size:0.78em;"><span class="highlight">Масштаб:</span> 15+ млрд IoT-пристроїв (2024), очікується 30 млрд до 2030. Telecom забезпечує ~30% підключень.</p>
-                        </div>
+                        <p style="font-size:0.82em;">Оператори — основні провайдери IoT-підключень: NB-IoT, LTE-M через ядро LTE/5G. Очікується 30 млрд пристроїв до 2030.</p>
+                        <h3 style="margin-top:0.3em;">⚠️ Основні ризики IoT</h3>
+                        <table>
+                            <thead><tr><th>Ризик</th><th>Приклад</th></tr></thead>
+                            <tbody>
+                                <tr><td>Слабкі credentials</td><td>Default паролі на пристроях</td></tr>
+                                <tr><td>Відсутність OTA update</td><td>Незакриті вразливості роками</td></tr>
+                                <tr><td>Незахищений транспорт</td><td>Дані без TLS</td></tr>
+                                <tr><td>SIM misuse</td><td>IoT SIM для шахрайства</td></tr>
+                                <tr><td>IoT Botnet (Mirai)</td><td>DDoS через незахищені пристрої</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div>
                         <h3>🛡️ Захист IoT/M2M</h3>
                         <ul style="font-size:0.85em;">
-                            <li><span class="highlight">LwM2M (OMA)</span> — стандартний протокол управління IoT-пристроями з DTLS</li>
-                            <li><span class="highlight">DTLS 1.3</span> — TLS для UDP (CoAP/MQTT over DTLS)</li>
-                            <li><span class="highlight">eSIM / iSIM</span> — захищена ідентифікація, remote provisioning (GSMA SGP.02)</li>
-                            <li><span class="highlight">PKI для IoT</span> — certificate-based автентифікація замість паролів</li>
-                            <li><span class="highlight">Zero Trust для IoT</span> — кожен пристрій ізольований, мінімальні права</li>
-                            <li>Сегрегація IoT трафіку через окремий APN / VLAN</li>
-                            <li>Регулярне OTA firmware оновлення з підписом</li>
+                            <li><span class="highlight">LwM2M (OMA)</span> — управління IoT з DTLS</li>
+                            <li><span class="highlight">DTLS 1.3</span> — TLS для UDP (CoAP/MQTT)</li>
+                            <li><span class="highlight">eSIM / iSIM</span> — захищена ідентифікація (GSMA SGP.02)</li>
+                            <li><span class="highlight">PKI для IoT</span> — certificate-based auth</li>
+                            <li>Сегрегація IoT через окремий APN / VLAN</li>
+                            <li>OTA firmware з підписом</li>
                         </ul>
                         <div class="box" style="border-color:#1f6feb; margin-top:0.3em;">
-                            <h3>AWS IoT Core для телеком</h3>
+                            <h3>AWS IoT Core</h3>
                             <ul style="font-size:0.78em;">
-                                <li>X.509 certificate authentication для кожного пристрою</li>
-                                <li>MQTT over TLS + IoT Device Policies (IAM-like)</li>
-                                <li>Device Defender — аномалійне виявлення на рівні пристрою</li>
-                                <li>IoT Jobs — безпечні OTA-оновлення з підписом</li>
-                                <li>Fleet Hub — централізований моніторинг мільйонів пристроїв</li>
+                                <li>X.509 cert auth + IoT Device Policies</li>
+                                <li>Device Defender — anomaly detection</li>
+                                <li>IoT Jobs — безпечні OTA-оновлення</li>
                             </ul>
                         </div>
                     </div>
@@ -2075,50 +2067,68 @@ jobs:
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 47: Підсумок та питання ===== -->
+            <!-- ===== СЛАЙД 47: Ключові висновки ===== -->
             <section>
-                <h2>Підсумок лекції 7</h2>
+                <h2>Ключові висновки лекції 7</h2>
                 <div class="two-col">
                     <div>
-                        <h3>🎯 Ключові висновки</h3>
                         <div class="box" style="border-color:#1f6feb;">
-                            <p style="font-size:0.82em;"><span class="highlight">🌐 Веб-безпека:</span></p>
-                            <ul style="font-size:0.78em;">
+                            <p style="font-size:0.88em;"><span class="highlight">🌐 Веб-безпека</span></p>
+                            <ul style="font-size:0.82em;">
                                 <li>OWASP Top 10 — базовий стандарт ризиків веб-застосунків</li>
-                                <li>Ін'єкції запобігаються Prepared Statements, WAF, Input Validation</li>
+                                <li>Ін'єкції → Prepared Statements + WAF + Input Validation</li>
                                 <li>OAuth 2.0 + PKCE + MFA — сучасна автентифікація</li>
-                                <li>AWS WAF + CloudFront + Shield — комплексний хмарний захист</li>
+                                <li>AWS WAF + CloudFront + Shield — хмарний периметр</li>
                             </ul>
                         </div>
-                        <div class="box" style="border-color:#e8b04b; margin-top:0.25em;">
-                            <p style="font-size:0.82em;"><span class="highlight">📡 Телеком-безпека:</span></p>
-                            <ul style="font-size:0.78em;">
-                                <li>SS7/Diameter — legacy протоколи без вбудованої безпеки → Signaling Firewall</li>
-                                <li>5G значно покращує безпеку: SUCI, SEPP, NRF OAuth, 5G-AKA</li>
+                        <div class="box" style="border-color:#e8b04b; margin-top:0.4em;">
+                            <p style="font-size:0.88em;"><span class="highlight">📡 Телеком-безпека</span></p>
+                            <ul style="font-size:0.82em;">
+                                <li>SS7/Diameter — legacy без безпеки → Signaling Firewall</li>
+                                <li>5G: SUCI, SEPP, NRF OAuth, 5G-AKA — значно кращий захист</li>
                                 <li>SMS OTP ненадійний → FIDO2/WebAuthn, TOTP</li>
-                                <li>Zero Trust + mTLS — новий стандарт для хмарного телеком-ядра</li>
+                                <li>Telecom Fraud: $38.95B/рік → FMS + CDR-аналіз</li>
                             </ul>
                         </div>
                     </div>
                     <div>
-                        <h3>🔗 Зв'язки з курсом</h3>
-                        <div class="box" style="border-color:#444;">
+                        <div class="box" style="border-color:#238636;">
+                            <p style="font-size:0.88em;"><span class="highlight">☁️ Cloud / DevSecOps</span></p>
                             <ul style="font-size:0.82em;">
-                                <li>← <span class="highlight">Лекція 5:</span> KMS для шифрування API ключів та CDR в S3</li>
-                                <li>← <span class="highlight">Лекція 6:</span> EKS/Kubernetes для 5G NF, Lambda для Telecom API</li>
-                                <li>→ <span class="highlight">Лекція 8:</span> GuardDuty, CloudTrail, SIEM для моніторингу веб та телеком загроз</li>
+                                <li>Zero Trust + mTLS — стандарт для хмарного телеком-ядра</li>
+                                <li>Shift-left: SAST+SCA в CI, DAST на staging</li>
+                                <li>NIS2 + GSMA FS.11 + PCI DSS — регуляторна відповідність</li>
+                                <li>DevSecOps pipeline включає Protocol Fuzzing для телеком</li>
                             </ul>
                         </div>
-                        <h3 style="margin-top:0.4em;">📚 Практичне завдання</h3>
-                        <div class="box" style="border-color:#238636;">
-                            <ol style="font-size:0.82em;">
-                                <li><span class="highlight">Завдання 1:</span> Налаштуйте AWS WAF WebACL з OWASP Core Rule Set для захисту тестового веб-застосунку на ALB</li>
-                                <li style="margin-top:0.3em;"><span class="highlight">Завдання 2:</span> Проаналізуйте SS7 Firewall logs (синтетичні дані) та ідентифікуйте Location Tracking атаки за MAP-повідомленнями</li>
-                                <li style="margin-top:0.3em;"><span class="highlight">Завдання 3:</span> Побудуйте DevSecOps pipeline у GitHub Actions: SAST (Semgrep) + SCA (Dependabot) + Container Scan (Trivy) для Telecom REST API</li>
+                        <div class="box" style="border-color:#444; margin-top:0.4em;">
+                            <p style="font-size:0.88em;"><span class="highlight">🎯 Практичні завдання</span></p>
+                            <ol style="font-size:0.8em;">
+                                <li>AWS WAF WebACL + OWASP Core Rule Set для ALB</li>
+                                <li>Аналіз SS7 Firewall logs: виявлення Location Tracking</li>
+                                <li>DevSecOps pipeline: Semgrep + Trivy + Dependabot</li>
                             </ol>
                         </div>
-                        <p style="text-align:center; margin-top:0.6em; font-size:1.2em;">❓ Питання?</p>
                     </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 48: Зв'язки з курсом та Питання ===== -->
+            <section>
+                <div class="title-slide">
+                    <h2 style="color:#58a6ff; margin-bottom:0.4em;">🔗 Зв'язки з курсом</h2>
+                    <table style="width:70%; font-size:0.82em; margin:0 auto 0.8em;">
+                        <tbody>
+                            <tr><td style="text-align:right; padding:4px 8px;">← <span class="highlight">Лекція 5:</span></td><td>KMS для шифрування API ключів та CDR в S3</td></tr>
+                            <tr><td style="text-align:right; padding:4px 8px;">← <span class="highlight">Лекція 6:</span></td><td>EKS для 5G NF, Lambda для Telecom API</td></tr>
+                            <tr><td style="text-align:right; padding:4px 8px;">→ <span class="highlight">Лекція 8:</span></td><td>GuardDuty, CloudTrail, SIEM для моніторингу загроз</td></tr>
+                        </tbody>
+                    </table>
+                    <hr style="border-color:#444; width:60%; margin:0.3em auto;">
+                    <h1 style="font-size:2em; margin-top:0.5em;">❓ Питання?</h1>
+                    <blockquote style="font-size:0.88em; color:#aaa; margin-top:0.5em; border-left:3px solid #e8b04b; padding-left:0.6em;">
+                        <em>"Security is not a product, but a process."</em><br>— Bruce Schneier
+                    </blockquote>
                 </div>
             </section>
 
@@ -2137,6 +2147,7 @@ jobs:
             maxScale: 1.05,
             scrollActivationWidth: 700
         });
+        mermaid.initialize({ startOnLoad: true, theme: 'dark', themeVariables: { fontSize: '13px' } });
     </script>
 </body>
 </html>
