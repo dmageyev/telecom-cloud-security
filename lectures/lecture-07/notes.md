@@ -799,6 +799,8 @@ def detect_irsf_anomalies(cdr_df):
     """
     HIGH_RISK_PREFIXES = ['+252', '+881', '+960', '+964']  # known IRSF prefixes
 
+    # Витягти prefix з called_number (перші 4 символи, напр. '+252')
+    cdr_df['prefix'] = cdr_df['called_number'].str[:4]
     # Velocity check: >10 дзвінків на high-risk prefix за 5 хвилин
     cdr_df['window'] = cdr_df['timestamp'].dt.floor('5min')
     grouped = cdr_df.groupby(['msisdn', 'window', 'prefix'])
