@@ -26,7 +26,7 @@
         th { background: #1f6feb; padding: 2px 4px; }
         td { padding: 2px 4px; border-bottom: 1px solid #444; }
         code { background: #161b22; padding: 1px 4px; border-radius: 4px; font-size: 0.86em; color: #58a6ff; }
-        pre code { display: block; padding: 0.35em; font-size: 0.60em; color: #c9d1d9; line-height: 1.22; white-space: pre; }
+        pre code { display: block; padding: 0.35em; font-size: 0.80em; color: #c9d1d9; line-height: 1; white-space: pre; }
         .reveal .slides section { box-sizing: border-box; }
         /* Title slide */
         .title-slide { display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%; text-align:center; }
@@ -35,7 +35,7 @@
         .title-slide .meta { font-size:0.85em; color:#aaa; margin-top:0.5em; }
         .title-slide .badge { display:inline-block; background:#1f6feb; border-radius:4px; padding:2px 8px; margin:2px; font-size:0.72em; }
         /* Mermaid */
-        .mermaid { font-size: 0.55em; }
+        .mermaid { font-size: 0.75em; }
     </style>
 </head>
 <body>
@@ -69,30 +69,30 @@
                     <div>
                         <h3>🌐 Частина 1 — Безпека веб-застосунків (~14 слайдів)</h3>
                         <ol style="font-size:0.86em;">
-                            <li><strong>1.1</strong> Огляд загроз та OWASP Top 10</li>
-                            <li><strong>1.2</strong> Ін'єкції: SQL, NoSQL, Command</li>
-                            <li><strong>1.3</strong> Автентифікація, XSS, CSRF, SSRF, IDOR</li>
-                            <li><strong>1.4</strong> HTTPS/TLS та безпека транспорту</li>
-                            <li><strong>1.5</strong> Безпека REST/GraphQL API</li>
-                            <li><strong>1.6</strong> WAF, кращі практики, кейс AWS</li>
+                            <li>Огляд загроз та OWASP Top 10</li>
+                            <li>Ін'єкції: SQL, NoSQL, Command</li>
+                            <li>Автентифікація, XSS, CSRF, SSRF, IDOR</li>
+                            <li>HTTPS/TLS та безпека транспорту</li>
+                            <li>Безпека REST/GraphQL API</li>
+                            <li>WAF, кращі практики, кейс AWS</li>
                         </ol>
                         <h3 style="margin-top:0.4em;">📡 Частина 2 — Безпека телекому (~25 слайдів)</h3>
                         <ol style="font-size:0.86em;">
-                            <li><strong>2.1</strong> Архітектура мережі та загрози</li>
-                            <li><strong>2.2</strong> SS7 — атаки та захист</li>
-                            <li><strong>2.3</strong> Diameter, GTP, VoIP, SIP, SMS</li>
-                            <li><strong>2.4</strong> 5G Security, Telecom API</li>
-                            <li><strong>2.5</strong> MVNO, роумінг, Fraud, DDoS</li>
-                            <li><strong>2.6</strong> BSS/OSS, IoT, Zero Trust, NFV</li>
+                            <li>Архітектура мережі та загрози</li>
+                            <li>SS7 — атаки та захист</li>
+                            <li>Diameter, GTP, VoIP, SIP, SMS</li>
+                            <li>5G Security, Telecom API</li>
+                            <li>MVNO, роумінг, Fraud, DDoS</li>
+                            <li>BSS/OSS, IoT, Zero Trust, NFV</li>
                         </ol>
                     </div>
                     <div>
                         <h3>☁️ Частина 3 — Cloud / DevSecOps (~8 слайдів)</h3>
                         <ol style="font-size:0.86em;">
-                            <li><strong>3.1</strong> AWS WAF, Shield, CloudFront</li>
-                            <li><strong>3.2</strong> DevSecOps Pipeline (Shift-Left)</li>
-                            <li><strong>3.3</strong> Compliance: PCI DSS, GDPR, NIS2</li>
-                            <li><strong>3.4</strong> Чек-лист та підсумок</li>
+                            <li>AWS WAF, Shield, CloudFront</li>
+                            <li>DevSecOps Pipeline (Shift-Left)</li>
+                            <li>Compliance: PCI DSS, GDPR, NIS2</li>
+                            <li>Чек-лист та підсумок</li>
                         </ol>
                         <div class="box" style="border-color:#1f6feb; margin-top:0.5em;">
                             <h3>📌 Цілі навчання</h3>
@@ -1569,16 +1569,17 @@ SSDP: 30B  запит → 300B   відповідь → 10x</code></pre>
                     <div>
                         <h3>🏗️ Архітектура в хмарі</h3>
                         <div class="mermaid">
+%%{init: {'theme': 'dark', 'flowchart': {'htmlLabels': true}}}%%
 flowchart TD
-    A[🌐 Партнери / MVNO\nПортал абонентів] -->|HTTPS| B[🔥 AWS WAF\nAPI Gateway]
-    B -->|JWT Auth\nRate Limit| C[🔒 AWS PrivateLink\nVPC Link]
-    C --> D[🖥️ BSS Microservices\nECS Fargate]
-    D --> E1[(Aurora PostgreSQL\nMulti-AZ, encrypted)]
-    D --> E2[(S3 CDR Archive\nKMS + VPC Endpoint)]
-    style A fill:#1f6feb,color:#fff
-    style B fill:#da3633,color:#fff
-    style C fill:#e8b04b,color:#000
-    style D fill:#238636,color:#fff
+    A["🌐 Партнери / MVNO<br/>Портал абонентів"] -->|HTTPS| B["🔥 AWS WAF<br/>API Gateway"]
+    B -->|"JWT Auth / Rate Limit"| C["🔒 AWS PrivateLink<br/>VPC Link"]
+    C --> D["🖥️ BSS Microservices<br/>ECS Fargate"]
+    D --> E1[("Aurora PostgreSQL<br/>Multi-AZ, encrypted")]
+    D --> E2[("S3 CDR Archive<br/>KMS + VPC Endpoint")]
+    style A fill:#1f6feb,color:#fff,min-width:200px
+    style B fill:#da3633,color:#fff,min-width:200px
+    style C fill:#e8b04b,color:#000,min-width:200px
+    style D fill:#238636,color:#fff,min-width:200px
                         </div>
                     </div>
                     <div>
