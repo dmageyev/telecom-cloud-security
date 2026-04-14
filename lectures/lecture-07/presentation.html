@@ -36,6 +36,43 @@
         .title-slide .badge { display:inline-block; background:#1f6feb; border-radius:4px; padding:2px 8px; margin:2px; font-size:0.72em; }
         /* Mermaid */
         .mermaid { font-size: 0.95em; }
+        /* ===== Notes Panel ===== */
+        #notes-btn {
+            position: fixed; bottom: 18px; right: 18px; z-index: 10000;
+            background: #1f6feb; color: #fff; border: none; border-radius: 50%;
+            width: 46px; height: 46px; font-size: 1.25em; cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.55); transition: background 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #notes-btn:hover { background: #388bfd; }
+        #notes-panel {
+            position: fixed; top: 0; right: -420px; width: 410px; height: 100%;
+            background: #0d1117; border-left: 1px solid #30363d;
+            z-index: 9999; display: flex; flex-direction: column;
+            transition: right 0.28s cubic-bezier(.4,0,.2,1);
+            box-shadow: -4px 0 20px rgba(0,0,0,0.5);
+        }
+        #notes-panel.open { right: 0; }
+        #notes-panel-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 16px; border-bottom: 1px solid #30363d;
+            background: #161b22; flex-shrink: 0;
+        }
+        #notes-panel-title { font-size: 0.9em; font-weight: bold; color: #58a6ff; }
+        #notes-panel-close {
+            background: none; border: none; color: #8b949e; cursor: pointer;
+            font-size: 1.2em; padding: 2px 6px; border-radius: 4px;
+        }
+        #notes-panel-close:hover { background: #21262d; color: #c9d1d9; }
+        #notes-panel-body {
+            flex: 1; overflow-y: auto; padding: 16px 18px;
+            font-size: 0.82em; line-height: 1.65; color: #c9d1d9;
+        }
+        #notes-panel-body h4 { color: #e8b04b; margin: 0.6em 0 0.3em; font-size: 1em; }
+        #notes-panel-body p { margin: 0.4em 0; }
+        #notes-panel-body code { background: #161b22; padding: 1px 4px; border-radius: 3px; font-size: 0.9em; color: #79c0ff; }
+        #notes-panel-body ul { padding-left: 1.2em; margin: 0.3em 0; }
+        #notes-panel-body li { margin: 0.2em 0; }
     </style>
 </head>
 <body>
@@ -2135,6 +2172,15 @@ jobs:
 
         </div>
     </div>
+    <!-- ===== Notes Button & Panel ===== -->
+    <button id="notes-btn" onclick="toggleNotesPanel()" title="Конспект до слайду">📄</button>
+    <div id="notes-panel">
+        <div id="notes-panel-header">
+            <span id="notes-panel-title">📄 Конспект лекції</span>
+            <button id="notes-panel-close" onclick="toggleNotesPanel()" title="Закрити">✕</button>
+        </div>
+        <div id="notes-panel-body">Оберіть слайд для перегляду конспекту.</div>
+    </div>
     <script>
         Reveal.initialize({
             hash: true,
@@ -2149,6 +2195,273 @@ jobs:
             scrollActivationWidth: 700
         });
         mermaid.initialize({ startOnLoad: true, theme: 'dark', themeVariables: { fontSize: '16px' } });
+
+        // ===== Slide Notes Data (indexed 0..47) =====
+        const SLIDE_NOTES = [
+          // 0 — Титульний
+          `<h4>Лекція 7 — Вступ</h4>
+<p>Лекція охоплює три взаємопов'язані домени: безпеку веб-застосунків, захист телекомунікаційних мереж і хмарний підхід DevSecOps. Для телеком-оператора веб-застосунки є критичними компонентами — self-care портали, BSS/OSS, API для партнерів. Вразливість у будь-якому з них може призвести до витоку персональних та платіжних даних мільйонів абонентів.</p>
+<p>Наскрізний принцип — <strong>Defense in Depth</strong>: жоден окремий засіб захисту не є достатнім; лише комбінація незалежних рівнів суттєво знижує ризик.</p>`,
+
+          // 1 — План лекції
+          `<h4>Структура лекції</h4>
+<p><strong>Частина 1</strong> (~14 слайдів): OWASP Top 10, ін'єкції, автентифікація, XSS, CSRF, SSRF, HTTPS/TLS, API Security, WAF.</p>
+<p><strong>Частина 2</strong> (~25 слайдів): архітектура телеком-мережі, SS7 та захист, Diameter, GTP, VoIP/SIP, SMS, 5G, Telecom API, MVNO, шахрайство, DDoS, IoT, Zero Trust, NFV.</p>
+<p><strong>Частина 3</strong> (~8 слайдів): AWS WAF/Shield/CloudFront, DevSecOps pipeline, Compliance (PCI DSS, GDPR, NIS2), чек-лист.</p>`,
+
+          // 2 — Веб-застосунки огляд
+          `<h4>Ландшафт загроз веб-застосунків</h4>
+<p>За даними Verizon DBIR 2023, <strong>43% порушень безпеки</strong> пов'язані з атаками на веб-застосунки. Для телекому це особливо критично: self-care портали, білінгові системи, OSS/BSS та API партнерів — усі є потенційними цілями.</p>
+<p>Три категорії атак: <strong>Client-side</strong> (XSS, CSRF, Clickjacking), <strong>Server-side</strong> (SQLi, SSRF, RCE) та <strong>Infrastructure</strong> (DDoS, TLS downgrade, MITM). Кожна категорія вимагає окремих контрзаходів.</p>`,
+
+          // 3 — OWASP Top 10
+          `<h4>OWASP Top 10 (2021)</h4>
+<p>OWASP Top 10 сформований на основі ~500 тис. протестованих застосунків. <strong>A01 Broken Access Control</strong> — перше місце; охоплює IDOR, обхід авторизації, CORS-помилки. <strong>A03 Injection</strong> — класичні SQLi, LDAP, NoSQL. <strong>A10 SSRF</strong> — особливо небезпечна в AWS через доступ до Instance Metadata Service.</p>
+<p><strong>A06 Vulnerable Components</strong>: Log4Shell (CVE-2021-44228, CVSS 10.0) — RCE через один рядок у лог-повідомленні — найяскравіший приклад катастрофічних наслідків вразливої залежності.</p>`,
+
+          // 4 — Ін'єкції
+          `<h4>SQL Injection та інші ін'єкції</h4>
+<p>SQL Injection відбувається, коли вхідні дані вставляються в SQL-рядок без санації. Класичний приклад: <code>username = admin' --</code> відкидає умову перевірки пароля. Типи: in-band, blind boolean, blind time-based, out-of-band.</p>
+<p><strong>Захист</strong>: <em>Parameterized Queries (Prepared Statements)</em> — єдиний надійний метод. ORM не захищає від raw queries з інтерполяцією. WAF — лише додатковий рівень. Принцип найменших привілеїв для облікового запису БД обов'язковий.</p>`,
+
+          // 5 — Автентифікація та авторизація
+          `<h4>Автентифікація та JWT</h4>
+<p>JSON Web Token (JWT) складається з header.payload.signature. Атака <strong>alg:none</strong>: зміна алгоритму на <code>none</code> у заголовку видаляє перевірку підпису. Атака <strong>Algorithm Confusion</strong>: заміна RS256→HS256 дозволяє підписати токен публічним ключем.</p>
+<p>Захист: фіксований whitelist алгоритмів на сервері; HMAC-секрет ≥256 біт; короткий TTL (≤1 год для access token); зберігання в <code>httpOnly; Secure; SameSite=Strict</code> cookie.</p>`,
+
+          // 6 — XSS
+          `<h4>Cross-Site Scripting (XSS)</h4>
+<p>XSS дозволяє виконати довільний JavaScript у браузері жертви. <strong>Reflected XSS</strong>: скрипт у GET/POST відображається у відповіді. <strong>Stored XSS</strong>: збережений у БД, виконується для всіх відвідувачів — найнебезпечніший. <strong>DOM-based XSS</strong>: маніпуляція DOM без запиту до сервера.</p>
+<p>Захист: Output Encoding (<code>htmlspecialchars</code>, DOMPurify); <strong>Content Security Policy</strong> (CSP) з nonce/hash; <code>X-Content-Type-Options: nosniff</code>. CSP різко ускладнює виконання ін'єктованих скриптів.</p>`,
+
+          // 7 — CSRF та Clickjacking
+          `<h4>CSRF та Clickjacking</h4>
+<p>CSRF примушує браузер автентифікованого користувача виконати небажаний запит до стороннього сайту, автоматично відправляючи сесійні cookie. Захист: CSRF Token у кожній формі; <code>SameSite=Strict</code> cookie — браузер не надсилає cookie для cross-site запитів.</p>
+<p>Clickjacking: вбудовування цільового сайту в iframe на шкідливій сторінці. Захист: <code>X-Frame-Options: DENY</code> або CSP <code>frame-ancestors 'none'</code>.</p>`,
+
+          // 8 — SSRF та IDOR
+          `<h4>SSRF та IDOR</h4>
+<p><strong>SSRF</strong>: сервер виконує HTTP-запит до URL, вказаного зловмисником. В AWS: запит до <code>169.254.254.254</code> (IMDS) може розкрити IAM credentials. Capital One 2019: SSRF→IMDS→100M+ записів. Захист: IMDSv2, egress filtering, allowlist для вихідних запитів.</p>
+<p><strong>IDOR</strong>: пряме звернення до ресурсу за ідентифікатором без перевірки прав. Виправлення: завжди перевіряти <code>resource.owner_id == current_user.id</code>. UUID замість auto-increment ускладнює, але не усуває — авторизація на сервері обов'язкова.</p>`,
+
+          // 9 — HTTPS/TLS
+          `<h4>HTTPS, TLS та HTTP Security Headers</h4>
+<p>TLS 1.0/1.1 — deprecated (RFC 8996, 2021). Мінімальна вимога: TLS 1.2. Рекомендований: <strong>TLS 1.3</strong> — усунуто слабкі cipher suites, обов'язкове Forward Secrecy (ECDHE), handshake 1-RTT.</p>
+<p>Ключові заголовки: <code>Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</code>; <code>Content-Security-Policy</code>; <code>X-Frame-Options: DENY</code>; <code>X-Content-Type-Options: nosniff</code>. <strong>HSTS Preload</strong>: включення до браузерного списку — HTTPS навіть при першому відвідуванні.</p>`,
+
+          // 10 — Безпека API
+          `<h4>Безпека API (REST, GraphQL)</h4>
+<p>OWASP API Security Top 10 (2023): <strong>API1 BOLA</strong> — Broken Object Level Authorization, аналог IDOR для API. <strong>API4</strong> — відсутність rate limiting дозволяє DoS або масовий перебір. <strong>GraphQL</strong>: атака глибокими запитами (Query Depth Attack) — DoS через нескінченно вкладені запити.</p>
+<p>Захист API: JWT авторизація; rate limiting (AWS API Gateway: ≤1000 req/s за замовчуванням); вимкнути GraphQL Introspection у production; обмежити глибину запитів (<code>maxDepth: 5</code>).</p>`,
+
+          // 11 — WAF
+          `<h4>Web Application Firewall (WAF)</h4>
+<p>WAF аналізує HTTP/HTTPS трафік на L7 і блокує шкідливі запити. Режими: Detection (лише логування, для tuning) та Prevention (активне блокування). Типи: Network (апаратний), Host-based (ModSecurity), Cloud (AWS WAF, Cloudflare).</p>
+<p><strong>OWASP Core Rule Set (CRS)</strong> — базовий набір правил для покриття OWASP Top 10. AWS WAF Managed Rules містить CRS, SQLi та XSS rule groups. WAF — важливий, але не єдиний захист; Prepared Statements обов'язкові.</p>`,
+
+          // 12 — Кращі практики веб-безпеки
+          `<h4>Defense in Depth — багаторівневий захист</h4>
+<p>Правильна архітектура: <code>Internet → CloudFront+Shield (DDoS) → AWS WAF (L7) → Load Balancer (TLS) → Application (SQLi захист) → Database (least privilege)</code>. Кожен рівень перехоплює різні типи атак. Компрометація одного рівня не означає компрометацію системи.</p>
+<p>Основні принципи: HTTPS скрізь (HSTS preloaded); Prepared Statements для всіх DB-запитів; Output Encoding при виведенні; CSP; SameSite=Strict cookie; MFA для адміністраторів; SAST+DAST+SCA в CI/CD.</p>`,
+
+          // 13 — Кейс AWS WAF + CloudFront
+          `<h4>Кейс: AWS WAF + CloudFront для телеком API</h4>
+<p>Архітектура: CloudFront Edge PoP (geo-blocking, cache) → AWS WAF WebACL (OWASP CRS + Rate-based rules) → ALB → API Gateway → Lambda/ECS. AWS Shield Standard захищає від L3/L4 DDoS автоматично і безкоштовно; Shield Advanced додає SRT (Shield Response Team) підтримку та cost protection.</p>
+<p>Rate-based rule: блокування IP після 2000 req/5хв. WAF логи → CloudWatch → CloudTrail для SIEM-інтеграції. Час реагування WAF: <1мс на рішення.</p>`,
+
+          // 14 — Архітектура телеком-мережі
+          `<h4>Архітектура телеком-мережі</h4>
+<p>Сучасний телеком-оператор використовує три покоління одночасно: 2G/3G (SS7/MAP), 4G LTE (Diameter/GTP), 5G NR (HTTP/2, OAuth 2.0). Ядро мережі містить MSC, HLR/VLR, MME, SGW/PGW, AMF/SMF. Роумінг між операторами відбувається через IPX-провайдерів.</p>
+<p>Ключова проблема: SS7 та Diameter не мають обов'язкової автентифікації між операторами. Будь-який учасник SS7-мережі теоретично може надіслати шкідливі повідомлення MAP будь-якому іншому оператору.</p>`,
+
+          // 15 — SS7
+          `<h4>SS7 — Signaling System 7</h4>
+<p>SS7 розроблений у 1975 році; ключова проблема — відсутність автентифікації між операторами. <strong>Location Tracking</strong>: зловмисник надсилає <code>SendRoutingInfo</code> + <code>ProvideSubscriberInfo</code> → отримує Cell ID → визначає місцезнаходження. <strong>SMS Interception</strong>: <code>UpdateLocation</code> реєструє жертву на підробному VLR → SMS перенаправляються зловмиснику.</p>
+<p>Реальний випадок: журналіст Карстен Нол (2014) продемонстрував перехоплення дзвінка конгресмена США через SS7. Атаки документовані у 100+ операторів.</p>`,
+
+          // 16 — SS7 Захист
+          `<h4>Захист SS7 — Signaling Firewall</h4>
+<p>GSMA FS.11 визначає 5 категорій захисту: блокування заборонених повідомлень MAP, перевірка SCCP Calling Party, моніторинг аномалій, фільтрація за результатами. Signaling Firewall (Cyphershield, Mobileum, P1 Security) розгортається між SS7-мережею та ядром.</p>
+<p>Практичний захист: IP-зв'язки з IPX-партнерами через IPsec/TLS; регулярний аудит роумінгових партнерів; моніторинг UpdateLocation/SRI аномалій; GSMA NESAS-сертифікація обладнання.</p>`,
+
+          // 17 — Diameter
+          `<h4>Diameter та GTP Security</h4>
+<p>Diameter — протокол 4G LTE, замінив SS7 для ядра. DEA (Diameter Edge Agent) є аналогом STP для SS7 і точкою перехоплення. Типові атаки: Identity Hiding Bypass, Location Tracking через S6a, Subscription Information Download через S6a/Swx.</p>
+<p>GTP (GPRS Tunnelling Protocol) використовується між базовими станціями та ядром. GTP-C v1/v2 вразливий до: створення підробних PDP-сесій, атак на тарифікацію, GTP-U тунельних ін'єкцій. Захист: GTP Firewall з peer whitelist (GSMA FS.20).</p>`,
+
+          // 18 — VoIP та SIP
+          `<h4>VoIP та SIP Security</h4>
+<p>SIP (Session Initiation Protocol) — протокол управління сесіями для VoIP. Компоненти: UA (User Agent), Proxy, Registrar, B2BUA. Атаки: <strong>Registration Hijacking</strong> (підміна Contact URI через REGISTER), <strong>INVITE Flood</strong> (DoS тисячами SIP INVITE), <strong>Toll Fraud</strong> (несанкціоновані дорогі дзвінки).</p>
+<p>Захист: <strong>SBC (Session Border Controller)</strong> — валідація SIP, rate limiting, топологічне приховування (B2BUA), SRTP шифрування медіа. TLS для SIP-сигналізації (SIPS URI), SRTP для медіатрафіку.</p>`,
+
+          // 19 — SIP Атаки та SBC
+          `<h4>SIP-атаки та роль SBC</h4>
+<p>SBC (Session Border Controller) є обов'язковим елементом для захисту SIP-інфраструктури. Він виконує топологічне приховування (не розкриває внутрішню адресацію), rate limiting SIP-запитів, валідацію SIP-заголовків, транскодування медіа та SRTP завершення.</p>
+<p>Ін'єкція SDP: зловмисник модифікує SDP-тіло запиту для перенаправлення RTP-потоку на шкідливий хост. Захист: SBC перевіряє SDP-корпус, нормалізує медіа-адреси. STIR/SHAKEN: підписання Caller ID для запобігання спуфінгу.</p>`,
+
+          // 20 — SMS Security
+          `<h4>SMS Security</h4>
+<p>SMS-загрози: <strong>SMishing</strong> (фішинг через SMS), <strong>SIM Swap</strong> (перенесення номера на SIM зловмисника через соціальну інженерію), <strong>SS7 SMS Interception</strong>. SMS не є захищеним каналом для 2FA — NIST SP 800-63B рекомендує відмовитись від SMS OTP на користь TOTP/FIDO2.</p>
+<p><strong>SMS Firewall</strong>: фільтрація за відправником/шаблоном, детекція A2P (Application-to-Person) трафіку, сканування URL на phishing, блокування flash SMS. GSMA FS.15 визначає вимоги до SMS Firewall.</p>`,
+
+          // 21 — GTP Security
+          `<h4>GTP Security</h4>
+<p>GTP (GPRS Tunnelling Protocol) — протокол для передачі даних між RAN та PDN/EPC. GTP-C (Control Plane) управляє сесіями; GTP-U (User Plane) передає трафік. Атаки: GTP Flooding (DoS), підробні Create Session Request, impersonation SGW/PGW для перехоплення трафіку.</p>
+<p>GSMA FS.20 визначає рекомендації GTP-фільтрації: peer whitelist за IP/IMSI, rate limiting GTP-C, перевірка TEID, блокування неочікуваних повідомлень. GTP Firewall — обов'язковий елемент для Gi/SGi інтерфейсу.</p>`,
+
+          // 22 — Архітектура безпеки 5G
+          `<h4>Архітектура безпеки 5G</h4>
+<p>5G Security Architecture (3GPP TS 33.501) вирішує три ключові проблеми: <strong>SUCI</strong> — шифрований ідентифікатор абонента (ECIES) замість відкритого IMSI; <strong>SEPP</strong> — Security Edge Protection Proxy для захисту роумінгового N32-інтерфейсу; <strong>SBA</strong> — Service-Based Architecture з OAuth 2.0 для міжфункційної авторизації.</p>
+<p>5G-AKA або EAP-AKA' для автентифікації абонента. NDS/IP (IPsec) для N2/N3. TLS 1.2+ або DTLS для SBI. OAuth 2.0 Client Credentials для NF-NF взаємодії через NRF.</p>`,
+
+          // 23 — Атаки на 5G
+          `<h4>Атаки та загрози 5G</h4>
+<p>Незважаючи на суттєві покращення безпеки, 5G має власні вектори атак. SUCI-атаки: якщо UE не підтримує SUCI або ключ оператора скомпрометований — SUPI може бути розкритий. Rogue gNB: підробна базова станція може ініціювати downgrade до LTE/NR без 5G-AKA.</p>
+<p>SBI/OAuth атаки: JWT forgery між NF якщо NRF не перевіряє підпис строго. Network Slicing: витік між слайсами через спільні NF; SSRF через SBI. HTTP/2 DoS: HPACK bomb, RST flood (CVE-2023-44487 HTTP/2 Rapid Reset).</p>`,
+
+          // 24 — Telecom API
+          `<h4>Telecom API (GSMA Open Gateway / CAMARA)</h4>
+<p>GSMA Open Gateway — ініціатива стандартизації API для доступу до мережевих можливостей операторів. CAMARA Project (Linux Foundation) визначає API-специфікації: SIM Swap Detection, Network Quality On Demand, Number Verify, Location Verify.</p>
+<p>Загрози: SIM Swap Detection API сам по собі може бути атакований для верифікації факту свіжої заміни SIM. OAuth 2.0 PKCE обов'язковий для клієнтських застосунків. GSMA FS.36 визначає вимоги безпеки до Open Gateway API.</p>`,
+
+          // 25 — Безпека мобільних застосунків
+          `<h4>Безпека мобільних застосунків</h4>
+<p>OWASP MASVS (Mobile Application Security Verification Standard) визначає рівні безпеки: L1 (базовий), L2 (захист від реверс-інжинірингу), R (Resilience). Ключові загрози (OWASP MAS Top 10): незахищене зберігання (M1), слабка автентифікація (M3), незахищений канал (M5).</p>
+<p>Специфіка телеком: Certificate Pinning для запобігання MITM; шифрування локального сховища (MSISDN, токенів); захист від реверс-інжинірингу (ProGuard, R8); Jailbreak/Root detection. AWS Cognito + PKCE для OAuth у мобільних клієнтах.</p>`,
+
+          // 26 — MVNO та роумінг
+          `<h4>MVNO та безпека роумінгу</h4>
+<p>MVNO (Mobile Virtual Network Operator) орендує мережеву інфраструктуру в MNO. Взаємодія через SS7/Diameter/GTP вимагає тих самих засобів захисту, що і між MNO. Роумінгові з'єднання проходять через IPX-провайдерів — потенційна точка атаки.</p>
+<p>Захист роумінгу: IPsec між операторами та IPX; SS7 та Diameter Firewall; SEPP для 5G-роумінгу (N32); регулярний аудит роумінгових партнерів і перегляд TADIG-угод. Договір роумінгу повинен включати вимоги безпеки GSMA FS.11.</p>`,
+
+          // 27 — AWS API Gateway для телеком
+          `<h4>AWS API Gateway для Telecom API</h4>
+<p>AWS API Gateway REST API: rate limiting (default 1000 req/s burst), Usage Plans для B2B-партнерів, Lambda Authorizer для JWT-перевірки. VPC Link дозволяє безпечно з'єднати API Gateway з ресурсами у VPC без відкриття публічних ендпоінтів.</p>
+<p>Інтеграція: API Gateway → Lambda Authorizer (перевіряє JWT, MSISDN ownership) → VPC Link → ECS/EKS (бізнес-логіка) → RDS/DynamoDB. WAF WebACL прикріплюється до API Gateway Stage. CloudWatch Logs + X-Ray для трейсингу запитів.</p>`,
+
+          // 28 — Сигнальні фаєрволи та SMS Firewall
+          `<h4>Signaling Firewall та SMS Firewall</h4>
+<p>Signaling Firewall (SS7/Diameter) працює на STP/DEA і фільтрує повідомлення за категоріями GSMA FS.11: Category 1 (блокувати завжди), Category 2 (блокувати для роумінгу), Category 3 (підозрілі, моніторинг). Провайдери: P1 Security, Mobileum, Cyphershield, Enea.</p>
+<p>SMS Firewall виконує фільтрацію A2P трафіку, URL scanning, блокування SIM swap SMS, anti-smishing. GSMA FS.15 та FS.38 — стандарти для SMS Firewall. Типовий результат впровадження: блокування 95%+ SS7 Location Tracking спроб.</p>`,
+
+          // 29 — Telecom Fraud
+          `<h4>Телеком-шахрайство (Telecom Fraud)</h4>
+<p>Річні збитки: $38.95 мільярдів (CFCA 2021). Типи: <strong>IRSF</strong> ($6.1B/рік) — автоматичні дзвінки на premium-номери; <strong>Wangiri</strong> — один дзвінок для зворотного набору; <strong>SIM Box</strong> — маршрутизація VoIP через SIM-карти; <strong>SIM Swap</strong> — захоплення номера через соціальну інженерію.</p>
+<p>Захист: Fraud Management System (FMS) — CDR-аналіз у реальному часі з пороговими значеннями (>10 дзвінків на high-risk prefix за 5хв → alert). AI/ML для виявлення аномальних патернів трафіку. Blocklist high-risk country prefixes.</p>`,
+
+          // 30 — Моніторинг аномалій
+          `<h4>Моніторинг аномалій у телеком</h4>
+<p>CDR (Call Detail Records) — основне джерело даних для виявлення шахрайства. Метрики: UpdateLocation rate >5/год на IMSI → SS7 Location Tracking; SRI запити >100/год → SS7 Profiling; SMS до одного MSISDN >50/хв → SMishing campaign; Wangiri дзвінки <3 сек >1000/год.</p>
+<p>Платформи телеком-SOC: Mobileum RAID, Anam Protect, GSMA T-ISAC (Threat Intelligence Sharing). Інтеграція з AWS: Kinesis Data Streams → Lambda → DynamoDB → CloudWatch Alarms для real-time CDR аналізу.</p>`,
+
+          // 31 — Перехоплення трафіку та LI
+          `<h4>Lawful Interception (LI)</h4>
+<p>Lawful Interception (LI) — легальне перехоплення комунікацій за судовим рішенням. Стандарти: ETSI TS 102 232, CALEA (США), ЗУ "Про оперативно-розшукову діяльність". LI-архітектура: ADMF (Administration Function), DF (Delivery Function), LEA (Law Enforcement Agency).</p>
+<p>Ризики безпеки LI-системи: LI-інтерфейси є самі по собі high-value targets. Компрометація LI-системи (Vodafone Greece 2004) призвела до незаконного прослуховування 100+ урядовців. Захист: ізоляція LI-підсистеми у окрему VPC/VLAN, суворий аудит доступу, шифрування LI-трафіку.</p>`,
+
+          // 32 — IMSI Catcher
+          `<h4>IMSI Catcher (Stingray)</h4>
+<p>IMSI Catcher (StingRay, Harris Corp.) — пристрій, що імітує базову станцію і змушує телефони підключатися до нього. В 2G/3G примушує downgrade, перехоплює SMS та дзвінки. Виявлення: IMSI + TMSI + Cell ID збирається без дозволу.</p>
+<p>5G-захист: SUCI (зашифрований IMSI) ускладнює отримання IMSI через IMSI Catcher. Але downgrade до LTE можливий, якщо 5G-only режим не налаштований. Виявлення IMSI Catcher: моніторинг аномальних Cell ID через AIMSICD або Snoopsnitch.</p>`,
+
+          // 33 — DDoS на телеком
+          `<h4>DDoS-атаки на телекомунікаційну інфраструктуру</h4>
+<p>Специфіка DDoS для телекому: <strong>SIP Flood</strong> (тисячі INVITE в секунду перевантажують SIP proxy); <strong>SS7 Flood</strong> (масові MAP повідомлення для виснаження HLR); <strong>GTP-C Flood</strong> (підробні Create Session Request перевантажують SGSN/MME); <strong>DNS Amplification</strong> через відкриті resolver у мережі оператора.</p>
+<p>Захист: SBC rate limiting для SIP; SS7 Firewall для MAP flooding; GTP Firewall rate limiting; AWS Shield Advanced для DNS/NTP amplification; Anycast BGP Blackholing для volumetric attacks. Середній cost: $218K/год downtime (Ponemon 2020).</p>`,
+
+          // 34 — Криптографія у телеком
+          `<h4>Криптографія у телеком-протоколах</h4>
+<p>Еволюція: GSM A5/1 (56-bit stream cipher, зламаний Karsten Nohl 2009); UMTS f8/f9 (KASUMI, частково зламаний); LTE 128-EEA2/128-EIA2 (AES-CTR/CMAC); 5G ZUC-256/SNOW-3G/AES-256.</p>
+<p>Post-Quantum Cryptography (PQC): NIST вибрав CRYSTALS-Kyber (KEM) та CRYSTALS-Dilithium (підпис) у 2022. 3GPP досліджує інтеграцію PQC у 6G. Критичний ризик: Harvest Now, Decrypt Later — зловмисники збирають зашифрований трафік сьогодні для дешифрування квантовим комп'ютером у майбутньому.</p>`,
+
+          // 35 — Кейс захист BSS/OSS
+          `<h4>Кейс: захист BSS/OSS на AWS</h4>
+<p>Типова архітектура BSS/OSS на AWS: окремі VPC для Billing, CRM, OSS з VPC Peering та строгими Security Groups. IAM Roles для сервісних акаунтів (без постійних ключів). KMS для шифрування CDR в S3 та даних у RDS (AES-256).</p>
+<p>Аудит: CloudTrail для всіх API-дій; GuardDuty для виявлення аномалій; AWS Config Rules для відповідності (s3-bucket-public-read-prohibited, rds-storage-encrypted). Lambda функції для автоматизованого реагування на GuardDuty findings.</p>`,
+
+          // 36 — Regulatory & Compliance
+          `<h4>Регуляторні вимоги та відповідність</h4>
+<p><strong>GSMA FS.11</strong>: вимоги до захисту SS7 (5 категорій). <strong>3GPP TS 33.501</strong>: 5G Security architecture. <strong>NIS2</strong> (2022/2555): телеком-оператори — критичні суб'єкти; повідомлення про інциденти за 24/72 год; штрафи до €10M або 2% обороту.</p>
+<p><strong>GDPR Art. 32</strong>: TLS, шифрування, RBAC, аудит для захисту персональних даних абонентів. <strong>PCI DSS v4.0 Req. 6</strong>: WAF або автоматизований технічний засіб для Req. 6.4.2. <strong>OWASP ASVS L2/L3</strong> як практичний стандарт для аудиту веб-застосунків оператора.</p>`,
+
+          // 37 — IoT та M2M
+          `<h4>IoT та M2M Security</h4>
+<p>30+ мільярдів IoT-пристроїв підключені до мереж операторів через NB-IoT, LTE-M, 5G (eMBB/URLLC). Загрози: дефолтні паролі на IoT-пристроях, відсутність TLS на MQTT/CoAP, масові ботнети (Mirai). LwM2M (Lightweight M2M) — стандарт управління IoT через DTLS/TLS.</p>
+<p>Захист: eSIM (eUICC) з remote provisioning; IoT SIM сегрегація в окремий APN з rate limiting; AWS IoT Device Defender для моніторингу аномалій; Device Defender Detect виявляє підозрілі з'єднання. GSMA IoT Security Guidelines (CLP.11, CLP.13).</p>`,
+
+          // 38 — Соціальна інженерія
+          `<h4>Соціальна інженерія проти абонентів</h4>
+<p><strong>Vishing</strong>: дзвінок зі спуфінгом Caller ID (номер банку/оператора) для виманювання паролів або OTP. <strong>SIM Swap</strong>: зловмисник звертається до оператора з фальшивими документами і переносить номер жертви на свою SIM → перехоплення 2FA SMS → захоплення акаунтів.</p>
+<p>Технічний захист: <strong>STIR/SHAKEN</strong> (RFC 8226) — підписання Caller ID сертифікатом оператора; FIDO2/WebAuthn замість SMS 2FA (phishing-resistant MFA); підвищений рівень верифікації для SIM Swap запитів; callback verification на зареєстрований email.</p>`,
+
+          // 39 — Zero Trust для телеком
+          `<h4>Zero Trust для телекомунікаційної інфраструктури</h4>
+<p>Zero Trust: "Never trust, always verify" — кожен запит автентифікується незалежно від місця у мережі. Для 5G Core: NF-NF взаємодія через OAuth 2.0 Client Credentials + NRF як Authorization Server. mTLS між усіма NF через Service Mesh (Istio).</p>
+<p>Istio Service Mesh: Envoy sidecar proxy для кожного NF pod; Mutual TLS автоматично; PeerAuthentication (STRICT mTLS); AuthorizationPolicy (RBAC на рівні L7). AWS EKS + Istio для Cloud-Native Network Functions (CNF). Micro-segmentation через Security Groups та Kubernetes Network Policies.</p>`,
+
+          // 40 — NFV та SDN
+          `<h4>NFV та SDN Security</h4>
+<p>NFV (Network Functions Virtualization) переміщує мережеві функції на commodity hardware (x86 сервери). Загрози: гіпервізорний escape (VM to hypervisor), side-channel атаки між VNF на одному хості, компрометація NFVO/VIM-оркестратора.</p>
+<p>SDN (Software-Defined Networking): централізований контролер (OpenDaylight, ONOS) є єдиною точкою відмови. Атаки: компрометація southbound API (OpenFlow), flooding control plane. Захист: ізоляція management plane; TLS для OpenFlow/NETCONF; RBAC для NFVO; ETSI NFV SEC серія стандартів.</p>`,
+
+          // 41 — Тестування безпеки
+          `<h4>Тестування безпеки</h4>
+<p>Методології: OWASP WSTG (Web Security Testing Guide) v4.2 — 91 тест для веб; OWASP MSTG для мобільних; GSMA SECAM/NESAS для телеком-обладнання; 3GPP SCAS (Security Assurance Specification).</p>
+<p>Інструменти: OWASP ZAP, Burp Suite Pro (веб DAST); SipVicious Suite (SIP); SigPloit, SS7map (SS7 тестування); Codenomicon Defensics (fuzzing SIP/Diameter/GTP); Metasploit (penetration testing). Penetration Test Report має включати CVSS-оцінку та PoC-код для кожної знахідки.</p>`,
+
+          // 42 — AWS WAF, Shield та CloudFront
+          `<h4>AWS WAF + Shield + CloudFront</h4>
+<p>CloudFront Edge PoP (~450 точок по світу): TLS offload, geo-restriction, caching. AWS WAF WebACL: Managed Rule Groups (AWSManagedRulesCommonRuleSet OWASP CRS, SQLi, XSS), Custom Rate-based rules (2000 req/5хв → Block), Geographic match rules.</p>
+<p>Shield Standard: безкоштовний, захист L3/L4, автоматичний. Shield Advanced: $3000/міс; SRT підтримка; attack visibility dashboard; cost protection (refund за scaling під час атаки); proactive engagement. WAF Logs → Kinesis Firehose → S3 → Athena для аналізу.</p>`,
+
+          // 43 — DevSecOps
+          `<h4>DevSecOps Pipeline</h4>
+<p>Shift Left: виправлення в коді — $80, після інциденту — $7680. Автоматизований пайплайн: <strong>SAST</strong> (Semgrep, SonarQube — статичний аналіз коду), <strong>SCA</strong> (Trivy, Snyk — залежності/CVE), <strong>IaC Security</strong> (Checkov, tfsec — Terraform), <strong>Secret Detection</strong> (Gitleaks — API ключі у коді), <strong>DAST</strong> (OWASP ZAP на staging).</p>
+<p>GitHub Actions реалізує ці перевірки паралельно при кожному Push/PR. Результати: fail build при HIGH/CRITICAL CVE; блокування PR при SAST findings; автоматичне PR від Dependabot для оновлення залежностей.</p>`,
+
+          // 44 — Compliance
+          `<h4>Відповідність нормативним вимогам (Compliance)</h4>
+<p><strong>PCI DSS v4.0</strong>: Req. 6.4 — веб-застосунки захищені від OWASP Top 10; Req. 6.4.2 — WAF або автоматизований технічний засіб; Req. 11.6 — change detection для payment pages. <strong>GDPR</strong>: Art. 25 Privacy by Design; Art. 32 технічні заходи; Art. 33 повідомлення за 72 год.</p>
+<p><strong>NIS2</strong>: телеком-оператори — critical entities; штрафи до €10M або 2% обороту. <strong>NIST CSF 2.0</strong>: 6 функцій (Govern, Identify, Protect, Detect, Respond, Recover). AWS Config Rules для автоматизованої перевірки відповідності конфігурацій.</p>`,
+
+          // 45 — Кращі практики та чек-лист
+          `<h4>Чек-ліст безпеки</h4>
+<p><strong>Web:</strong> HTTPS скрізь (HSTS preloaded); Prepared Statements; Output Encoding (DOMPurify); CSP з nonce; SameSite=Strict cookie; MFA для адмінів; rate limiting ≤5 спроб/хв; SAST+DAST+SCA в CI/CD; AWS WAF з OWASP CRS; JWT RS256+short exp.</p>
+<p><strong>Telecom:</strong> SS7/Diameter Signaling Firewall (GSMA FS.11/FS.19); GTP Firewall з peer whitelist (GSMA FS.20); SMS Firewall з A2P filtering; IPsec/TLS між роумінговими партнерами; SEPP для 5G N32; NRF OAuth 2.0; SIM Swap Detection; STIR/SHAKEN; CDR-аналіз для IRSF/Wangiri; IoT APN сегрегація; аудит роумінгових партнерів.</p>`,
+
+          // 46 — Ключові висновки
+          `<h4>Ключові висновки лекції</h4>
+<p>Три домени — веб, телеком, DevSecOps — формують комплексну картину безпеки для сучасного оператора. <strong>Defense in Depth</strong>: жоден окремий засіб не є достатнім; необхідна комбінація незалежних рівнів. <strong>Shift Left</strong>: безпека в коді, а не після релізу.</p>
+<p>Спадкові протоколи (SS7) є невід'ємною частиною телекому ще десятиліттями. Signaling Firewall — обов'язковий мінімум. 5G вирішує критичні проблеми, але не є панацеєю. Zero Trust та mTLS для 5G Core SBI — новий стандарт. Compliance (NIS2, GDPR, PCI DSS) — не бюрократія, а мінімальний базовий рівень захисту.</p>`,
+
+          // 47 — Зв'язки з курсом та Питання
+          `<h4>Зв'язки з курсом</h4>
+<p>← <strong>Лекція 5:</strong> AWS KMS для шифрування API-ключів та CDR в S3; IAM Roles для мінімальних привілеїв сервісних акаунтів.</p>
+<p>← <strong>Лекція 6:</strong> Amazon EKS для деплою 5G Network Functions (NF) як Cloud-Native Functions; AWS Lambda для Telecom API (CAMARA/Open Gateway).</p>
+<p>→ <strong>Лекція 8:</strong> Amazon GuardDuty для виявлення аномальної активності; AWS CloudTrail для аудиту; SIEM-інтеграція для моніторингу загроз у телеком-хмарній інфраструктурі.</p>`
+        ];
+
+        let notesPanelOpen = false;
+
+        function toggleNotesPanel() {
+            const panel = document.getElementById('notes-panel');
+            notesPanelOpen = !notesPanelOpen;
+            panel.classList.toggle('open', notesPanelOpen);
+            if (notesPanelOpen) updateNotesContent();
+        }
+
+        function updateNotesContent() {
+            const idx = Reveal.getIndices().h;
+            const body = document.getElementById('notes-panel-body');
+            const title = document.getElementById('notes-panel-title');
+            const content = SLIDE_NOTES[idx];
+            title.textContent = `📄 Слайд ${idx + 1} / ${SLIDE_NOTES.length}`;
+            body.innerHTML = content || '<p style="color:#8b949e; font-style:italic;">Конспект для цього слайду відсутній.</p>';
+        }
+
+        Reveal.on('slidechanged', () => {
+            if (notesPanelOpen) updateNotesContent();
+        });
     </script>
 </body>
 </html>
