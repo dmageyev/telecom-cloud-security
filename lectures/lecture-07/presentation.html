@@ -8,30 +8,25 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/black.css">
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
     <style>
-        .reveal h1 { font-size: 1.45em; }
-        .reveal h2 { font-size: 1.18em; color: #58a6ff; }
-        .reveal h3 { font-size: 0.9em; color: #e8b04b; margin: 0.2em 0 0.15em; }
+        .reveal h1 { font-size: 1.4em; }
+        .reveal h2 { font-size: 1.12em; color: #58a6ff; }
+        .reveal h3 { font-size: 0.85em; color: #e8b04b; margin: 0.18em 0 0.12em; }
         .reveal ul, .reveal ol { text-align: left; }
-        .reveal li { margin-bottom: 0.1em; font-size: 1.0em; }
-        .reveal p { margin: 0.18em 0; font-size: 1.0em; }
-        .two-col { display: flex; gap: 1em; }
+        .reveal li { margin-bottom: 0.08em; font-size: 0.93em; }
+        .reveal p { margin: 0.15em 0; font-size: 0.93em; }
+        .two-col { display: flex; gap: 0.8em; }
         .two-col > div { flex: 1; min-width: 0; }
         .highlight { color: #e8b04b; font-weight: bold; }
-        .tag { background: #1f6feb; border-radius: 4px; padding: 1px 5px; font-size: 0.75em; margin: 1px; display: inline-block; }
-        .tag-green { background: #238636; border-radius: 4px; padding: 1px 5px; font-size: 0.75em; margin: 1px; display: inline-block; }
-        .tag-red { background: #da3633; border-radius: 4px; padding: 1px 5px; font-size: 0.75em; margin: 1px; display: inline-block; }
-        .box { border: 1px solid #444; border-radius: 5px; padding: 0.2em 0.6em; margin: 0.15em 0; }
-        table { font-size: 0.7em; border-collapse: collapse; width: 100%; }
-        th { background: #1f6feb; padding: 3px 5px; }
-        td { padding: 3px 5px; border-bottom: 1px solid #444; }
-        code { background: #161b22; padding: 1px 4px; border-radius: 4px; font-size: 0.88em; color: #58a6ff; }
-        pre code { display: block; padding: 0.4em; font-size: 0.65em; color: #c9d1d9; line-height: 1.25; white-space: pre; }
-        /* Allow slide content to scroll vertically when it overflows */
-        .reveal .slides section {
-            overflow-y: auto !important;
-            max-height: 100% !important;
-            box-sizing: border-box !important;
-        }
+        .tag { background: #1f6feb; border-radius: 4px; padding: 1px 5px; font-size: 0.73em; margin: 1px; display: inline-block; }
+        .tag-green { background: #238636; border-radius: 4px; padding: 1px 5px; font-size: 0.73em; margin: 1px; display: inline-block; }
+        .tag-red { background: #da3633; border-radius: 4px; padding: 1px 5px; font-size: 0.73em; margin: 1px; display: inline-block; }
+        .box { border: 1px solid #444; border-radius: 5px; padding: 0.15em 0.5em; margin: 0.12em 0; }
+        table { font-size: 0.64em; border-collapse: collapse; width: 100%; }
+        th { background: #1f6feb; padding: 2px 4px; }
+        td { padding: 2px 4px; border-bottom: 1px solid #444; }
+        code { background: #161b22; padding: 1px 4px; border-radius: 4px; font-size: 0.86em; color: #58a6ff; }
+        pre code { display: block; padding: 0.35em; font-size: 0.60em; color: #c9d1d9; line-height: 1.22; white-space: pre; }
+        .reveal .slides section { box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -52,41 +47,37 @@
                 <h2>План лекції</h2>
                 <div class="two-col">
                     <div>
-                        <h3>🌐 Частина 1 — Безпека веб-застосунків (30%)</h3>
-                        <ol style="font-size:0.85em;">
-                            <li>Веб-застосунки — Огляд</li>
-                            <li>OWASP Top 10 — огляд</li>
+                        <h3>🌐 Частина 1 — Безпека веб-застосунків (~14 слайдів)</h3>
+                        <ol style="font-size:0.88em;">
+                            <li>Огляд загроз та OWASP Top 10</li>
                             <li>Ін'єкції: SQL, NoSQL, Command</li>
-                            <li>Порушення автентифікації та сесій</li>
-                            <li>XSS — міжсайтовий скриптинг</li>
-                            <li>CSRF та Clickjacking</li>
-                            <li>SSRF та IDOR</li>
+                            <li>Автентифікація, XSS, CSRF, SSRF, IDOR</li>
                             <li>HTTPS/TLS та безпека транспорту</li>
-                            <li>Безпека REST і GraphQL API</li>
-                            <li>WAF та захист веб-застосунків</li>
-                            <li>Кращі практики веб-безпеки</li>
-                            <li>Практичний кейс: AWS WAF + CloudFront</li>
+                            <li>Безпека REST/GraphQL API</li>
+                            <li>WAF, кращі практики, кейс AWS</li>
+                        </ol>
+                        <h3 style="margin-top:0.5em;">☁️ Частина 3 — Cloud / DevSecOps (~8 слайдів)</h3>
+                        <ol start="7" style="font-size:0.88em;">
+                            <li>AWS WAF, Shield, CloudFront</li>
+                            <li>DevSecOps Pipeline (Shift-Left)</li>
+                            <li>Compliance: PCI DSS, GDPR, NIS2</li>
+                            <li>Чек-лист та підсумок</li>
                         </ol>
                     </div>
                     <div>
-                        <h3>📡 Частина 2 — Безпека телеком-застосунків (55%)</h3>
-                        <ol start="13" style="font-size:0.85em;">
-                            <li>Архітектура телеком-мережі та загрози</li>
-                            <li>Вразливості SS7</li>
-                            <li>Diameter — атаки та захист</li>
-                            <li>VoIP та безпека SIP</li>
-                            <li>SMS та SMishing</li>
-                            <li>GTP та пакетне ядро</li>
-                            <li>Архітектура безпеки 5G</li>
-                            <li>Перехоплення трафіку (LI)</li>
-                            <li>NFV та SDN безпека</li>
-                            <li>Тестування безпеки</li>
-                        </ol>
-                        <h3 style="margin-top:0.4em;">☁️ Частина 3 — Cloud/DevSecOps (15%)</h3>
-                        <ol start="23" style="font-size:0.85em;">
-                            <li>AWS WAF, Shield, CloudFront</li>
-                            <li>DevSecOps &amp; Compliance</li>
-                            <li>Підсумок та питання</li>
+                        <h3>📡 Частина 2 — Безпека телеком (~25 слайдів)</h3>
+                        <ol start="11" style="font-size:0.88em;">
+                            <li>Архітектура мережі та загрози</li>
+                            <li>SS7 — атаки та захист</li>
+                            <li>Diameter, GTP</li>
+                            <li>VoIP, SIP, SMS</li>
+                            <li>5G Security Architecture</li>
+                            <li>Telecom API, мобільні застосунки</li>
+                            <li>MVNO, роумінг, API Gateway</li>
+                            <li>Fraud, Signaling Firewall, LI</li>
+                            <li>DDoS, моніторинг, крипто</li>
+                            <li>BSS/OSS, IoT, Zero Trust, NFV</li>
+                            <li>Соціальна інженерія, тестування</li>
                         </ol>
                     </div>
                 </div>
@@ -705,7 +696,55 @@ resource "aws_wafv2_web_acl" "app_waf" {
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 17: Diameter ===== -->
+            <!-- ===== СЛАЙД 17: SS7 — Захист ===== -->
+            <section>
+                <h2>SS7 — Захист та рекомендації</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>🛡️ Три категорії захисту (GSMA FS.11)</h3>
+                        <pre><code>Категорія 1 (мінімум):
+  → Блокувати PSI/SRI від сторонніх мереж
+  → SMS Home Routing — всі SMS через SMSC оператора
+
+Категорія 2 (рекомендовано):
+  → Detect UpdateLocation з нерідних PLMN
+  → Виявлення аномалій у CDR-потоках
+
+Категорія 3 (просунутий):
+  → ML + поведінковий аналіз
+  → Кореляція SS7 + IP + CDR
+  → Автоматичне блокування підозрілих транзакцій</code></pre>
+                        <h3 style="margin-top:0.3em;">📋 GSMA документи</h3>
+                        <table>
+                            <thead><tr><th>Документ</th><th>Зміст</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>GSMA FS.11</strong></td><td>SS7 — категорії загроз та контрзаходи</td></tr>
+                                <tr><td><strong>GSMA FS.19</strong></td><td>Diameter security guidelines</td></tr>
+                                <tr><td><strong>GSMA FS.07</strong></td><td>Захист HLR/HSS від несанкціонованого доступу</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h3>🔧 Стратегічний захист</h3>
+                        <ul style="font-size:0.85em;">
+                            <li><span class="highlight">SS7 Firewall</span> — фільтрація аномальних MAP-повідомлень на кордоні</li>
+                            <li><span class="highlight">SMS Home Routing</span> — обов'язковий мінімум для кожного оператора</li>
+                            <li><span class="highlight">Постійний моніторинг</span> — аналіз сигнального трафіку 24/7</li>
+                            <li><span class="highlight">Міграція на 5G</span> — захищена архітектура SEPP замінює SS7-роумінг</li>
+                        </ul>
+                        <div class="box" style="border-color:#e8b04b; margin-top:0.3em;">
+                            <h3>⚠️ Реальні збитки</h3>
+                            <p style="font-size:0.8em;">SS7-атаки на банки: крадіжка Bitcoin через 2FA (2017, Telefónica Германія). Прослуховування депутатів Бундестагу (2014). Злом акаунту конгресмена США (2016). Доступ до SS7: ~$1000/міс через сірих операторів.</p>
+                        </div>
+                        <div class="box" style="border-color:#1f6feb; margin-top:0.25em;">
+                            <h3>📌 GSMA T-ISAC</h3>
+                            <p style="font-size:0.78em;">Telecom Information Sharing and Analysis Centre — обмін IOC між операторами для спільної боротьби з SS7-атаками в реальному часі.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 18: Diameter ===== -->
             <section>
                 <h2>Diameter — вразливості та захист</h2>
                 <div class="two-col">
@@ -752,7 +791,7 @@ resource "aws_wafv2_web_acl" "app_waf" {
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 18: VoIP та SIP ===== -->
+            <!-- ===== СЛАЙД 19: VoIP та SIP ===== -->
             <section>
                 <h2>VoIP та безпека SIP</h2>
                 <div class="two-col">
@@ -794,7 +833,55 @@ resource "aws_wafv2_web_acl" "app_waf" {
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 19: SMS Security ===== -->
+            <!-- ===== СЛАЙД 20: SIP — Атаки та SBC ===== -->
+            <section>
+                <h2>SIP — Атаки та Session Border Controller</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>💥 Зведена таблиця атак на SIP</h3>
+                        <table>
+                            <thead><tr><th>Атака</th><th>Метод</th><th>Наслідок</th><th>Захист</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>Registration Hijacking</strong></td><td>REGISTER з підробленим From</td><td>Крадіжка ідентичності</td><td>Digest auth + TLS</td></tr>
+                                <tr><td><strong>INVITE Flooding</strong></td><td>Масові INVITE</td><td>DoS SIP proxy</td><td>Rate limiting, SBC</td></tr>
+                                <tr><td><strong>RTP Injection</strong></td><td>Вставка в медіа-потік</td><td>Спотворення аудіо</td><td>SRTP</td></tr>
+                                <tr><td><strong>Toll Fraud</strong></td><td>Несанкціонований INVITE</td><td>Фінансові втрати</td><td>Auth + ACL</td></tr>
+                                <tr><td><strong>Eavesdropping</strong></td><td>Пасивне прослуховування RTP</td><td>Запис дзвінків</td><td>SRTP + SIPS</td></tr>
+                                <tr><td><strong>SIP Scanning</strong></td><td>OPTIONS/REGISTER probe</td><td>Розкриття структури</td><td>Fail2ban, SBC</td></tr>
+                            </tbody>
+                        </table>
+                        <h3 style="margin-top:0.3em;">📋 Стандарти безпеки VoIP</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><strong>RFC 3261</strong> — базовий SIP протокол</li>
+                            <li><strong>RFC 5630</strong> — SIPS URI (SIP over TLS)</li>
+                            <li><strong>RFC 3711</strong> — SRTP (Secure RTP)</li>
+                            <li><strong>ETSI TS 133 203</strong> — 3GPP IMS безпека</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>🔒 Session Border Controller (SBC)</h3>
+                        <p style="font-size:0.82em;">SBC — граничний елемент між внутрішньою SIP-мережею та зовнішнім світом. Аналог WAF для VoIP.</p>
+                        <ul style="font-size:0.85em;">
+                            <li><span class="highlight">Нормалізація SIP</span> — виправлення некоректних заголовків</li>
+                            <li><span class="highlight">Rate limiting та антифлуд</span> — блокування INVITE/REGISTER flood</li>
+                            <li><span class="highlight">TLS термінація</span> — шифрування SIP-сигналізації</li>
+                            <li><span class="highlight">Topology hiding</span> — приховування внутрішньої архітектури</li>
+                            <li><span class="highlight">Медіа relay</span> — транскодування, SRTP → RTP</li>
+                        </ul>
+                        <div class="box" style="border-color:#238636; margin-top:0.3em;">
+                            <h3>SIPVicious — Інструмент пентесту</h3>
+                            <pre><code># Сканування SIP-пристроїв у мережі
+svmap.py 192.168.1.0/24
+# Enumeration розширень
+svwar.py -e100-200 192.168.1.100
+# Brute-force PIN
+svcrack.py -u100 192.168.1.100</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 21: SMS Security ===== -->
             <section>
                 <h2>Безпека SMS та SMS-фішинг (SMishing)</h2>
                 <div class="two-col">
@@ -842,7 +929,7 @@ resource "aws_wafv2_web_acl" "app_waf" {
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 20: GTP Security ===== -->
+            <!-- ===== СЛАЙД 22: GTP Security ===== -->
             <section>
                 <h2>Безпека GTP та пакетного ядра</h2>
                 <div class="two-col">
@@ -886,7 +973,7 @@ resource "aws_wafv2_web_acl" "app_waf" {
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 21: Архітектура безпеки 5G ===== -->
+            <!-- ===== СЛАЙД 23: Архітектура безпеки 5G ===== -->
             <section>
                 <h2>Архітектура безпеки 5G</h2>
                 <div class="two-col">
@@ -933,7 +1020,7 @@ resource "aws_wafv2_web_acl" "app_waf" {
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 22: Атаки на 5G ===== -->
+            <!-- ===== СЛАЙД 24: Атаки на 5G ===== -->
             <section>
                 <h2>Атаки на 5G мережі</h2>
                 <div class="two-col">
@@ -976,7 +1063,7 @@ resource "aws_wafv2_web_acl" "app_waf" {
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 23: Telecom API ===== -->
+            <!-- ===== СЛАЙД 25: Telecom API ===== -->
             <section>
                 <h2>Telecom API та відкриті інтерфейси</h2>
                 <div class="two-col">
@@ -1020,7 +1107,7 @@ resource "aws_wafv2_web_acl" "app_waf" {
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 24: Безпека мобільних застосунків ===== -->
+            <!-- ===== СЛАЙД 26: Безпека мобільних застосунків ===== -->
             <section>
                 <h2>Безпека мобільних застосунків</h2>
                 <div class="two-col">
@@ -1066,7 +1153,7 @@ resource "aws_wafv2_web_acl" "app_waf" {
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 25: MVNO та роумінг ===== -->
+            <!-- ===== СЛАЙД 27: MVNO та роумінг ===== -->
             <section>
                 <h2>Захист MVNO та роумінгу</h2>
                 <div class="two-col">
@@ -1108,7 +1195,7 @@ resource "aws_wafv2_web_acl" "app_waf" {
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 26: AWS API Gateway для телеком ===== -->
+            <!-- ===== СЛАЙД 28: AWS API Gateway для телеком ===== -->
             <section>
                 <h2>AWS API Gateway для телекому</h2>
                 <div class="two-col">
@@ -1169,7 +1256,7 @@ resource "aws_api_gateway_usage_plan" "partner" {
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 27: Сигнальні фаєрволи та SMS Firewall ===== -->
+            <!-- ===== СЛАЙД 29: Сигнальні фаєрволи та SMS Firewall ===== -->
             <section>
                 <h2>Сигнальні фаєрволи та SMS Firewall</h2>
                 <div class="two-col">
@@ -1215,7 +1302,53 @@ resource "aws_api_gateway_usage_plan" "partner" {
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 28: Моніторинг аномалій у телеком ===== -->
+            <!-- ===== СЛАЙД 30: Telecom Fraud ===== -->
+            <section>
+                <h2>Telecom Fraud — типи та виявлення</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>💰 Типи шахрайства в телекомі</h3>
+                        <table>
+                            <thead><tr><th>Тип</th><th>Опис</th><th>Збитки/рік</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>IRSF</strong></td><td>Дзвінки на premium номери за кордоном</td><td>~$6.1B</td></tr>
+                                <tr><td><strong>PBX / Toll Fraud</strong></td><td>Злом корпоративних АТС</td><td>~$4B</td></tr>
+                                <tr><td><strong>Wangiri</strong></td><td>Один дзвінок → жертва передзвонює на premium</td><td>$1–2B</td></tr>
+                                <tr><td><strong>SIM Box</strong></td><td>Приземлення VoIP через SIM — ухилення від тарифів</td><td>Мільярди</td></tr>
+                                <tr><td><strong>Subscription Fraud</strong></td><td>Фіктивні підписки на сервіси по чужих даних</td><td>Значні</td></tr>
+                                <tr><td><strong>Roaming Fraud</strong></td><td>Зловживання роумінговими умовами через IPX</td><td>Значні</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="box" style="border-color:#da3633; margin-top:0.3em;">
+                            <p style="font-size:0.8em;"><span class="highlight">CFCA 2021:</span> загальні збитки від телеком-шахрайства — <strong>$38.95 млрд/рік</strong> у глобальному масштабі</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>🔍 Виявлення шахрайства</h3>
+                        <pre><code>CDR Analysis Pipeline:
+CDR → Kafka (streaming)
+  → ML Anomaly Detection
+    (velocity, geo, pattern)
+  → Real-time FMS
+    (Fraud Management System)
+  → Block / Alert / Investigate</code></pre>
+                        <h3 style="margin-top:0.3em;">⚡ Ознаки IRSF у CDR</h3>
+                        <ul style="font-size:0.82em;">
+                            <li>Різкий ріст дзвінків на конкретні міжнародні префікси</li>
+                            <li>Нова SIM-карта → одразу дзвінки за кордон</li>
+                            <li>Нетипові години активності (3–5 ранку)</li>
+                        </ul>
+                        <h3 style="margin-top:0.3em;">🛡️ Системи захисту</h3>
+                        <ul style="font-size:0.82em;">
+                            <li><span class="highlight">FMS</span> (Subex, TEKELEC) — real-time аналіз CDR</li>
+                            <li><span class="highlight">Velocity checks</span> — &gt;N дзвінків за X хв → блокування</li>
+                            <li><span class="highlight">GSMA T-ISAC</span> — обмін даними між операторами</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 31: Моніторинг аномалій у телеком ===== -->
             <section>
                 <h2>Моніторинг аномалій у телеком</h2>
                 <div class="two-col">
@@ -1261,7 +1394,7 @@ index=cdr dest_country IN ("Cuba","Somalia","...)
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 29: Перехоплення трафіку та Lawful Interception ===== -->
+            <!-- ===== СЛАЙД 32: Перехоплення трафіку та Lawful Interception ===== -->
 
             <section>
                 <h2>Перехоплення трафіку в телекомі</h2>
@@ -1299,7 +1432,92 @@ index=cdr dest_country IN ("Cuba","Somalia","...)
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 30: Криптографія у телеком-протоколах ===== -->
+            <!-- ===== СЛАЙД 33: IMSI Catcher та Eavesdropping ===== -->
+            <section>
+                <h2>IMSI Catcher та Eavesdropping у телекомі</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>📡 IMSI Catcher (Stingray)</h3>
+                        <pre><code>Легітимна BTS → BSC → MSC → HLR
+
+IMSI Catcher (фіктивна вишка):
+ 1. Випромінює потужний сигнал
+ 2. Телефон підключається (MITM)
+ 3. Отримує IMSI/TMSI абонента
+ 4. Downgrade до 2G (A5/1 → зламано)
+ 5. Прослуховування дзвінків/SMS</code></pre>
+                        <h3 style="margin-top:0.3em;">🗂️ Методи перехоплення</h3>
+                        <table>
+                            <thead><tr><th>Метод</th><th>Покоління</th><th>Доступність</th></tr></thead>
+                            <tbody>
+                                <tr><td>IMSI Catcher</td><td>2G–4G</td><td>Держструктури, злочинці</td></tr>
+                                <tr><td>SS7 Call Forward</td><td>2G–3G</td><td>Будь-хто з SS7-доступом</td></tr>
+                                <tr><td>Diameter Intercept</td><td>4G</td><td>Спецслужби</td></tr>
+                                <tr><td>GSM Downgrade</td><td>2G fallback</td><td>Спеціалізоване ПО</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h3>⚖️ Законне перехоплення (LI — Lawful Interception)</h3>
+                        <ul style="font-size:0.85em;">
+                            <li><span class="highlight">ETSI TS 101 331</span> — LI для фіксованих мереж</li>
+                            <li><span class="highlight">3GPP TS 33.108</span> — LI для мобільних мереж</li>
+                            <li>Оператори <strong>зобов'язані</strong> надавати LI за рішенням суду</li>
+                        </ul>
+                        <h3 style="margin-top:0.3em;">🛡️ Захист для кінцевого користувача</h3>
+                        <ul style="font-size:0.85em;">
+                            <li><span class="highlight">End-to-End шифрування</span> — Signal Protocol, WhatsApp</li>
+                            <li><span class="highlight">VPN</span> — захист усього IP-трафіку</li>
+                            <li><span class="highlight">5G SUCI</span> — шифрований ідентифікатор → IMSI catcher неефективний</li>
+                            <li>Уникати SMS OTP для критичних акаунтів → FIDO2</li>
+                        </ul>
+                        <div class="box" style="border-color:#e8b04b; margin-top:0.3em;">
+                            <p style="font-size:0.78em;"><span class="highlight">5G захист:</span> SUCI шифрує SUPI публічним ключем оператора (ECIES). Навіть фальшива 5G-базова станція не може отримати реальний ідентифікатор абонента.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 34: DDoS-атаки на телеком ===== -->
+            <section>
+                <h2>DDoS-атаки на телеком-мережі</h2>
+                <div class="two-col">
+                    <div>
+                        <h3>📊 Телеком-специфічні DDoS</h3>
+                        <table>
+                            <thead><tr><th>Тип атаки</th><th>Протокол</th><th>Інструмент</th><th>Захист</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>SIP INVITE Flood</strong></td><td>SIP/UDP</td><td>SIPVicious</td><td>SBC rate limiting</td></tr>
+                                <tr><td><strong>SS7 Signal Flood</strong></td><td>SS7/SCTP</td><td>Кастомні інструменти</td><td>SS7 Firewall</td></tr>
+                                <tr><td><strong>GTP Flood</strong></td><td>GTP/UDP</td><td>EPC Attack toolkit</td><td>GTP Firewall</td></tr>
+                                <tr><td><strong>DNS Amplification</strong></td><td>DNS/UDP</td><td>Ботнети</td><td>RPF, rate limit</td></tr>
+                                <tr><td><strong>RTP Flood</strong></td><td>RTP/UDP</td><td>RTPFlood</td><td>Медіа rate limit</td></tr>
+                                <tr><td><strong>Volumetric</strong></td><td>IP</td><td>Ботнети, IoT</td><td>Anycast BGP, scrubbing</td></tr>
+                            </tbody>
+                        </table>
+                        <h3 style="margin-top:0.3em;">📈 Amplification фактори</h3>
+                        <pre><code>DNS:  60B  запит → 3000B  відповідь → 50x
+NTP:  8B   запит → 468B   відповідь → 58x
+SSDP: 30B  запит → 300B   відповідь → 10x</code></pre>
+                    </div>
+                    <div>
+                        <h3>🛡️ Захист телеком-оператора</h3>
+                        <ul style="font-size:0.85em;">
+                            <li><span class="highlight">Anycast BGP</span> — розподіл атаки по глобальній мережі</li>
+                            <li><span class="highlight">Scrubbing Centers</span> — очищення трафіку (Akamai, Cloudflare)</li>
+                            <li><span class="highlight">RTBH</span> (Remote Triggered Black Hole) — аварійне блокування</li>
+                            <li><span class="highlight">BCP38 / RPF</span> — фільтрація підробленого IP-відправника</li>
+                            <li><span class="highlight">AWS Shield Advanced</span> — захист хмарних компонентів</li>
+                        </ul>
+                        <div class="box" style="border-color:#1f6feb; margin-top:0.3em;">
+                            <h3>Специфіка SIP DDoS</h3>
+                            <p style="font-size:0.78em;">SIP Flood складніший ніж IP DDoS: кожен INVITE — легітимний запит з реальними заголовками. SBC повинен ідентифікувати аномальну <em>частоту</em> від одного IP/SIP UA. Rate-based rules: &gt;50 INVITE/сек → тимчасовий бан.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 35: Криптографія у телеком-протоколах ===== -->
             <section>
                 <h2>Криптографія у телеком-протоколах</h2>
                 <div class="two-col">
@@ -1346,7 +1564,7 @@ index=cdr dest_country IN ("Cuba","Somalia","...)
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 31: Кейс захист BSS/OSS ===== -->
+            <!-- ===== СЛАЙД 36: Кейс захист BSS/OSS ===== -->
             <section>
                 <h2>Практичний кейс: захист BSS/OSS у AWS</h2>
                 <div class="two-col">
@@ -1389,7 +1607,7 @@ index=cdr dest_country IN ("Cuba","Somalia","...)
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 32: Regulatory & Compliance ===== -->
+            <!-- ===== СЛАЙД 37: Regulatory & Compliance ===== -->
             <section>
                 <h2>Regulatory &amp; Compliance у телекомі</h2>
                 <div class="two-col">
@@ -1432,7 +1650,7 @@ index=cdr dest_country IN ("Cuba","Somalia","...)
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 33: IoT та M2M ===== -->
+            <!-- ===== СЛАЙД 38: IoT та M2M ===== -->
             <section>
                 <h2>IoT та M2M безпека у телекомі</h2>
                 <div class="two-col">
@@ -1477,7 +1695,7 @@ index=cdr dest_country IN ("Cuba","Somalia","...)
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 34: Соціальна інженерія проти абонентів ===== -->
+            <!-- ===== СЛАЙД 39: Соціальна інженерія проти абонентів ===== -->
             <section>
                 <h2>Атаки на абонентів: соціальна інженерія</h2>
                 <div class="two-col">
@@ -1520,7 +1738,7 @@ index=cdr dest_country IN ("Cuba","Somalia","...)
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 35: Zero Trust для телеком ===== -->
+            <!-- ===== СЛАЙД 40: Zero Trust для телеком ===== -->
             <section>
                 <h2>Zero Trust для телеком-інфраструктури</h2>
                 <div class="two-col">
@@ -1560,7 +1778,7 @@ index=cdr dest_country IN ("Cuba","Somalia","...)
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 36: NFV та SDN ===== -->
+            <!-- ===== СЛАЙД 41: NFV та SDN ===== -->
             <section>
                 <h2>NFV та SDN — Безпека віртуалізованих мереж</h2>
                 <div class="two-col">
@@ -1598,7 +1816,7 @@ index=cdr dest_country IN ("Cuba","Somalia","...)
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 37: Тестування безпеки ===== -->
+            <!-- ===== СЛАЙД 42: Тестування безпеки ===== -->
             <section>
                 <h2>Тестування безпеки веб- та телеком-застосунків</h2>
                 <div class="two-col">
@@ -1637,7 +1855,7 @@ index=cdr dest_country IN ("Cuba","Somalia","...)
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 38: AWS WAF, Shield та CloudFront ===== -->
+            <!-- ===== СЛАЙД 43: AWS WAF, Shield та CloudFront ===== -->
             <section>
                 <h2>AWS WAF, Shield та CloudFront — комплексний захист</h2>
                 <div class="two-col">
@@ -1693,7 +1911,7 @@ resource "aws_cloudfront_response_headers_policy" "security" {
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 39: DevSecOps ===== -->
+            <!-- ===== СЛАЙД 44: DevSecOps ===== -->
             <section>
                 <h2>DevSecOps для веб- та телеком-систем</h2>
                 <div class="two-col">
@@ -1771,7 +1989,7 @@ jobs:
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 40: Compliance ===== -->
+            <!-- ===== СЛАЙД 45: Compliance ===== -->
             <section>
                 <h2>Compliance: PCI DSS, GDPR, NIST</h2>
                 <div class="two-col">
@@ -1816,7 +2034,7 @@ jobs:
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 41: Кращі практики та чек-лист ===== -->
+            <!-- ===== СЛАЙД 46: Кращі практики та чек-лист ===== -->
             <section>
                 <h2>Кращі практики та чек-лист безпеки</h2>
                 <div class="two-col">
@@ -1857,7 +2075,7 @@ jobs:
                 </div>
             </section>
 
-            <!-- ===== СЛАЙД 42: Підсумок та питання ===== -->
+            <!-- ===== СЛАЙД 47: Підсумок та питання ===== -->
             <section>
                 <h2>Підсумок лекції 7</h2>
                 <div class="two-col">
@@ -1912,11 +2130,11 @@ jobs:
             transition: 'slide',
             slideNumber: 'c/t',
             center: false,
-            width: 1650,
-            height: 900,
+            width: 1750,
+            height: 920,
             margin: 0.04,
             minScale: 0.2,
-            maxScale: 1.0,
+            maxScale: 1.05,
             scrollActivationWidth: 700
         });
     </script>
