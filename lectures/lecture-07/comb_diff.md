@@ -95,5 +95,5 @@
 | `h3` | 0.9em | 0.85em | Зменшення для fit |
 | `li/p` | 1.0em | 0.93em | Зменшення для fit |
 | `table` | 0.7em | 0.64em | Таблиці займали більшість overflow |
-| `pre code` | 0.65em | 0.60em | Код блоки overflow |
+| `pre code` | 0.65em | 0.80em | Код блоки overflow |
 | `overflow-y: auto` | Увімкнено | Видалено | Scroll — не рішення, потрібен fit |
