@@ -67,13 +67,14 @@
 | `5_presentation.html` (вхід) | 39 |
 | `7_presentation.html` (вхід) | 38 |
 | Попередня `presentation.html` (вхід, фрагмент) | ~12 унікальних |
-| **`presentation.html` (фінал)** | **47** |
+| **`presentation.html` (фінал)** | **48** |
 
 ### Розподіл за джерелами
 
 - **З `7_presentation.html`**: 38 слайдів (основа — всі збережено)
 - **Зі старої `presentation.html`**: +4 унікальних слайди (Web Overview, LI, NFV/SDN, Security Testing)
 - **З `5_presentation.html`**: +5 унікальних слайдів (SS7 Defense, SIP SBC, Fraud, IMSI Catcher, DDoS Telecom)
+- **Додатково у фінальній `presentation.html`**: +1 слайд через поділ фінального матеріалу на окремий «СЛАЙД 48»
 
 ---
 
