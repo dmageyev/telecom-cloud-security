@@ -126,7 +126,7 @@ document.getElementById('output').innerHTML = location.hash.substring(1);
 ```html
 <!-- Content Security Policy -->
 <meta http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'nonce-random123'">
+      content="default-src 'self'; script-src 'self' 'nonce-<generated-per-response>'">
 
 <!-- Output encoding у PHP -->
 echo htmlspecialchars($user_input, ENT_QUOTES, 'UTF-8');
