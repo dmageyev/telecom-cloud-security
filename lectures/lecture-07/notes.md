@@ -5,6 +5,16 @@
 
 ---
 
+## Вступ
+
+Лекція 7 охоплює три взаємопов'язані домени сучасної кібербезпеки: безпеку веб-застосунків, захист телекомунікаційних мереж і хмарний підхід DevSecOps. Ці теми є фундаментальними для фахівців з інформаційної безпеки, адже саме веб-сервіси та телеком-інфраструктура є найчастіше атакованими цілями у сучасному цифровому середовищі.
+
+Важливою особливістю лекції є розгляд спадкових протоколів — SS7 та Diameter, що були розроблені в епоху, коли концепція кібербезпеки ще не існувала як самостійна дисципліна. Ці протоколи досі використовуються у мільярдах телефонних з'єднань щодня, і їхні вразливості є реальним ризиком як для операторів, так і для кінцевих користувачів. Паралельно розглядається 5G — нове покоління мобільних мереж, де проблеми безпеки були враховані від початку проектування архітектури.
+
+Хмарна складова лекції охоплює практичне застосування сервісів AWS (WAF, Shield, CloudFront) для захисту веб-застосунків і телеком API, а також принципи DevSecOps — методологію, що інтегрує безпеку у кожен етап розробки та доставки програмного забезпечення.
+
+---
+
 ## 1. Безпека веб-застосунків
 
 ### 1.1 Ландшафт загроз
@@ -279,7 +289,86 @@ query {
 
 ---
 
+### 1.9 HTTPS, TLS та HTTP Security Headers
+
+#### TLS — протокол та версії
+
+TLS (Transport Layer Security) є обов'язковим для всіх веб-застосунків, які передають будь-які дані. Версії та їх статус:
+
+| Версія | Рік | Статус |
+|--------|-----|--------|
+| SSL 3.0 | 1996 | Deprecated (POODLE attack) |
+| TLS 1.0 | 1999 | Deprecated (RFC 8996, 2021) |
+| TLS 1.1 | 2006 | Deprecated (RFC 8996, 2021) |
+| TLS 1.2 | 2008 | Підтримується, мінімальна вимога |
+| TLS 1.3 | 2018 | **Рекомендований**, значно швидший |
+
+TLS 1.3 усунув слабкі cipher suites (RC4, DES, 3DES, RSA key exchange), обов'язково Forward Secrecy (ECDHE), скоротив handshake до 1-RTT (або навіть 0-RTT для resume сесій).
+
+**Типові помилки конфігурації TLS:**
+- Дозволяти TLS 1.0/1.1 для "сумісності" зі старими клієнтами
+- Відключати перевірку сертифіката у внутрішніх сервісах
+- Використовувати самопідписані сертифікати без перевірки CA
+- Mixed Content — завантаження HTTP ресурсів на HTTPS-сторінці
+
+#### HTTP Security Headers
+
+Правильний набір HTTP-заголовків безпеки значно ускладнює атаки:
+
+| Заголовок | Призначення | Рекомендоване значення |
+|-----------|-------------|----------------------|
+| `Strict-Transport-Security` | Примусовий HTTPS (HSTS) | `max-age=31536000; includeSubDomains; preload` |
+| `Content-Security-Policy` | Захист від XSS | `default-src 'self'; script-src 'self' 'nonce-...';` |
+| `X-Frame-Options` | Захист від Clickjacking | `DENY` або `SAMEORIGIN` |
+| `X-Content-Type-Options` | Захист від MIME sniffing | `nosniff` |
+| `Referrer-Policy` | Контроль Referer заголовку | `strict-origin-when-cross-origin` |
+| `Permissions-Policy` | Обмеження API браузера | `camera=(), microphone=(), geolocation=()` |
+
+**HSTS Preload:** Якщо домен включено до HSTS Preload List (hstspreload.org), браузер ніколи не звертатиметься до нього по HTTP, навіть при першому відвідуванні.
+
+**Certificate Transparency (CT):** Всі SSL/TLS сертифікати публічно логуються в CT Log (RFC 9162). Це дозволяє виявити неавторизовані сертифікати для вашого домену.
+
+---
+
+### 1.10 WAF та кращі практики веб-безпеки
+
+#### Web Application Firewall — принцип роботи
+
+WAF (Web Application Firewall) аналізує HTTP/HTTPS трафік на рівні застосунку (L7) і блокує шкідливі запити. Режими роботи:
+
+- **Detection mode** — лише логування, без блокування (для tuning)
+- **Prevention mode** — активне блокування (production)
+- **Hybrid** — деякі правила блокують, інші тільки логують
+
+**Типи WAF:**
+- **Network WAF** — апаратний пристрій у мережі (Imperva, F5 BIG-IP)
+- **Host-based WAF** — модуль у веб-сервері (ModSecurity для Apache/nginx)
+- **Cloud WAF** — SaaS або CDN-інтегрований (AWS WAF, Cloudflare, Akamai)
+
+**OWASP CRS (Core Rule Set)** — набір правил для ModSecurity та AWS WAF, що покриває OWASP Top 10. Використовується як базовий рівень для більшості WAF рішень.
+
+#### Defense in Depth — багаторівневий захист
+
+Жоден окремий засіб захисту не є достатнім. Правильна архітектура:
+
+```
+Internet
+    ↓ CloudFront + AWS Shield (DDoS, Edge)
+    ↓ AWS WAF (L7 filtering, OWASP rules)
+    ↓ Load Balancer (TLS termination)
+    ↓ Application (prepared statements, output encoding)
+    ↓ Database (least privilege, encryption at rest)
+```
+
+Кожен рівень перехоплює різні типи атак. Компрометація одного рівня не означає компрометацію системи.
+
+---
+
 ## 2. Безпека телеком-застосунків
+
+Телекомунікаційна інфраструктура є критично важливою для будь-якої сучасної держави. Атаки на телеком-мережі можуть призвести не тільки до фінансових збитків, але й до порушення роботи екстрених служб, перехоплення урядових комунікацій і масової слідкованини за громадянами. Унікальність телеком-безпеки полягає в тому, що більшість використовуваних протоколів (SS7, Diameter) були розроблені ще до появи концепції нульової довіри та в епоху, коли весь трафік між операторами вважався надійним за визначенням.
+
+Сучасний телеком-оператор обслуговує одночасно легасі-інфраструктуру (2G/3G/SS7) та нові покоління мереж (4G LTE, 5G NR), що вимагає підтримки безпеки на всіх рівнях паралельно. Крім того, операторський бізнес включає складну екосистему партнерів: MVNO, роумінгові партнери, IPX-провайдери — кожен з яких є потенційним вектором атаки.
 
 ### 2.1 SS7 — Signaling System 7
 
@@ -543,7 +632,552 @@ def detect_irsf(cdr_records):
 
 ---
 
+### 2.7 Безпека мобільних застосунків
+
+Мобільні застосунки операторів (self-care додатки, корпоративні VPN-клієнти) є специфічним вектором атак, оскільки поєднують клієнтський код, API-взаємодію та зберігання чутливих даних на пристрої.
+
+#### OWASP MASVS — Mobile Application Security Verification Standard
+
+| Рівень | Застосування |
+|--------|-------------|
+| MASVS-L1 | Базова безпека (всі застосунки) |
+| MASVS-L2 | Захист від потужних зловмисників (банківські, телеком) |
+| MASVS-R | Захист від реверс-інжинірингу та тампінгу |
+
+**Основні ризики мобільних застосунків:**
+
+- **Незахищене зберігання:** Паролі, токени, MSISDN у SharedPreferences або незашифрованих файлах
+- **Слабка автентифікація:** Відсутність biometric або PIN lock після timeout
+- **Небезпечна комунікація:** Відсутність certificate pinning → MITM атака через proxy
+- **Витік через логи:** Запис чутливих даних у логи Android/iOS
+- **Реверс-інжиніринг:** Декомпіляція APK та отримання hardcoded ключів API
+
+**Захист:**
+- Certificate pinning для API-комунікації (але ускладнює оновлення)
+- Зберігання credentials у Android Keystore / iOS Secure Enclave
+- Root/jailbreak detection (бібліотеки RootBeer, DTTJailbreakDetection)
+- Obfuscation + RASP (Runtime Application Self-Protection)
+- Мінімальні дозволи (Android permissions): запитувати лише необхідні
+
+---
+
+### 2.8 MVNO та безпека роумінгу
+
+#### MVNO (Mobile Virtual Network Operator)
+
+MVNO — оператор, що надає послуги мобільного зв'язку, орендуючи інфраструктуру у MNO (Mobile Network Operator). Моделі MVNO:
+
+- **Full MVNO** — власний HLR/HSS, SIM-карти, IP-ядро
+- **Light MVNO** — власні SIM та тарифи, але частина ядра від MNO
+- **Reseller** — повністю залежить від MNO
+
+**Ризики MVNO:**
+- MVNO має доступ до SS7-мережі MNO → потенційний вектор атаки
+- Слабкий контроль ідентичності абонентів MVNO з боку MNO
+- Спільне використання HLR/HSS може призводити до витоку даних між MVNO
+
+**Безпека роумінгу:**
+Роумінг здійснюється через **IPX (IP eXchange)** провайдерів — посередників між операторами різних країн.
+
+| Рівень | Протокол | Ризик |
+|--------|----------|-------|
+| Сигналізація | SS7 MAP / Diameter | Location tracking, SMS interception |
+| Транспорт | IPX IP мережа | MITM, traffic analysis |
+| Дані | GTP-U тунелі | User data interception |
+| 5G роумінг | N32 (SEPP) | JOSE manipulation |
+
+**Захист:**
+- IPsec між IPX вузлами
+- SS7/Diameter Signaling Firewall на кордоні з IPX
+- SEPP для 5G роумінгу (N32 інтерфейс з JOSE захистом)
+- Регулярний аудит роумінгових угод та IPX-партнерів
+
+---
+
+### 2.9 AWS API Gateway для телеком
+
+AWS API Gateway є ключовим компонентом для побудови захищених телеком API у хмарі — BSS/OSS API для партнерів, MVNO-порталів, IoT платформ.
+
+**Ключові функції безпеки API Gateway:**
+
+| Функція | Опис |
+|---------|------|
+| Lambda Authorizer | JWT, API Key, IMSI-based автентифікація через Lambda |
+| WAF Integration | AWS WAF на шлюзі (L7 захист від SQLi/XSS) |
+| Throttling | Rate limit per метод/ресурс/API Key |
+| Usage Plans | Квоти для партнерів/MVNO (daily/monthly quota) |
+| VPC Link | Приватний доступ до телеком VPC без інтернету |
+| Resource Policy | IP whitelist / account-based доступ |
+
+**Архітектура BSS/OSS API:**
+```
+Partner / MVNO
+    │ HTTPS + JWT
+    ↓
+API Gateway (WAF + Lambda Authorizer)
+    │ VPC Link
+    ↓
+NLB (Network Load Balancer)
+    │
+    ↓
+BSS Microservices (ECS Fargate)
+    │
+    ↓
+Aurora PostgreSQL / DynamoDB
+```
+
+**Конфігурація Usage Plan (Terraform):**
+```hcl
+resource "aws_api_gateway_usage_plan" "partner" {
+  name = "partner-quota"
+  throttle_settings {
+    burst_limit = 100
+    rate_limit  = 50      # запитів/сек
+  }
+  quota_settings {
+    limit  = 10000
+    period = "DAY"        # 10k запитів/день
+  }
+}
+```
+
+---
+
+### 2.10 Сигнальні фаєрволи та SMS Firewall
+
+#### Signaling Firewall
+
+Сигнальний фаєрвол — захисний пристрій (або програмне рішення), що інспектує та фільтрує сигнальні повідомлення (SS7 MAP, Diameter, SIP, GTP) на кордоні мережі оператора. Відповідно до GSMA FS.11, впровадження сигнального фаєрвола є обов'язковою вимогою для операторів, що беруть участь у міжнародному роумінгу.
+
+**Функції Signaling Firewall:**
+
+| Функція | Опис |
+|---------|------|
+| GT Validation | Перевірка відповідності Global Title (GT) та IMSI у MAP-повідомленнях |
+| Category Blocking | Блокування MAP-операцій категорій 1, 2, 3 (GSMA FS.11) |
+| Anomaly Detection | Виявлення location-tracking patterns, UpdateLocation-атак |
+| Geo-blocking | Відхилення запитів з неочікуваних мереж / регіонів |
+| Rate Limiting | Обмеження кількості повідомлень per Origin-Point Code (OPC) |
+| Reporting | Логування та звітність для аудиту GSMA FS.11 compliance |
+
+Провідні вендори Signaling Firewall: Cellusys, P1 Security, Mobileum, Tektronix, NetCracker, Subex.
+
+**Категорії захисту GSMA FS.11:**
+- **Категорія 1 (Базова):** Фільтрація очевидно шкідливих повідомлень — updateLocation від нерозпізнаних мереж, запити на кшталт AnyTimeInterrogation.
+- **Категорія 2 (Розширена):** Корелятивна фільтрація — виявлення складних атак через кореляцію кількох повідомлень.
+- **Категорія 3 (Аналітична):** ML-моделі для виявлення нетипової поведінки, підключення до T-ISAC (Telecom Information Sharing and Analysis Center).
+
+#### SMS Firewall
+
+SMS Firewall фільтрує вхідні та вихідні SMS на рівні SMSC для захисту абонентів від SMishing та запобігання A2P-шахрайству.
+
+**Правила фільтрації SMS Firewall:**
+- **Keyword Blocking** — шаблони шкідливого контенту, URL-аналіз у реальному часі через Threat Intelligence
+- **Sender ID Validation** — перевірка реєстрації Sender ID у центральному реєстрі оператора
+- **A2P Rate Limiting** — обмеження кількості SMS від одного джерела за одиницю часу
+- **Grey Route Detection** — виявлення нелегальних маршрутів A2P трафіку в обхід тарифів
+- **Flash SMS Blocking** — блокування SMS Class 0 (miflashing), що не зберігаються на пристрої
+- **MSRN / IMSI Masking** — захист ідентифікаторів абонента під час маршрутизації
+
+Регуляторна база: GSMA PRD IR.70 (Interconnection SMS), GSMA PRD IR.71 (SMS Firewall вимоги).
+
+---
+
+### 2.11 Моніторинг аномалій у телекомі
+
+Виявлення атак у реальному часі є критичним для телеком-операторів. Традиційні IDS не підходять для специфічного трафіку SS7/Diameter/GTP, тому потрібні спеціалізовані рішення.
+
+**CDR-аналіз для виявлення шахрайства:**
+
+```python
+# Спрощений алгоритм виявлення IRSF на основі CDR
+import pandas as pd
+
+def detect_irsf_anomalies(cdr_df):
+    """
+    cdr_df: DataFrame з колонками [msisdn, called_number, duration, timestamp]
+    """
+    HIGH_RISK_PREFIXES = ['+252', '+881', '+960', '+964']  # known IRSF prefixes
+
+    # Velocity check: >10 дзвінків на high-risk prefix за 5 хвилин
+    cdr_df['window'] = cdr_df['timestamp'].dt.floor('5min')
+    grouped = cdr_df.groupby(['msisdn', 'window', 'prefix'])
+
+    alerts = []
+    for (msisdn, window, prefix), group in grouped:
+        if prefix in HIGH_RISK_PREFIXES and len(group) > 10:
+            alerts.append({
+                'msisdn': msisdn,
+                'type': 'IRSF_VELOCITY',
+                'count': len(group),
+                'prefix': prefix,
+                'window': window
+            })
+    return alerts
+```
+
+**Metrics-based підходи:**
+
+| Метрика | Порогове значення | Тип атаки |
+|---------|-------------------|-----------|
+| UpdateLocation rate | >5/год на IMSI | SS7 Location Tracking |
+| SRI запити з нового SCCP | >100/год | SS7 Profiling |
+| SMS до одного MSISDN | >50/хв | SMishing Campaign |
+| GTP Create Session з однакового IMSI | >10/хв | SIM Cloning |
+| Wangiri дзвінки (тривалість <3 сек) | >1000/год | Wangiri Fraud |
+
+**Платформи телеком SOC:**
+- **Mobileum RAID** — Fraud Management System з AI/ML
+- **Cellusys Analytics** — SS7/Diameter моніторинг
+- **AWS GuardDuty** — виявлення загроз у хмарних компонентах телеком
+- **Amazon Kinesis + OpenSearch** — real-time CDR streaming та аналіз
+
+---
+
+### 2.12 Перехоплення трафіку та IMSI Catcher
+
+#### Lawful Interception (LI)
+
+Законне перехоплення — регуляторна вимога, що зобов'язує операторів надавати правоохоронним органам (LEA) доступ до комунікацій конкретних абонентів за рішенням суду.
+
+**Архітектура LI (ETSI TS 101 331):**
+
+```
+Оператор:
+  ├── ADMF (Administration Function) ← команди від LEA
+  ├── IRI (Intercept Related Information) → LEA (метадані)
+  └── CC (Content of Communication) → LEA (контент)
+                ↑
+    Law Enforcement Agency (правоохоронці)
+```
+
+- **3GPP TS 33.108** — LI для мобільних мереж (2G/3G/4G)
+- **3GPP TS 33.127** — LI для 5G (IRI-POI, CC-POI в AMF/SMF/UPF)
+- **ETSI TS 102 232** — загальна архітектура LI
+
+**Ризики LI систем:**
+- Несанкціонований доступ до LI-інтерфейсів (резонансний інцидент: Vodafone Greece, 2005 — прослуховування прем'єр-міністра)
+- Backdoor у LI-обладнанні від постачальників
+- Компрометація ключів шифрування LI-каналу до LEA
+- Інсайдер з доступом до ADMF
+
+#### IMSI Catcher (Stingray)
+
+IMSI Catcher — пристрій, що імітує легітимну базову станцію і виконує MITM-атаку між телефоном та мережею.
+
+**Принцип роботи:**
+```
+Легітимна BTS → BSC → MSC → HLR
+IMSI Catcher (фіктивна вишка):
+  1. Випромінює потужніший сигнал ніж реальні BTS
+  2. Телефон підключається до "найсильнішої" станції
+  3. Отримує IMSI/TMSI — ідентифікатор абонента
+  4. Ініціює downgrade до 2G (де A5/1 зламаний)
+  5. Декриптує та прослуховує дзвінки / SMS
+```
+
+**Еволюція методів перехоплення:**
+
+| Метод | Покоління | Доступність |
+|-------|-----------|-------------|
+| IMSI Catcher | 2G–4G | Держструктури, злочинці ($2K–$100K) |
+| SS7 Call Forward | 2G–3G | Будь-хто з SS7-доступом |
+| Diameter Intercept | 4G | Спецслужби |
+| GSM Downgrade | 2G fallback | Спеціалізоване ПО |
+
+**Захист кінцевого користувача:**
+- **End-to-End шифрування** — Signal Protocol, WhatsApp (Noise Protocol Framework)
+- **VPN** — захист усього IP-трафіку
+- **5G SUCI** — шифрований ідентифікатор: навіть фіктивна 5G-базова станція не отримає реальний IMSI
+- **FIDO2/WebAuthn** — замість SMS OTP для критичних акаунтів
+
+---
+
+### 2.13 DDoS-атаки на телеком-мережі
+
+Телеком-мережі є мішенню специфічних DDoS-атак, спрямованих не лише на пропускну здатність, але й на сигнальні протоколи.
+
+**Телеком-специфічні DDoS:**
+
+| Тип атаки | Протокол | Інструмент | Захист |
+|-----------|----------|-----------|--------|
+| SIP INVITE Flood | SIP/UDP | SIPVicious, inviteflood | SBC rate limiting |
+| SS7 Signal Flood | SS7/SCTP | Кастомні скрипти | SS7 Firewall |
+| GTP Flood | GTP/UDP | EPC Attack Toolkit | GTP Firewall |
+| DNS Amplification | DNS/UDP | Ботнети | RPF, rate limit |
+| RTP Flood | RTP/UDP | rtpflood | Медіа rate limit |
+| Volumetric | IP | Ботнети, IoT | Anycast BGP, scrubbing |
+
+**Amplification фактори:**
+```
+DNS:  8B запит   → 3000B відповідь  → 50×
+NTP:  8B запит   → 468B відповідь   → 58×
+SSDP: 30B запит  → 300B відповідь   → 10×
+```
+
+**SIP DDoS — специфіка:**
+
+SIP Flood складніший за звичайний IP DDoS: кожен INVITE є легітимним запитом з коректними SIP-заголовками. SBC повинен ідентифікувати аномальну частоту від одного IP/SIP UA.
+
+```
+Порогові значення SBC:
+  > 50 INVITE/сек з одного IP → тимчасовий бан (300 сек)
+  > 1000 REGISTER/хв з одного IP → блокування
+  Розмір тіла SDP > 4KB → підозра на DoS
+```
+
+**Захист телеком-оператора:**
+- **Anycast BGP** — розподіл атаки по глобальній мережі (BGP community blackhole)
+- **Scrubbing Centers** — очищення трафіку через Akamai Prolexic, Cloudflare Magic Transit
+- **RTBH (Remote Triggered Black Hole)** — аварійне блокування атакованого префіксу
+- **BCP38 / RPF** — фільтрація підробленого IP-відправника (Unicast Reverse Path Forwarding)
+- **AWS Shield Advanced** — захист хмарних компонентів телеком (SRT підтримка, cost protection)
+
+---
+
+### 2.14 Криптографія у телеком-протоколах
+
+#### Огляд криптографії за поколіннями
+
+| Покоління | Протокол | Алгоритм шифрування | Статус |
+|-----------|----------|---------------------|--------|
+| 2G GSM | A5/1, A5/2 | Stream cipher 64-bit | **Зламаний** |
+| 3G UMTS | KASUMI (UEA1/UIA1) | Block cipher 128-bit | Слабкий, deprecated |
+| 3G/4G | SNOW 3G (UEA2/UIA2) | Stream cipher 128-bit | Прийнятний |
+| 4G/5G | AES-EEA2 / AES-EIA2 | AES-CTR/CMAC 128-bit | Добрий |
+| 5G | ZUC (EEA3/EIA3) | Stream cipher 128-bit | Добрий |
+| SIP/RTP | SRTP (RFC 3711) | AES-128, HMAC-SHA1 | Стандарт |
+| Роумінг | IPsec / TLS | AES-256-GCM, SHA-256 | Вимога |
+
+**GSM A5/1 зламаний:** існують rainbow tables для повного bruteforce offline-злому GSM дзвінків. Вартість обладнання для атаки — від $2000.
+
+#### Ключові протоколи захисту
+
+**IPsec для телеком-з'єднань:**
+```
+Режим тунелювання IPsec (Transport/Tunnel Mode):
+  - Tunnel: захист GTP між vPGW та партнерами
+  - IKEv2: встановлення Security Association (SA)
+  - ESP з AES-256-GCM: автентифіковане шифрування
+  - 3GPP TS 33.210: вимоги до захисту IP-мережі
+```
+
+**SRTP для VoIP (RFC 3711):**
+```
+SRTP = RTP + шифрування + автентифікація:
+  - AES-128 CTR: шифрування медіапотоку RTP
+  - HMAC-SHA1 (80-bit): цілісність
+  - DTLS-SRTP (RFC 5764): для WebRTC-дзвінків
+  - ZRTP (RFC 6189): E2E без PKI (Zimmermann Protocol)
+```
+
+**Post-Quantum Cryptography (PQC) у телекомі:**
+
+3GPP та GSMA вивчають PQC для захисту від атак квантових комп'ютерів у 5G Advanced та 6G:
+- **CRYSTALS-Kyber** (NIST FIPS 203) — для Key Encapsulation Mechanism (KEM)
+- **CRYSTALS-Dilithium** (NIST FIPS 204) — для цифрових підписів
+- Перехід планується поетапно для N32 (SEPP) та NDS/IP інтерфейсів
+
+---
+
+### 2.15 IoT та M2M безпека у телекомі
+
+Телеком-оператори є основними провайдерами IoT-підключень: NB-IoT та LTE-M через ядро LTE/5G. Очікується понад **30 мільярдів підключених IoT-пристроїв** до 2030 року (GSMA Intelligence).
+
+#### Основні ризики IoT/M2M
+
+| Ризик | Приклад | Наслідок |
+|-------|---------|---------|
+| Слабкі credentials | Default паролі (`admin/admin`) | Компрометація, ботнет |
+| Відсутність OTA update | Незакриті вразливості роками | Masive exploitation |
+| Незахищений транспорт | Дані без TLS/DTLS | Перехоплення, підробка |
+| SIM misuse | IoT SIM для дзвінків або IRSF | Фінансові збитки оператора |
+| IoT Botnet | Mirai (2016) — 600 Gbps DDoS | Знищення інфраструктури |
+| Supply chain | Backdoor у IoT-чипах | Тихе шпигунство |
+
+**Mirai botnet (2016):** Захопив 600,000+ IoT-пристроїв (камери, роутери) через default credentials. DDoS атака на Dyn DNS — 1.2 Tbps, недоступність Twitter, Netflix, Amazon.
+
+#### Захист IoT/M2M
+
+**Стандарти та технології:**
+- **LwM2M (OMA)** — протокол управління IoT пристроями, DTLS для захисту
+- **DTLS 1.3** — TLS для UDP (CoAP/MQTT протоколи IoT)
+- **eSIM / iSIM** — захищена ідентифікація (GSMA SGP.02, SGP.32)
+- **PKI для IoT** — certificate-based автентифікація замість паролів
+- **OTA firmware** з цифровим підписом (SUIT standard — RFC 9019)
+
+**Сегрегація IoT в мережі:**
+```
+IoT Security Architecture:
+  ┌─────────────────────────────────────────┐
+  │ IoT SIM → Окремий APN (iot.operator.ua) │
+  │ → Dedicated PDN Gateway                 │
+  │ → IoT Security Gateway (DPI + firewall) │
+  │ → Ізольований VPC / VLAN               │
+  │ → Rate limit: 100 KB/день per SIM       │
+  │ → AWS IoT Core з X.509 cert auth        │
+  └─────────────────────────────────────────┘
+```
+
+**AWS IoT Core для телеком-операторів:**
+- **X.509 cert auth + IoT Device Policies** — кожен пристрій отримує унікальний сертифікат
+- **AWS IoT Device Defender** — виявлення аномалій поведінки пристрою (detect, audit)
+- **AWS IoT Jobs** — безпечна доставка OTA-оновлень з rollback-механізмом
+- **Amazon Kinesis** — стрімінг IoT телеметрії для аналізу
+
+---
+
+### 2.16 Соціальна інженерія проти абонентів
+
+#### Основні вектори атак
+
+**Vishing (Voice Phishing):**
+
+Телефонний дзвінок від "банку", "поліції" або "служби підтримки оператора". Зловмисники використовують:
+- **Caller ID Spoofing** — підробка номера легітимного банку/організації
+- **AI-generated голоси (2024+)** — deepfake голосу знайомої людини або офіційної особи
+- **Pre-texting** — ретельно підготовлений сценарій розмови на основі OSINT
+
+**SMishing (SMS Phishing):**
+- Шкідливі SMS з фішинговими посиланнями
+- Підробка Sender ID банків та держорганів
+- OTP-перехоплення через соціальну інженерію ("скажіть код, що прийшов")
+
+#### SIM Swap Attack — детальна схема
+
+SIM Swap поєднує соціальну інженерію та технічні методи:
+
+```
+Крок 1: OSINT збір
+  - Ім'я, дата народження, адреса жертви (Facebook, LinkedIn, OSINT)
+  - Контрольні питання для верифікації у оператора
+
+Крок 2: Дзвінок оператору
+  - "Я загубив телефон, прошу перевипустити SIM"
+  - Відповіді на секретні питання (з OSINT-даних)
+  - Оператор переносить номер на SIM зловмисника
+
+Крок 3: Exploitation
+  - Всі вхідні SMS + дзвінки → SIM зловмисника
+  - Скидання паролів через SMS OTP
+  - Захоплення email → банків → крипто-гаманців
+```
+
+**Статистика:** FBI IC3 2022 — SIM Swap fraud: **$72.7 мільйони збитків** в США.
+
+#### Захист від соціальної інженерії
+
+**STIR/SHAKEN — стандарт автентифікації Caller ID (RFC 8224/8226, ATIS-1000074):**
+```
+Оригінатор → Підписує PASSporT токен (JWT) з номером
+Транзитний оператор → Передає токен
+Оператор отримувача → Перевіряє підпис через PKI
+Дисплей телефону: "✅ Verified A" або "⚠️ Unverified"
+
+Рівні атестації:
+  A — Повна верифікація (відомий абонент + номер)
+  B — Часткова (відомий шлюз, але не кінцевий абонент)
+  C — Маршрут верифіковано, початок — ні
+```
+
+Обов'язково в США (FCC STIR/SHAKEN mandate), впроваджується в ЄС та Україні.
+
+**SIM Swap Detection API** (GSMA Open Gateway):
+```http
+GET /sim-swap/check
+Authorization: Bearer <operator-token>
+X-MSISDN: +380671234567
+
+Response:
+{
+  "swapped": false,
+  "lastSwapDate": "2024-01-15T10:30:00Z"
+}
+```
+
+Банки можуть перевіряти чи не відбувся SIM Swap нещодавно перед підтвердженням транзакції.
+
+---
+
+### 2.17 Zero Trust для телеком-інфраструктури
+
+**Zero Trust принцип:** "Ніколи не довіряй, завжди перевіряй" — жоден вузол, сервіс або абонент не вважається довіреним за замовчуванням, навіть всередині корпоративної мережі оператора.
+
+#### Zero Trust для 5G Core (SBA)
+
+```
+5G Service-Based Architecture + Zero Trust:
+  ┌──────────────────────────────────────────────────────┐
+  │ Кожна NF:                                            │
+  │   ✓ Автентифікується: X.509 cert + NRF OAuth 2.0    │
+  │   ✓ Авторизується: token з мінімальними правами      │
+  │   ✓ mTLS до кожного сусіднього NF (Istio Service Mesh)│
+  │   ✓ Ізольована в окремому Kubernetes namespace       │
+  │   ✓ Моніторинг: Envoy sidecar → Jaeger tracing       │
+  └──────────────────────────────────────────────────────┘
+```
+
+**Istio Service Mesh для 5G SBA:**
+- Автоматичне інжектування Envoy sidecar proxy до кожного NF pod
+- mTLS увімкнено між усіма podами (PeerAuthentication: STRICT)
+- Policy enforcement через `AuthorizationPolicy`
+- Доповнює NRF OAuth 2.0 на application layer
+
+#### Zero Trust архітектура телеком у AWS
+
+```
+AWS Verified Access (Zero Trust без VPN для BSS/OSS)
+         ↓
+AWS IAM Identity Center (SSO + SAML/OIDC)
+         ↓
+Amazon EKS + Istio (mTLS Service Mesh для NF)
+         ↓
+AWS Network Firewall (сегментація між VPC/subnet)
+         ↓
+VPC Flow Logs + GuardDuty (continuous monitoring)
+         ↓
+AWS Security Hub (єдиний Zero Trust posture dashboard)
+```
+
+**Network Slicing та Zero Trust:**
+
+Кожен network slice (IoT, eMBB, URLLC) ізольований на рівні UPF + SMF + NSSAI. Zero Trust гарантує відсутність lateral movement між слайсами навіть при компрометації одного з них.
+
+---
+
+### 2.18 NFV та SDN — безпека віртуалізованих мереж
+
+#### Еволюція та нові ризики
+
+| Характеристика | Традиційна мережа | NFV/SDN |
+|----------------|-------------------|---------|
+| Обладнання | Спеціалізоване HW | COTS сервери |
+| NF розгортання | Фізичне | VNF/CNF (VM/Container) |
+| Управління | CLI, SNMP | REST API, YANG/NETCONF |
+| Атаки | Фізичні, протокольні | Cloud + протокольні + hypervisor |
+
+**Нові вектори атак NFV/SDN:**
+- **Hypervisor escape** — вихід VNF на фізичний хост (VMware ESXi, KVM вразливості)
+- **Tenant isolation failure** — витік між VNF різних клієнтів/слайсів
+- **SDN Controller compromise** — центральний мозок мережі, Single Point of Failure
+- **Оркестратор MANO** — несанкціонований деплой шкідливого VNF через VNFM API
+- **Supply chain VNF** — шкідливі образи NFV у marketplace / репозиторії
+
+**Захист NFV/SDN (ETSI NFV SEC):**
+- **ETSI GS NFV-SEC 001** — NFV Security Problem Statement
+- **ETSI GS NFV-SEC 010** — Report on Security Aspects in the NFV architecture
+- Ізоляція VNF через vSphere/KVM + sVirt (SELinux / AppArmor)
+- Сканування образів VNF перед деплоєм: Trivy, Amazon ECR scanning
+- **OAuth 2.0 + mTLS для MANO API** — автентифікація оркестратора
+- Immutable infrastructure: VNF образи підписані, не модифікуються в runtime
+
+---
+
 ## 3. Хмара та DevSecOps
+
+Хмарні технології кардинально змінили підхід до розгортання телеком-сервісів. Сучасні оператори переносять BSS/OSS системи в хмару (Cloud-Native Network Functions — CNF), використовують AWS або Azure для обслуговування API партнерів і MVNO. Це відкриває нові можливості масштабування, але й нові вектори атак.
+
+DevSecOps — культура та набір практик, що інтегрує заходи безпеки у весь lifecycle розробки програмного забезпечення. Ключовий принцип: **Shift Left** — виявляти вразливості якомога раніше, коли вартість їх виправлення мінімальна. Дослідження IBM показує, що вартість виявлення вразливості на етапі коду — $80, тоді як після продакшн-релізу — $960, а після реального інциденту — $7680+.
 
 ### 3.1 AWS WAF та Shield
 
@@ -679,7 +1313,108 @@ jobs:
 
 ---
 
-### 3.3 Compliance
+### 3.3 Тестування безпеки веб- та телеком-застосунків
+
+#### Методології тестування
+
+| Методологія | Область | Стандарт |
+|-------------|---------|---------|
+| OWASP WSTG | Веб-застосунки | OWASP Testing Guide v4.2 |
+| OWASP MASTG | Мобільні застосунки | OWASP Mobile Security Testing Guide |
+| PTES | Penetration Testing | Penetration Testing Execution Standard |
+| GSMA FS.11 | SS7 Security | GSMA Baseline Security Controls |
+| 3GPP TS 33.117 | 5G Security | SECAM/SCAS |
+
+**3GPP SECAM/SCAS:**
+Обов'язкове тестування NF (AMF, SMF, UDM, PCF, SMF) перед деплоєм у 5G Core через Security Assurance Specification (SCAS). Тестування проводиться акредитованими лабораторіями.
+
+#### Інструменти тестування
+
+| Категорія | Веб | Телеком |
+|-----------|-----|---------|
+| Проксі / MITM | Burp Suite, OWASP ZAP | SigPloit, ss7MAPer |
+| Fuzzing | ffuf, wfuzz, Boofuzz | SIPVicious, Asterisk, Codenomicon Defensics |
+| Сканування | Nikto, Nuclei, Nessus | Nmap, Shodan, Censys |
+| Мобільні | MobSF, APKTool, Frida | IMSI Catcher detector |
+| API | Postman, Insomnia, kiterunner | Diameter test tools |
+| Статичний аналіз | Semgrep, SonarQube, Bandit | Протокол-специфічні парсери |
+
+**SigPloit — SS7 Penetration Testing:**
+```python
+# SigPloit — Python-фреймворк для тестування SS7
+from sigtran import M2UA, SCCP, MAP
+
+# Тест: надсилання UpdateLocation на чужий IMSI
+map_msg = MAP()
+map_msg.set_operation("updateLocation")
+map_msg.set_imsi("255010123456789")
+map_msg.set_vlr_number("+380671234567")
+# Відправка через SS7 GW...
+```
+
+**Burp Suite для API-тестування телеком BSS:**
+```
+1. Interceptor → Capture JWT token від partner portal
+2. Repeater → Тест IDOR: змінити account_id в запиті
+3. Intruder → Brute force rate limit на /api/auth/login
+4. Scanner → Автоматичний SAST API endpoints
+5. Extensions → JSON Web Tokens (JWT Editor), AuthMatrix
+```
+
+---
+
+### 3.4 AWS WAF, Shield та CloudFront — комплексний захист
+
+#### Рівні захисту від DDoS та атак
+
+| Рівень | Сервіс | Захищає від |
+|--------|--------|-------------|
+| L3/L4 | AWS Shield Standard | SYN/UDP flood, Volumetric — безкоштовно |
+| L3/L4 | AWS Shield Advanced | Складні DDoS, SRT підтримка, cost protection |
+| L7 | AWS WAF | SQLi, XSS, OWASP Top 10, bots |
+| CDN | CloudFront | Кешування, geo-routing, TLS termination |
+| Network | Network Firewall | IPS/IDS, stateful inspection, SIP deep inspection |
+| DNS | Route 53 Resolver | DNS hijacking, DNSSEC |
+
+**Shield Advanced — додаткові можливості:**
+- **AWS Shield Response Team (SRT)** — 24/7 підтримка під час атаки, прямий доступ
+- **DDoS cost protection** — компенсація AWS-витрат під час DDoS (EC2, CloudFront)
+- **Global threat environment dashboard** — реальний час
+- **Proactive engagement** — SRT сам контактує при виявленні атаки
+
+#### CloudFront для веб та телеком API
+
+- **450+ Points of Presence** — геодистрибуція, мінімальна затримка
+- **Origin Shield** — додатковий рівень кешування, захист origin від прямих запитів
+- **Lambda@Edge / CloudFront Functions** — обробка запитів на edge (auth, redirect, headers)
+- **Real-time logs** — streaming до Kinesis для SIEM
+- **Field-level encryption** — шифрування окремих полів HTTP POST (наприклад, PAN-number)
+
+**CloudFront Security Headers (Terraform):**
+```hcl
+resource "aws_cloudfront_response_headers_policy" "security" {
+  name = "telecom-security-headers"
+  security_headers_config {
+    strict_transport_security {
+      access_control_max_age_sec = 31536000
+      include_subdomains = true
+      preload = true
+      override = true
+    }
+    content_type_options { override = true }
+    frame_options { frame_option = "DENY" override = true }
+    xss_protection { protection = true mode_block = true override = true }
+    referrer_policy {
+      referrer_policy = "strict-origin-when-cross-origin"
+      override = true
+    }
+  }
+}
+```
+
+---
+
+### 3.5 Compliance
 
 #### GDPR — вимоги до веб- та телеком-застосунків
 
@@ -736,11 +1471,69 @@ L3 (Просунутий) — для критичних систем:
 
 Штрафи: до **€10 мільйонів** або **2% річного обороту** (подібно до GDPR).
 
+#### NIST Cybersecurity Framework 2.0
+
+NIST CSF 2.0 (лютий 2024) є стандартом де-факто для управління ризиками кібербезпеки у США та за їх межами. Він визначає шість функцій:
+
+| Функція | Опис | Приклади заходів для телеком |
+|---------|------|------------------------------|
+| **Govern** | Управління ризиками, стратегія, supply chain | CSP, ISMS, третя сторона аудити |
+| **Identify** | Інвентаризація активів, оцінка ризиків | Карта мережевих активів, CDR класифікація |
+| **Protect** | Захист активів | IAM, WAF, Signaling Firewall, шифрування |
+| **Detect** | Виявлення подій | GuardDuty, SS7 monitor, SIEM |
+| **Respond** | Реагування на інциденти | IR Playbooks, EventBridge + Lambda |
+| **Recover** | Відновлення після інцидентів | Multi-AZ, Backup, DRS, DR-тести |
+
+**AWS Compliance Automation:**
+
+AWS Artifact надає для завантаження compliance звіти (SOC 2 Type II, ISO 27001 Certificate, PCI DSS AOC) для підтвердження відповідності регуляторам. AWS Config Rules автоматично перевіряє відповідність конфігурацій таким вимогам:
+
+- `restricted-ssh` — перевіряє відсутність відкритого SSH на 0.0.0.0/0
+- `s3-bucket-public-read-prohibited` — заборона публічних S3 buckets
+- `rds-storage-encrypted` — перевірка шифрування RDS
+- `vpc-flow-logs-enabled` — увімкнення VPC Flow Logs
+
+Ці правила є частиною автоматизованих перевірок у конформних хмарних середовищах для операторів зв'язку.
+
 ---
 
 ## 4. Підсумок
 
-### Ключові концепції лекції
+### 4.1 Чек-лист безпеки
+
+#### Web Application Security Checklist
+
+- ✅ HTTPS скрізь (HSTS preloaded, TLS 1.2+, HSTS max-age ≥ 31536000)
+- ✅ Prepared Statements / Parameterized Queries для всіх DB-запитів
+- ✅ Output Encoding при виведенні в HTML (`htmlspecialchars`, DOMPurify)
+- ✅ Content Security Policy (CSP) з nonce або hash (уникати `unsafe-inline`)
+- ✅ SameSite=Strict cookie + HttpOnly + Secure атрибути
+- ✅ MFA для адміністраторів та критичних операцій
+- ✅ Rate limiting на auth endpoints та API (≤ 5 спроб/хвилину на логін)
+- ✅ SAST + DAST + SCA в CI/CD pipeline (Semgrep + ZAP + Snyk)
+- ✅ AWS WAF з OWASP Core Rule Set на ALB/CloudFront
+- ✅ Security headers (X-Frame-Options, HSTS, CSP, X-Content-Type-Options)
+- ✅ JWT: RS256/ES256, короткий exp (≤ 1 год), перевірка `iss` та `aud`
+- ✅ Dependency scanning та оновлення (Dependabot або Snyk автоматично)
+- ✅ Threat modeling (STRIDE/PASTA) для нових функцій
+
+#### Telecom Security Checklist
+
+- ✅ SS7/Diameter Signaling Firewall (GSMA FS.11/FS.19)
+- ✅ GTP Firewall з peer whitelist (GSMA FS.20)
+- ✅ SMS Firewall з A2P filtering та URL scanning
+- ✅ IPsec / TLS між всіма роумінговими з'єднаннями
+- ✅ SEPP для 5G роумінгового трафіку (N32 інтерфейс)
+- ✅ NRF OAuth 2.0 між 5G NF (3GPP TS 33.501)
+- ✅ SIM Swap Detection API для критичних API (GSMA Open Gateway)
+- ✅ STIR/SHAKEN для захисту Caller ID
+- ✅ CDR-аналіз для виявлення IRSF/Wangiri/SIM Box
+- ✅ SBI: TLS між усіма NF у 5G Core
+- ✅ IoT SIM сегрегація: окремий APN + rate limit на трафік
+- ✅ Регулярний аудит роумінгових партнерів (IPX-провайдери)
+- ✅ LI-інтерфейси ізольовані та моніторяться
+
+### 4.2 Ключові концепції лекції
 
 | Тема | Основні поняття |
 |------|----------------|
@@ -752,3 +1545,27 @@ L3 (Просунутий) — для критичних систем:
 | **AWS WAF/Shield** | WebACL, managed rules, Shield Advanced SRT |
 | **DevSecOps** | SAST+SCA в CI, DAST на staging, shift-left |
 | **Compliance** | PCI DSS v4.0, NIS2, OWASP ASVS, GSMA FS.11 |
+| **Zero Trust** | NF OAuth 2.0, mTLS/Istio, micro-segmentation |
+| **IoT Security** | LwM2M, eSIM, Device Defender, segmented APN |
+| **Соц. інженерія** | Vishing, SIM Swap, STIR/SHAKEN, FIDO2 |
+
+### 4.3 Зв'язки з курсом
+
+| Лекція | Зв'язок |
+|--------|---------|
+| ← Лекція 5 | KMS для шифрування API-ключів та CDR в S3 |
+| ← Лекція 6 | EKS для деплою 5G NF, Lambda для Telecom API |
+| → Лекція 8 | GuardDuty, CloudTrail, SIEM для моніторингу загроз |
+
+
+---
+
+## Висновок
+
+Лекція 7 охопила широкий спектр загроз та контрзаходів у трьох взаємопов'язаних доменах. Веб-безпека базується на систематичному підході OWASP: розуміння Top 10 вразливостей є відправною точкою для будь-якого веб-розробника та security engineer. Кожна вразливість — від ін'єкцій до SSRF — має конкретні технічні контрзаходи, які необхідно застосовувати комплексно.
+
+Телеком-безпека є унікальним доменом, де спадкові протоколи (SS7, GTP) існують паралельно з сучасними рішеннями (5G SBA, OAuth 2.0, SEPP). Захист цих мереж вимагає глибокого розуміння специфічних протоколів, стандартів GSMA, 3GPP, та специфічних рішень — Signaling Firewall, SMS Firewall, GTP Firewall. Телеком-шахрайство залишається масштабною проблемою з щорічними збитками майже $40 мільярдів, що вимагає систематичного CDR-аналізу та Fraud Management Systems.
+
+Хмарна та DevSecOps складова показує, як сучасні оператори можуть будувати безпечну інфраструктуру на AWS, використовуючи managed сервіси (WAF, Shield, GuardDuty) замість власних рішень, а також інтегрувати безпеку у кожен крок CI/CD пайплайна. Zero Trust архітектура, де кожен компонент автентифікується незалежно від місця у мережі, є сучасним стандартом для 5G Core та хмарних телеком-розгортань.
+
+Виконання регуляторних вимог (NIS2, GDPR, PCI DSS, GSMA FS.11) — це не лише юридичне зобов'язання, але й практичний мінімум заходів безпеки, перевірений галузевим досвідом. Фахівець з кібербезпеки в телекомі повинен орієнтуватися як у веб-вразливостях та хмарних архітектурах, так і в специфічних телеком-протоколах та регуляторному середовищі.
