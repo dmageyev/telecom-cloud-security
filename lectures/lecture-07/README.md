@@ -108,7 +108,6 @@
 | [`presentation.html`](presentation.html) | Reveal.js презентація (~48 слайдів) |
 | [`slides.md`](slides.md) | Слайди у форматі Marp Markdown |
 | [`notes.md`](notes.md) | Детальний конспект лекції (Markdown) |
-| [`notes.html`](notes.html) | Конспект лекції для перегляду в браузері |
 | [`references.md`](references.md) | Список літератури та джерел |
 
 ---
