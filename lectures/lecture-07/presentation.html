@@ -35,7 +35,7 @@
         .title-slide .meta { font-size:0.85em; color:#aaa; margin-top:0.5em; }
         .title-slide .badge { display:inline-block; background:#1f6feb; border-radius:4px; padding:2px 8px; margin:2px; font-size:0.72em; }
         /* Mermaid */
-        .mermaid { font-size: 0.75em; }
+        .mermaid { font-size: 0.95em; }
     </style>
 </head>
 <body>
@@ -1222,7 +1222,7 @@ svcrack.py -u100 ip       # brute</code></pre>
                             <li><span class="highlight">VPC Link</span> — приватний доступ до telecom VPC</li>
                         </ul>
                         <h3 style="margin-top:0.3em;">🏗️ Архітектура BSS/OSS API</h3>
-                        <div class="mermaid" style="font-size:0.5em;">
+                        <div class="mermaid" style="font-size:0.95em;">
 graph LR
     A[Partner / MVNO] -->|HTTPS + JWT| B[API Gateway<br/>WAF + Authorizer]
     B -->|VPC Link| C[NLB]
@@ -1569,17 +1569,17 @@ SSDP: 30B  запит → 300B   відповідь → 10x</code></pre>
                     <div>
                         <h3>🏗️ Архітектура в хмарі</h3>
                         <div class="mermaid">
-%%{init: {'theme': 'dark', 'flowchart': {'htmlLabels': true}}}%%
+%%{init: {'theme': 'dark', 'flowchart': {'htmlLabels': false, 'useMaxWidth': true,'padding': 25, 'nodeSpacing': 50, 'rankSpacing': 50, 'padding': 20}}}%%
 flowchart TD
-    A["🌐 Партнери / MVNO<br/>Портал абонентів"] -->|HTTPS| B["🔥 AWS WAF<br/>API Gateway"]
-    B -->|"JWT Auth / Rate Limit"| C["🔒 AWS PrivateLink<br/>VPC Link"]
-    C --> D["🖥️ BSS Microservices<br/>ECS Fargate"]
+    A["Партнери / MVNO<br/>Портал абонентів"] -->|HTTPS| B["AWS WAF<br/>API Gateway"]
+    B -->|"JWT Auth / Rate Limit"| C["AWS PrivateLink<br/>VPC Link"]
+    C --> D["BSS Microservices<br/>ECS Fargate"]
     D --> E1[("Aurora PostgreSQL<br/>Multi-AZ, encrypted")]
     D --> E2[("S3 CDR Archive<br/>KMS + VPC Endpoint")]
-    style A fill:#1f6feb,color:#fff,min-width:200px
-    style B fill:#da3633,color:#fff,min-width:200px
-    style C fill:#e8b04b,color:#000,min-width:200px
-    style D fill:#238636,color:#fff,min-width:200px
+    style A fill:#1f6feb,color:#fff,min-width:800px
+    style B fill:#da3633,color:#fff,min-width:800px
+    style C fill:#e8b04b,color:#000,min-width:800px
+    style D fill:#238636,color:#fff,min-width:800px
                         </div>
                     </div>
                     <div>
@@ -2148,7 +2148,7 @@ jobs:
             maxScale: 1.05,
             scrollActivationWidth: 700
         });
-        mermaid.initialize({ startOnLoad: true, theme: 'dark', themeVariables: { fontSize: '13px' } });
+        mermaid.initialize({ startOnLoad: true, theme: 'dark', themeVariables: { fontSize: '16px' } });
     </script>
 </body>
 </html>
