@@ -1780,7 +1780,7 @@ def isolate_ec2(instance_id):
             const body = document.getElementById('notes-panel-body');
             const title = document.getElementById('notes-panel-title');
             const content = SLIDE_NOTES[idx];
-            title.textContent = `📄 Слайд ${idx + 1} / ${SLIDE_NOTES.length}`;
+            title.textContent = `📄 Слайд ${idx + 1} / ${Reveal.getTotalSlides()}`;
             body.innerHTML = content ||
                 '<p style="color:#8b949e;font-style:italic;">Конспект для цього слайду відсутній.</p>';
         }
