@@ -31,6 +31,42 @@
             max-height: 100% !important;
             box-sizing: border-box !important;
         }
+        /* ===== Notes Button ===== */
+        #notes-btn {
+            position: fixed; bottom: 18px; right: 90px; z-index: 10000;
+            width: 46px; height: 46px; border-radius: 50%;
+            background: #1f6feb; border: none; cursor: pointer;
+            font-size: 1.3em; color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center;
+        }
+        #notes-btn:hover { background: #388bfd; }
+        #notes-panel {
+            position: fixed; top: 0; right: -420px; width: 410px; height: 100vh;
+            background: #0d1117; border-left: 2px solid #1f6feb;
+            z-index: 9999; overflow-y: auto; transition: right 0.3s ease;
+            padding: 0; box-shadow: -4px 0 18px rgba(0,0,0,0.6);
+        }
+        #notes-panel.open { right: 0; }
+        #notes-panel-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 16px; background: #161b22;
+            border-bottom: 1px solid #30363d; position: sticky; top: 0;
+        }
+        #notes-panel-title { color: #58a6ff; font-size: 0.9em; font-weight: bold; }
+        #notes-panel-close {
+            background: none; border: none; color: #8b949e;
+            cursor: pointer; font-size: 1.2em; padding: 0 4px;
+        }
+        #notes-panel-close:hover { color: #f0f6fc; }
+        #notes-panel-body {
+            padding: 16px; color: #c9d1d9; font-size: 0.85em; line-height: 1.6;
+        }
+        #notes-panel-body h4 { color: #58a6ff; margin: 0.8em 0 0.3em; }
+        #notes-panel-body p { margin: 0.4em 0; }
+        #notes-panel-body ul { padding-left: 1.4em; margin: 0.3em 0; }
+        #notes-panel-body li { margin-bottom: 0.2em; }
+        #notes-panel-body code { background: #161b22; padding: 1px 4px; border-radius: 3px; color: #79c0ff; font-size: 0.92em; }
+        #notes-panel-body strong { color: #e8b04b; }
     </style>
 </head>
 <body>
@@ -1800,6 +1836,15 @@ resource "aws_cloudwatch_metric_alarm"
 
         </div>
     </div>
+    <!-- ===== Notes Button & Panel ===== -->
+    <button id="notes-btn" onclick="toggleNotesPanel()" title="Конспект до слайду">📄</button>
+    <div id="notes-panel">
+        <div id="notes-panel-header">
+            <span id="notes-panel-title">📄 Конспект лекції</span>
+            <button id="notes-panel-close" onclick="toggleNotesPanel()" title="Закрити">✕</button>
+        </div>
+        <div id="notes-panel-body">Оберіть слайд для перегляду конспекту.</div>
+    </div>
     <script>
         Reveal.initialize({
             hash: true,
@@ -1812,6 +1857,122 @@ resource "aws_cloudwatch_metric_alarm"
             minScale: 0.2,
             maxScale: 1.0,
             scrollActivationWidth: 700
+        });
+
+        const SLIDE_NOTES = [
+            null, // 0 — Титульний
+            null, // 1 — План лекції
+            `<h4>1. DDoS — визначення, масштаб загрози та статистика</h4>
+<p><strong>DDoS (Distributed Denial of Service)</strong> — атака, що використовує сотні тисяч скомпрометованих вузлів для перевантаження цілі. Масштаб: рекордна атака 2023 р. — 71 млн rps (HTTP/2 Rapid Reset). Середня вартість DDoS для телеком — $50,000–$200,000/год простою.</p>
+<p>Мотиви зловмисників: конкурентний підрив, хактивізм, вимагання (Ransom DDoS), кібервійна. <strong>Amplification factor</strong> (AF): DNS = 28–54×, NTP = 556×, Memcached = 51,000×. Прямий трафік 1 Gbps → після amplification = 51 Tbps.</p>`,
+            `<h4>2. Класифікація DDoS-атак за моделлю OSI</h4>
+<p><strong>Volumetric (L3/L4):</strong> UDP Flood, ICMP Flood, DNS Amplification — мета: заповнити канал (bandwidth exhaustion). Міряється у Gbps/Tbps. Захист: upstream scrubbing, BGP blackhole.</p>
+<p><strong>Protocol (L4):</strong> SYN Flood, ACK Flood, TCP/IP stack exhaustion — мета: вичерпати ресурси firewalls/load balancers. Міряється у pps (packets per second). Захист: SYN cookies, rate limiting.</p>
+<p><strong>Application (L7):</strong> HTTP Flood, Slowloris, RUDY, GET/POST floods — мета: вичерпати CPU/RAM веб-серверів, складно відрізнити від легітимного трафіку. Захист: WAF, behavior analysis, CAPTCHA.</p>`,
+            `<h4>3. Amplification-атаки</h4>
+<p>Amplification використовує протоколи з малим запитом → великою відповіддю + UDP spoofing (жертва отримує відповіді). <strong>DNS Amplification:</strong> ANY query 40 bytes → відповідь 4000+ bytes = 100× amplification. Захист: Response Rate Limiting (RRL), відмова від ANY queries.</p>
+<p><strong>NTP Monlist:</strong> 8-byte запит → 48 IP × 72 bytes = 556×. Захист: оновлення ntpd, відключення monlist. <strong>Memcached UDP:</strong> 15-byte запит → 750 KB = 51,000×. Захист: ніколи не відкривати UDP 11211 публічно, authentication. <strong>CISA рекомендація:</strong> BCP38 (ingress filtering) блокує IP spoofing на рівні ISP.</p>`,
+            `<h4>4. Ботнети та DDoS-as-a-Service</h4>
+<p><strong>Ботнет</strong> — мережа скомпрометованих пристроїв (bots/zombies) під контролем C&C (Command and Control) сервера. <strong>Mirai botnet</strong> (2016): 600,000 IoT-пристроїв → атака 620 Gbps на Krebs на Security, потім 1.1 Tbps.</p>
+<p><strong>DDoS-as-a-Service (Stresser/Booter):</strong> $10–50/год для атаки 1–5 Gbps, $100+/год для потужніших. Ринок оцінюється в $400M/рік. <strong>Захист від ботнетів:</strong> Challenge-Response (CAPTCHA, JS challenge), Behavioral analysis (mouse tracking, click patterns), Device fingerprinting, Reputation-based blocking (Tor exit nodes, known bot IPs).</p>`,
+            `<h4>5. Layer 7 атаки — Slowloris та HTTP Flood</h4>
+<p><strong>Slowloris</strong> відкриває тисячі HTTP-з'єднань та надсилає headers максимально повільно, не завершуючи запит. Apache вичерпує MaxClients (default: 150). nginx резистентніший завдяки event-driven архітектурі.</p>
+<p>Захист від Slowloris: в Apache — директивою <code>RequestReadTimeout</code>; у nginx — параметрами <code>client_header_timeout</code> і <code>client_body_timeout</code>, які закривають повільні з'єднання. Також обмеження <code>LimitRequestFields</code> та <code>LimitRequestFieldSize</code>. AWS WAF дозволяє Rate Limiting на рівні Web ACL.</p>
+<p><strong>HTTP Flood</strong>: High-rate legitimate-looking GET/POST. Cache-bypass: унікальні query strings (?id=random). Захист: WAF правила нормалізації URL, rate limiting, bot detection.</p>`,
+            `<h4>6. DDoS у телекомунікаційних мережах</h4>
+<p>Телеком-оператори є одночасно <strong>жертвами та транзитною мережею</strong> DDoS. <strong>Специфічні вектори:</strong> SS7/Diameter flooding (сигнальні протоколи), GTP tunnel exhaustion (LTE/5G), DNS amplification через open resolvers операторів, BGP hijacking для перенаправлення трафіку.</p>
+<p><strong>Регуляторні вимоги:</strong> ETSI EN 303 645 (IoT security), GSMA FS.11 (network resilience), ITU-T X.1060 (cybersecurity operations). <strong>Захист:</strong> RTBH (Remotely Triggered Black Hole), BGP Flowspec для granular filtering, DDoS scrubbing center (Arbor Networks, Radware), peering agreements для upstream filtering.</p>`,
+            `<h4>7. Стратегії захисту від DDoS</h4>
+<p><strong>Defense in Depth — шари захисту:</strong> ISP-рівень (BGP blackhole, RTBH, upstream scrubbing), CDN (Cloudfront/Cloudflare absorb volumetric), AWS Shield (DDoS mitigation service), WAF (L7 filtering), Load Balancer (розподіляє, absorbs floods), Auto Scaling (масштабується під навантаження), Application (rate limiting, circuit breaker).</p>
+<p><strong>Ключові принципи:</strong> Absorb (CDN + Shield), Deflect (cache, offload origin), Detect & Filter (WAF, GuardDuty), Scale (Auto Scaling, Global Accelerator), Respond (SOAR, DDoS response team). <strong>AWS Well-Architected:</strong> Reliability Pillar — Design for failure, loose coupling, no SPOF.</p>`,
+            `<h4>8. AWS Shield — захист від DDoS</h4>
+<p><strong>AWS Shield Standard</strong> — безкоштовно для всіх AWS customers. Захищає від L3/L4 атак (SYN flood, UDP flood, reflection attacks) на CloudFront, Route 53, ALB, EC2. Автоматично, без конфігурації.</p>
+<p><strong>AWS Shield Advanced</strong> — $3,000/місяць + data transfer. Додає: L7 DDoS protection (HTTP flood mitigation), AWS WAF included, DDoS cost protection (billing credits під час атаки), 24/7 Shield Response Team (SRT) access, real-time attack visibility, AWS Shield threat intelligence, proactive engagement (SRT contacts you). Рекомендований для: критичних workloads, telecom, financial, gaming.</p>
+<p><strong>Proactive Engagement:</strong> SRT автоматично зв'язується при виявленні атаки. Вимагає налаштування emergency contact.</p>`,
+            `<h4>9. AWS WAF — захист на рівні застосунку</h4>
+<p><strong>AWS WAF</strong> фільтрує HTTP/HTTPS трафік на рівні L7. Розгортається на: CloudFront, ALB, API Gateway, AppSync. <strong>Web ACL</strong> містить Rules (до 10,000 WCU) та Rule Groups. Дії: ALLOW, BLOCK, COUNT, CAPTCHA, Challenge.</p>
+<p><strong>AWS Managed Rule Groups:</strong> Core Rule Set (CRS, OWASP Top 10), Known Bad Inputs, SQL injection, Linux/Windows OS, PHP, WordPress, Bot Control, Fraud Control (Account Takeover). Оновлюються AWS автоматично. <strong>Rate-based rules:</strong> X requests per 5 хвилин per IP → BLOCK. <strong>Geo restriction:</strong> блокування країн. Logs → Kinesis Firehose → S3/OpenSearch.</p>`,
+            `<h4>10. WAF — розширені можливості</h4>
+<p><strong>Bot Control:</strong> Common bots (verified crawlers, monitoring) vs Targeted bots (sophisticated scrapers, credential stuffers). Challenge (JS injection) та CAPTCHA для підозрілих. <strong>Fraud Control — Account Takeover Prevention (ATP):</strong> аналіз login endpoint, credential stuffing detection, anomalous login patterns.</p>
+<p><strong>Custom rules:</strong> Label matching (cross-rule logic), RegEx pattern sets (custom signatures), IP set (blocklists/allowlists). <strong>WAF Logging:</strong> full request details → Kinesis Firehose. <strong>Security Automations on AWS WAF</strong> — AWS Solution для автоматичного блокування IP із сканерів та brute force (інтеграція з CloudFront access logs).</p>`,
+            `<h4>11. Концепції доступності — RTO, RPO, SLA</h4>
+<p><strong>RTO (Recovery Time Objective)</strong> — максимально допустимий час відновлення після збою. Приклад: RTO = 4 год означає, що система повинна відновитися протягом 4 годин. <strong>RPO (Recovery Point Objective)</strong> — максимально допустима втрата даних у часі. RPO = 1 год → backup кожну годину.</p>
+<p><strong>SLA (Service Level Agreement):</strong> 99.9% = 8.7 год/рік downtime, 99.99% = 52 хв/рік, 99.999% ("five nines") = 5.26 хв/рік. <strong>Стратегії відновлення:</strong> Backup & Restore (дешево, RTO/RPO = години), Pilot Light (мінімальна репліка, RTO = хвилини), Warm Standby (зменшена копія, RTO &lt; хвилина), Multi-Site Active/Active (RTO → секунди).</p>`,
+            `<h4>12. AWS CloudFront — CDN та захист</h4>
+<p>CloudFront — глобальна CDN з 400+ Point of Presence (PoP) у 90+ містах. <strong>Переваги для DDoS-захисту:</strong> absorbs volumetric attacks at the edge (не досягають origin), Shield Standard вбудований, WAF integration, geo-blocking, origin обфускація (Private CloudFront only).</p>
+<p><strong>Origin Shield</strong> — додатковий caching layer між PoP та origin (зменшує навантаження на origin на 73%). <strong>Cache behaviors:</strong> path pattern → TTL → headers/cookies forwarding. <strong>Security headers:</strong> Strict-Transport-Security, X-Frame-Options, X-Content-Type-Options через Response Headers Policy. <strong>OAC (Origin Access Control)</strong> замінює OAI для S3 origins.</p>`,
+            `<h4>13. Route 53 — DNS failover</h4>
+<p>Route 53 — AWS DNS сервіс зі 100% SLA. <strong>Routing policies:</strong> Simple, Weighted (A/B testing, blue/green), Latency-based (closest region), Geolocation, Geoproximity, Failover, Multivalue Answer, IP-based.</p>
+<p><strong>Failover routing:</strong> Primary + Secondary endpoints, Health checks (HTTP/HTTPS/TCP/String match), автоматичний failover при збої Primary. <strong>Health Checks:</strong> Global (20+ AWS locations), Calculated (AND/OR комбінація), CloudWatch alarm-based. <strong>DNS Security:</strong> DNSSEC підписує відповіді (захист від DNS spoofing). Route 53 Resolver DNS Firewall блокує malicious domains (threat lists). Private Hosted Zones для internal DNS.</p>`,
+            `<h4>14. Elastic Load Balancing — типи та захист</h4>
+<p><strong>ALB (Application Load Balancer)</strong> — L7, HTTP/HTTPS/WebSocket, path-based routing, host-based routing, content routing. Інтеграція з WAF, Cognito, мікросервіси. <strong>NLB (Network Load Balancer)</strong> — L4, TCP/UDP/TLS, ultra-low latency, static IP, millions rps. <strong>GWLB (Gateway Load Balancer)</strong> — для inline appliances (firewalls, IDS/IPS).</p>
+<p><strong>ELB та DDoS:</strong> Автоматично absorbs SYN floods (pre-warming), розподіляє трафік між AZ, Connection draining при unhealthy instances. <strong>Sticky sessions</strong> (application-based cookies) для stateful apps. <strong>Access logs:</strong> S3 bucket → Athena для forensics. Cross-zone load balancing для рівномірного розподілу.</p>`,
+            `<h4>15. Auto Scaling — еластичність під DDoS</h4>
+<p>Auto Scaling Group (ASG) автоматично додає/видаляє EC2 instances за scaling policies. <strong>Типи scaling:</strong> Target Tracking (CPU = 70%), Step Scaling (різні кроки при різних порогах), Scheduled (пік-трафік відомий заздалегідь), Predictive (ML прогнозує на 48 год вперед).</p>
+<p><strong>DDoS resilience:</strong> При атаці auto scaling може масштабуватись (absorb attack) + DDoS cost protection (Shield Advanced повертає кошти на scaling costs під час атаки). <strong>Cooldown period</strong> (default 300 s) запобігає надмірному scaling. <strong>Instance refresh</strong> для zero-downtime deployment. Launch Template vs Launch Configuration (LT підтримує множинні instance types, Spot instances).</p>`,
+            `<h4>16. Multi-AZ архітектура</h4>
+<p><strong>Availability Zone (AZ)</strong> — ізольований дата-центр в межах регіону. Multi-AZ = розгортання у ≥2 AZ → захист від single AZ failure. Відстань між AZ: кілька км, синхронна реплікація RDS &lt; 1ms latency.</p>
+<p><strong>Реалізація Multi-AZ:</strong> EC2 + ASG (Launch template: multiple AZ), ALB (cross-zone LB), RDS Multi-AZ (синхронна реплікація, автоматичний failover &lt; 60 с), ElastiCache (Multi-AZ replication), EFS (автоматично multi-AZ). <strong>DDoS resilience:</strong> атака на один AZ не впливає на інші. <strong>AZ outage probability:</strong> ~0.05%/рік; двоAZ = 0.0025%/рік (99.9975% availability).</p>`,
+            `<h4>17. Multi-Region HA</h4>
+<p><strong>Multi-Region</strong> захищає від регіональних збоїв та дозволяє global low-latency. <strong>Active-Passive:</strong> один primary region + standby secondary (route53 failover), RPO = хвилини. <strong>Active-Active:</strong> обидва регіони обслуговують трафік (Route 53 latency-based + Geolocation), RPO = секунди.</p>
+<p><strong>Data replication:</strong> S3 Cross-Region Replication (CRR), DynamoDB Global Tables (multi-master), RDS Cross-Region Read Replicas (promoted при failover), Aurora Global Database (&lt; 1 с replication lag, &lt; 1 хв failover). <strong>Challenges:</strong> data consistency, latency, cost (cross-region data transfer). <strong>AWS Global Accelerator</strong> + static Anycast IPs для automatic routing до healthiest endpoint.</p>`,
+            `<h4>18. AWS Global Accelerator</h4>
+<p>Global Accelerator використовує AWS глобальну мережу (backbone) замість публічного інтернету. <strong>Переваги:</strong> 60–65% менша затримка, 2 static Anycast IP (замість DNS-based failover з TTL затримкою), автоматичний routing до healthiest endpoint.</p>
+<p><strong>DDoS захист:</strong> Shield Standard вбудований, Anycast architecture поглинає атаки на edge (400+ PoP). <strong>Traffic dials:</strong> routing weight per endpoint group (регіон). <strong>Health checks:</strong> TCP/HTTP/HTTPS, failover &lt; 30 с. <strong>Endpoint groups:</strong> ALB, NLB, EC2, EIP. <strong>Client Affinity:</strong> sticky routing per source IP. Відрізняється від CloudFront: GA не кешує, оптимізує routing; CF — CDN+cache.</p>`,
+            `<h4>19. Caching стратегії</h4>
+<p><strong>Caching знижує навантаження на origin і підвищує стійкість до DDoS.</strong> <strong>CloudFront:</strong> static assets (TTL=1 рік, immutable), HTML pages (TTL=5-60 хв), API responses (TTL=30 с). Cache-Control headers керують TTL. <strong>Origin Shield</strong> додатковий caching layer.</p>
+<p><strong>ElastiCache:</strong> Redis (persistence, pub/sub, Lua scripts, Cluster mode) vs Memcached (simple caching, multi-thread). Cache patterns: Cache-Aside (application fetches), Write-Through, Write-Behind, Refresh-Ahead. <strong>Cache poisoning захист:</strong> Vary header, canonicalization, WAF rules для cache-bypass prevention (?id=random). <strong>Thundering herd:</strong> cache stampede при TTL expiry → mutex locking, staggered TTL.</p>`,
+            `<h4>20. Rate Limiting та Circuit Breaker</h4>
+<p><strong>Rate Limiting</strong> обмежує кількість запитів від одного клієнта. <strong>Алгоритми:</strong> Token Bucket (дозволяє burst), Leaky Bucket (рівний потік), Fixed Window (просто, але window edge problem), Sliding Window (точніше). <strong>AWS WAF Rate-Based rules:</strong> X requests / 5 хв per IP → BLOCK.</p>
+<p><strong>Circuit Breaker pattern</strong> запобігає каскадним відмовам. Стани: Closed (normal) → Open (trips при error threshold) → Half-Open (probe requests). <strong>AWS App Mesh/ECS Service Connect</strong> підтримує circuit breaker natively. <strong>Bulkhead pattern:</strong> ізоляція ресурсів між сервісами (thread pools, connection pools). <strong>Retry з exponential backoff + jitter</strong> — запобігає thundering herd при відновленні.</p>`,
+            `<h4>21. DDoS Response Plan</h4>
+<p><strong>DRP (DDoS Response Plan)</strong> — задокументований план дій під час атаки. Фази: <strong>Preparation</strong> (Shield Advanced, WAF, runbooks, contacts), <strong>Detection</strong> (CloudWatch alarms, Shield alerts, GuardDuty), <strong>Analysis</strong> (attack type, source, impact), <strong>Mitigation</strong> (WAF rules, blackholing, SRT engagement), <strong>Recovery</strong>, <strong>Post-incident</strong> (lessons learned, rule tuning).</p>
+<p><strong>Escalation matrix:</strong> L1 NOC (виявлення) → L2 Security (аналіз) → L3 Architect (mitigation) → AWS SRT (Shield Advanced) → CSIRT → Management. Час реагування: Detection &lt; 5 хв, Initial mitigation &lt; 30 хв, Full mitigation &lt; 4 год. <strong>War Room</strong> procedure: Slack channel, bridge call, real-time dashboard.</p>`,
+            `<h4>22. Chaos Engineering</h4>
+<p>Chaos Engineering — навмисне введення збоїв для перевірки resilience. <strong>Принципи:</strong> Steady State Hypothesis → Introduce Variables → Observe → Learn. Стаття: "Chaos Engineering" by Netflix (Simian Army).</p>
+<p><strong>AWS Fault Injection Service (FIS):</strong> managed chaos engineering сервіс. Дії: <code>aws:ec2:stop-instances</code>, <code>aws:rds:failover-db-cluster</code>, <code>aws:ssm:send-command</code>, <code>aws:network:disrupt-connectivity</code>, <code>aws:eks:terminate-node-group-instances</code>. <strong>Experiment template:</strong> targets, actions, stop conditions (CloudWatch alarm), IAM role. GameDay — регулярні командні вправи зі змодельованими збоями. <strong>FIS GameDay SLA:</strong> оцінка готовності команди до реального інциденту.</p>`,
+            `<h4>23. AWS Resilience Hub</h4>
+<p>AWS Resilience Hub аналізує архітектуру та оцінює RTO/RPO відносно ваших цілей. <strong>Workflow:</strong> Define app → Set RTO/RPO targets → Assess → Identify gaps → Implement recommendations → Reassess.</p>
+<p><strong>Resilience score</strong> (0–100): враховує AZ coverage, backup policies, scaling, DR readiness. <strong>Інтеграції:</strong> CloudFormation, Terraform, Service Catalog, App Registry. <strong>Assessment reports:</strong> знаходить SPOF (Single Points of Failure), відсутні backup policies, недостатнє multi-AZ coverage. <strong>Drift detection:</strong> автоматичні щоденні assessments для виявлення змін у архітектурі. Вартість: per resource assessment.</p>`,
+            `<h4>24. Захист DNS-інфраструктури від DDoS</h4>
+<p>DNS є критичною точкою відмови: якщо DNS недоступний — сервіс недоступний незалежно від стану backend. <strong>DNS DDoS вектори:</strong> DNS Flood (мільйони запитів → resolver exhaustion), NXDOMAIN flood (запити до неіснуючих доменів), DNS Amplification (відкриті resolvers).</p>
+<p><strong>Захист:</strong> Route 53 має автоматичний DDoS захист (Shield Standard), global anycast network (100+ resolvers), DNSSEC (підпис відповідей). <strong>Route 53 Resolver DNS Firewall:</strong> блокування malicious domains за threat lists (AWS Managed, custom). <strong>Оператори:</strong> Response Rate Limiting (RRL) на DNS серверах, відключення рекурсивних resolvers від публічного інтернету, DNSSEC validation.</p>`,
+            `<h4>25. Cost optimization при DDoS</h4>
+<p>DDoS може призвести до значного збільшення AWS витрат (scaling costs, data transfer). <strong>Захист від billing impact:</strong> AWS Shield Advanced включає DDoS cost protection (credits за EC2, ELB, CloudFront scaling під час атаки).</p>
+<p><strong>Cost controls:</strong> AWS Budgets alerts (threshold notifications), Service Quotas limits, EC2 instance limits per region, WAF rate limits для зниження трафіку до origin. <strong>Spot instances:</strong> не рекомендовані для DDoS mitigation layer (можуть бути terminated). <strong>Savings Plans:</strong> on-demand capacity reservation гарантує доступність при масштабуванні під атакою. CloudFront transfer pricing: перші 10 TB/місяць безкоштовно.</p>`,
+            `<h4>26. DDoS Testing та Red Team</h4>
+<p>Тестування DDoS-стійкості дозволяє виявити слабкі місця до реальної атаки. <strong>AWS Policy:</strong> DDoS testing вимагає попередньої заявки через AWS Support (Penetration Testing Policy). Дозволені цілі: власні ресурси; заборонено: AWS інфраструктура.</p>
+<p><strong>Інструменти:</strong> hping3, LOIC/HOIC (освітні), AWS Load Testing (Distributed Load Testing solution на AWS), Locust, k6, Artillery для L7. <strong>Red Team вправи:</strong> симуляція ботнет-атаки (Terraform-автоматизовані EC2 instances), тестування WAF bypass techniques, перевірка alerting latency. <strong>Результати тестування:</strong> baseline metrics, mitigation effectiveness, alert thresholds tuning.</p>`,
+            `<h4>27. Content Security та захист API</h4>
+<p><strong>API Gateway захист:</strong> Throttling (requests/second per stage/method), Usage Plans (API keys, quota), WAF integration, Resource policies (IP allowlist/denylist), mTLS (mutual TLS) для machine-to-machine. <strong>API DDoS вектори:</strong> credential stuffing, scraping, abuse of heavy endpoints.</p>
+<p><strong>Content Security Policy (CSP):</strong> HTTP header, що обмежує джерела скриптів/стилів/медіа. Захищає від XSS + data exfiltration. <strong>CORS</strong> обмежує cross-origin запити. <strong>Subresource Integrity (SRI):</strong> integrity="sha384-..." для CDN-hosted libraries. <strong>AWS Certificate Manager (ACM):</strong> безкоштовні SSL/TLS сертифікати, автооновлення, інтеграція з CloudFront/ALB.</p>`,
+            `<h4>28. Telecom HA та 5G доступність</h4>
+<p>5G мережі вводять нові вимоги до HA: <strong>Network Slicing</strong> — ізоляція слайсів (eMBB, URLLC, mMTC) → збій одного слайсу не впливає на інші. <strong>URLLC (Ultra-Reliable Low-Latency Communications)</strong> вимагає 99.9999% (six nines) availability та &lt;1 ms latency.</p>
+<p><strong>Cloud-Native Network Functions (CNF):</strong> Kubernetes-based VNFs на AWS EKS → auto-healing (pod restarts), horizontal scaling. <strong>5G Core HA:</strong> redundant AMF/SMF/UPF у multiple AZ, stateful session replication. <strong>Geo-redundancy:</strong> розподілені gNB (base stations) + центральний cloud core. <strong>AWS Wavelength:</strong> AWS compute/storage на периметрі мережі оператора для ultra-low latency додатків.</p>`,
+            `<h4>29. Health Checks та моніторинг доступності</h4>
+<p><strong>Health Check pyramid:</strong> Shallow (HTTP 200 OK, &lt;100ms), Deep (DB query, cache hit, downstream APIs), Business metric (orders/minute, login rate). <strong>AWS Health checks:</strong> Route 53 (global), ELB (instance-level), Target Group (container-level), CloudWatch Synthetics (canary — scheduled browser/API tests).</p>
+<p><strong>CloudWatch Synthetics Canaries:</strong> Node.js/Python scripts що симулюють user journeys (login flow, checkout). Запускаються кожні 1 хв, сповіщають при деградації. <strong>AWS Health Dashboard:</strong> статус AWS сервісів + Personal Health Dashboard (події що впливають на ваш account). <strong>Status Page:</strong> Atlassian Statuspage або AWS Incident Manager для публічної комунікації.</p>`,
+            `<h4>30. Практичний кейс</h4>
+<p>Сценарій: великий телеком-оператор зазнає атаки 500 Gbps UDP Flood + 2M rps HTTP Flood на API Gateway. <strong>T+0:</strong> CloudWatch anomaly detection → SNS → PagerDuty → L1 NOC alert. <strong>T+5 хв:</strong> Shield Advanced auto-mitigation поглинає L3/L4 атаку на CloudFront edge.</p>
+<p><strong>T+15 хв:</strong> WAF rate-based rules активуються (IP блокування при &gt;1000 rps/5хв), Bot Control Challenge для підозрілих UA. <strong>T+30 хв:</strong> SRT (Shield Response Team) підключається, додає custom WAF signatures. Auto Scaling додає +20 EC2 instances за Target Tracking. <strong>T+2 год:</strong> атака знижується, Shield Advanced генерує billing credits. <strong>Post-incident:</strong> WAF rules tune, runbook update, Shield Advanced proactive engagement налаштований.</p>`,
+            `<h4>31. Compliance та регуляторні вимоги</h4>
+<p><strong>PCI DSS v4.0:</strong> Req 6.4 (WAF для public-facing web apps), Req 11.5 (IDS/IPS), Req 12.10 (incident response plan). <strong>ISO 27001:2022:</strong> A.8.8 (vulnerability management), A.5.29 (information security during disruption). <strong>SOC 2:</strong> Availability criteria — capacity planning, DDoS mitigation, disaster recovery tested annually.</p>
+<p><strong>Телеком-специфічні:</strong> ETSI EN 303 645 (IoT cybersecurity), GSMA FS.11 (network resilience framework), 3GPP TS 33.117 (5G security), NIST SP 800-189 (BGP route security). <strong>AWS Compliance programs:</strong> AWS Artifact надає reports (SOC 1/2/3, PCI DSS AOC, ISO certificates). Shared Responsibility Model: AWS захищає infrastructure, клієнт — application layer.</p>`,
+            `<h4>32. Антипатерни в DDoS-захисті та HA</h4>
+<p><strong>Антипатерн 1 — Single Point of Failure:</strong> один NAT Gateway, один load balancer, один DNS server → завжди redundancy. <strong>Антипатерн 2 — Security через obscurity:</strong> приховування IP origin не є захистом; потрібен Shield + WAF. <strong>Антипатерн 3 — Статичний rate limiting:</strong> один поріг для всіх → legitimate spikes блокуються (flash sales), атаки нижче порогу проходять.</p>
+<p><strong>Антипатерн 4 — Відсутність тестування failover:</strong> DR plan без регулярних drill → не працює під час реального інциденту. <strong>Антипатерн 5 — Over-alerting:</strong> тисячі CloudWatch алармів без пріоритизації → alert fatigue → пропущена критична атака. <strong>Антипатерн 6 — Відсутність DDoS cost protection:</strong> масштабування під атакою без Shield Advanced → $100K+ bill.</p>`,
+            null, // 34 — Підсумок
+        ];
+
+        function toggleNotesPanel() {
+            document.getElementById('notes-panel').classList.toggle('open');
+        }
+
+        Reveal.on('slidechanged', function(event) {
+            const idx = event.indexh;
+            const body = document.getElementById('notes-panel-body');
+            const note = SLIDE_NOTES[idx];
+            body.innerHTML = note || '<p style="color:#8b949e;">Конспект для цього слайду відсутній.</p>';
         });
     </script>
 </body>
