@@ -158,7 +158,7 @@ X-Custom-Header-1: ...
             <tr><td>Cookie</td><td>Відсутній (не браузер)</td></tr>
             <tr><td>TLS fingerprint (JA3)</td><td>Повторюється масово</td></tr>
         </table>
-        <p>Захист: <code>RequestReadTimeout</code> в Apache/nginx, обмеження <code>LimitRequestFields</code> та <code>LimitRequestFieldSize</code>, AWS WAF Connection timeout rules та Rate Limiting на кількість з'єднань з одного IP. WAF-правила нормалізації URL усувають Cache-bypass.</p>
+        <p>Захист: для Apache — <code>RequestReadTimeout</code>; для nginx — <code>client_header_timeout</code> і <code>client_body_timeout</code>; також обмеження <code>LimitRequestFields</code> та <code>LimitRequestFieldSize</code>, AWS WAF Connection timeout rules та Rate Limiting на кількість з'єднань з одного IP. WAF-правила нормалізації URL усувають Cache-bypass.</p>
     </section>
 
     <section id="s6">
@@ -214,8 +214,8 @@ X-Custom-Header-1: ...
 resource "aws_shield_proactive_engagement" "main" {
   enabled = true
   emergency_contact {
-    email = "soc@company.com"
-    phone = "+380501234567"
+    email = "security@example.com"
+    phone = "+00000000000"
   }
 }</code></pre>
         <table>

@@ -107,7 +107,7 @@ HTTP Flood, на відміну від Slowloris, генерує масові з
 | Cookie | Відсутній (не браузер) |
 | TLS fingerprint (JA3) | Повторюється масово |
 
-Захист від Slowloris реалізується через директиву `RequestReadTimeout` у конфігурації Apache/nginx, що закриває повільні з'єднання після визначеного таймауту. Додатково встановлюються обмеження `LimitRequestFields` та `LimitRequestFieldSize`. AWS WAF дозволяє налаштовувати правила обмеження кількості з'єднань з однієї IP-адреси, а також реалізовувати Rate Limiting на рівні Web ACL.
+Захист від Slowloris реалізується через налаштування таймаутів читання запиту: в Apache — директивою `RequestReadTimeout`, а в nginx — параметрами `client_header_timeout` і `client_body_timeout`, які закривають повільні з'єднання після визначеного таймауту. Додатково для Apache можуть встановлюватися обмеження `LimitRequestFields` та `LimitRequestFieldSize`. AWS WAF дозволяє налаштовувати правила обмеження кількості з'єднань з однієї IP-адреси, а також реалізовувати Rate Limiting на рівні Web ACL.
 
 ---
 
@@ -171,8 +171,8 @@ resource "aws_shield_protection" "alb" {
 resource "aws_shield_proactive_engagement" "main" {
   enabled = true
   emergency_contact {
-    email        = "soc@company.com"
-    phone        = "+380501234567"
+    email        = "security@example.com"
+    phone        = "+00000000000"
   }
 }
 ```

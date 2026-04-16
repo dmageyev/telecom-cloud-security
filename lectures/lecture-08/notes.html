@@ -142,7 +142,7 @@
 
     <section id="s4">
         <h2>4. Архітектура збору та зберігання логів в AWS</h2>
-        <p>Централізована архітектура логування є необхідною умовою ефективного моніторингу, особливо в mid-account середовищах. Типова архітектура: Log Sources → Kinesis Data Firehose → S3 (archive) + OpenSearch (real-time search) + CloudWatch Logs (operational).</p>
+        <p>Централізована архітектура логування є необхідною умовою ефективного моніторингу, особливо в multi-account середовищах. Типова архітектура: Log Sources → Kinesis Data Firehose → S3 (archive) + OpenSearch (real-time search) + CloudWatch Logs (operational).</p>
         <table>
             <tr><th>Компонент</th><th>Роль</th><th>Зберігання</th></tr>
             <tr><td>CloudTrail Trail</td><td>Аудит API-викликів</td><td>S3 (1–7 років)</td></tr>
