@@ -67,11 +67,11 @@
 
 ```html
 <!-- ===== Notes Button & Panel ===== -->
-<button id="notes-btn" onclick="toggleNotesPanel()" title="Конспект до слайду">📄</button>
+<button id="notes-btn" type="button" onclick="toggleNotesPanel()" title="Конспект до слайду" aria-label="Відкрити конспект до слайду">📄</button>
 <div id="notes-panel">
     <div id="notes-panel-header">
         <span id="notes-panel-title">📄 Конспект лекції</span>
-        <button id="notes-panel-close" onclick="toggleNotesPanel()" title="Закрити">✕</button>
+        <button id="notes-panel-close" type="button" onclick="toggleNotesPanel()" title="Закрити" aria-label="Закрити конспект">✕</button>
     </div>
     <div id="notes-panel-body">Оберіть слайд для перегляду конспекту.</div>
 </div>
