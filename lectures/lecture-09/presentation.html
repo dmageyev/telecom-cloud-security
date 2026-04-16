@@ -1964,16 +1964,23 @@ resource "aws_cloudwatch_metric_alarm"
             null, // 34 — Підсумок
         ];
 
+        let notesPanelOpen = false;
         function toggleNotesPanel() {
-            document.getElementById('notes-panel').classList.toggle('open');
+            const panel = document.getElementById('notes-panel');
+            notesPanelOpen = !notesPanelOpen;
+            panel.classList.toggle('open', notesPanelOpen);
+            if (notesPanelOpen) updateNotesContent();
         }
-
-        Reveal.on('slidechanged', function(event) {
-            const idx = event.indexh;
+        function updateNotesContent() {
+            const idx = Reveal.getIndices().h;
             const body = document.getElementById('notes-panel-body');
-            const note = SLIDE_NOTES[idx];
-            body.innerHTML = note || '<p style="color:#8b949e;">Конспект для цього слайду відсутній.</p>';
-        });
+            const title = document.getElementById('notes-panel-title');
+            const content = SLIDE_NOTES[idx];
+            title.textContent = `📄 Слайд ${idx + 1} / ${SLIDE_NOTES.length}`;
+            body.innerHTML = content ||
+                '<p style="color:#8b949e;font-style:italic;">Конспект для цього слайду відсутній.</p>';
+        }
+        Reveal.on('slidechanged', () => { if (notesPanelOpen) updateNotesContent(); });
     </script>
 </body>
 </html>
