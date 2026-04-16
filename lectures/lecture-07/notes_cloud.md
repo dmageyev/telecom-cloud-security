@@ -601,7 +601,7 @@ GSMA FS.11 класифікує SS7-атаки за трьома категор�
 
 Перед введенням в експлуатацію будь-якого веб-застосунку, особливо у телекомунікаційному контексті, необхідно пройти структурований чеклист перевірки. Цей чеклист базується на вимогах OWASP ASVS рівня 2 та охоплює ключові аспекти безпеки.
 
-**Автентифікація та управління сесіями.** Перевіряється: чи використовується bcrypt або Argon2id для хешування паролів (мінімальний cost factor 12 для bcrypt); чи реалізовано захист від brute force (account lockout після 5 невдалих спроб); чи встановлено TOTP-базовану MFA для всіх адміністративних аккаунтів; чи генеруються session ID криптографічно стійким генератором (128 bit entropy); чи встановлено атрибути , ,  для сесійних cookies; чи інвалідується сесія на стороні сервера після logout; чи налаштовано idle timeout (15-30 хвилин) та абсолютний timeout (8 годин).
+**Автентифікація та управління сесіями.** Перевіряється: чи використовується bcrypt або Argon2id для хешування паролів (мінімальний cost factor 12 для bcrypt); чи реалізовано захист від brute force (account lockout після 5 невдалих спроб); чи встановлено TOTP-базовану MFA для всіх адміністративних аккаунтів; чи генеруються session ID криптографічно стійким генератором (128 bit entropy); чи встановлено атрибути `HttpOnly`, `Secure`, `SameSite` для сесійних cookies; чи інвалідується сесія на стороні сервера після logout; чи налаштовано idle timeout (15-30 хвилин) та абсолютний timeout (8 годин).
 
 **Контроль доступу.** Перевіряється: чи реалізовано перевірку авторизації на кожному backend endpoint (не тільки на рівні UI); чи застосовується принцип deny-by-default; чи перевіряється ownership ресурсу при доступі (захист від IDOR); чи немає доступу до адміністративних endpoint для звичайних користувачів; чи логуються всі порушення авторизації.
 
@@ -609,7 +609,7 @@ GSMA FS.11 класифікує SS7-атаки за трьома категор�
 
 **Криптографія та TLS.** Перевіряється: чи підтримуються виключно TLS 1.2+ (вимкнено TLS 1.0/1.1); чи використовуються лише strong cipher suites (ECDHE + AES-GCM); чи встановлено HSTS з max-age не менше 31536000; чи перевіряються SSL-сертифікати (не встановлено verify=False); чи немає захардкоджених секретів у коді (перевірка через git-secrets або truffleHog); чи зберігаються секрети в Secrets Manager або Vault.
 
-**HTTP Security Headers.** Перевіряється наявність та коректність: ,  (без ), , , , . Автоматизований скан через securityheaders.com або Mozilla Observatory.
+**HTTP Security Headers.** Перевіряється наявність та коректність: `Strict-Transport-Security`, `Content-Security-Policy` (без `unsafe-inline`), `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`. Автоматизований скан через securityheaders.com або Mozilla Observatory.
 
 **Логування та моніторинг.** Перевіряється: чи логуються всі автентифікаційні події; чи логуються порушення авторизації; чи немає чутливих даних (паролів, токенів, PAN) у логах; чи централізовані логи в SIEM; чи налаштовані алерти для критичних подій (brute force, SQLi, масовий 403); чи перевірено retention period логів (мінімум 90 днів онлайн, 1 рік архів для PCI DSS).
 
@@ -617,14 +617,20 @@ GSMA FS.11 класифікує SS7-атаки за трьома категор�
 
 Налаштування AWS WAF потребує балансування між захистом та мінімальною кількістю false positives. Рекомендована послідовність впровадження: спочатку всі правила переводяться в режим Count (тільки логування, без блокування) на 2–4 тижні для аналізу трафіку, після чого поступово правила переводяться в режим Block із моніторингом false positives.
 
-Базовий набір Managed Rule Groups для продуктивного веб-застосунку:  (priority 10) із виключенням правил, що викликають false positives у конкретному застосунку;  (priority 20);  (priority 30); rate-based rule для обмеження запитів з одного IP (priority 1, limit 2000 req/5 min). Для телеком-порталів із B2B-інтеграціями рекомендується додати whitelist правило для trusted partner IP ranges із найвищим пріоритетом (priority 0, action Allow), що виключає партнерів зі стандартних перевірок WAF.
+Базовий набір Managed Rule Groups для продуктивного веб-застосунку: `AWSManagedRulesCommonRuleSet` (priority 10) із виключенням правил, що викликають false positives у конкретному застосунку; `AWSManagedRulesSQLiRuleSet` (priority 20); `AWSManagedRulesKnownBadInputsRuleSet` (priority 30); rate-based rule для обмеження запитів з одного IP (priority 1, limit 2000 req/5 min). Для телеком-порталів із B2B-інтеграціями рекомендується додати whitelist правило для trusted partner IP ranges із найвищим пріоритетом (priority 0, action Allow), що виключає партнерів зі стандартних перевірок WAF.
 
 Логування WAF та аналіз через Athena дозволяють виявляти патерни атак. Типовий SQL-запит для аналізу заблокованих запитів:
 
-Error:
-No DBURL given
-
-sql [-hnr] [--table-size] [--db-size] [-p pass-through] [-s string] dburl [command]
+```sql
+SELECT clientip, terminatingruleid, COUNT(*) AS block_count,
+       date_trunc('hour', from_unixtime(timestamp/1000)) AS hour
+FROM waf_logs
+WHERE action = 'BLOCK'
+  AND date_partition >= '2024/01/01'
+GROUP BY 1, 2, 4
+ORDER BY block_count DESC
+LIMIT 100;
+```
 
 ### Threat Modeling — практичне застосування методології STRIDE
 

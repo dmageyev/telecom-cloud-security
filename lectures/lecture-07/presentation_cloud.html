@@ -306,7 +306,7 @@ hash = ph.hash(password)</code></pre>
                             <li><span class="highlight">Output encoding</span> — HTML-entities при виведенні даних у HTML</li>
                             <li><span class="highlight">Content Security Policy (CSP)</span> — заборона inline-скриптів</li>
                             <li><span class="highlight">HTTPOnly cookie</span> — JS не може читати session cookie</li>
-                            <li><span class="highlight">X-XSS-Protection: 1; mode=block</span></li>
+                            <li><span class="highlight">SameSite cookie</span> — додатково зменшує ризики експлуатації через браузер</li>
                             <li><span class="highlight">Використовуйте фреймворк</span> — React, Vue auto-escape</li>
                             <li>Уникати <code>innerHTML</code>, <code>document.write</code>, <code>eval()</code></li>
                             <li>DOMPurify для sanitization HTML-вмісту</li>
