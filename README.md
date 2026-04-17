@@ -31,8 +31,8 @@
 |---|------|-----------|
 | 6 | Безпека обчислювальних сервісів і контейнерів | [📊 Презентація](lectures/lecture-06/presentation.html) · [📖 Конспект](lectures/lecture-06/notes.html) · [📋 README](lectures/lecture-06/README.md) · [🔗 Джерела](lectures/lecture-06/references.md) |
 | 7 | Безпека веб- та телеком-застосунків | [📊 Презентація](lectures/lecture-07/presentation.html) |
-| 8 | Моніторинг, логування та виявлення загроз | [📊 Презентація](lectures/lecture-08/presentation.html) · [📖 Конспект](lectures/lecture-08/notes.html) |
-| 9 | Захист від DDoS та забезпечення доступності | [📊 Презентація](lectures/lecture-09/presentation.html) · [📖 Конспект](lectures/lecture-09/notes.html) |
+| 8 | Моніторинг, логування та виявлення загроз | [📊 Презентація](lectures/lecture-08/presentation.html) · [📖 Конспект](lectures/lecture-08/notes_08.html) |
+| 9 | Захист від DDoS та забезпечення доступності | [📊 Презентація](lectures/lecture-09/presentation.html) · [📖 Конспект](lectures/lecture-09/notes_09.html) |
 | 10 | Реагування на інциденти та цифрова криміналістика | — |
 | 11 | Відповідність стандартам і сучасні підходи | — |
 

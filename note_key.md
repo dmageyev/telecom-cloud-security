@@ -1,11 +1,11 @@
 # note_key.md — Стандарти оформлення лекційних презентацій
 
-> Цей файл є специфікацією для ШІ-агентів, що створюють або редагують файли `presentation_NN.html` у цьому репозиторії.  
+> Цей файл є специфікацією для ШІ-агентів, що створюють або редагують файли `presentation.html` у цьому репозиторії.  
 > Всі агенти зобов'язані точно дотримуватися цих вимог, щоб забезпечити однаковий стиль у всіх лекціях.
 
 ---
 
-## 1. Загальна структура presentation_NN.html
+## 1. Загальна структура presentation.html
 
 Кожна презентація є **standalone Reveal.js deck** (CDN-посилання на reveal.js), що складається з:
 
@@ -13,11 +13,13 @@
 - Тема: `black` (`theme/black.css`)
 - CDN: `https://cdn.jsdelivr.net/npm/reveal.js/`
 - **36 слайдів** (може бути 34–50 залежно від теми)
-- Файл розміщується у: `lectures/lecture-NN/_NN.html`
+- Файл розміщується у: `lectures/lecture-NN/presentation.html`
 
 ---
 
 ## 2. Reveal.initialize — параметри
+
+Лекції 08+ використовують наступний профіль (оптимізований для 1920×1080):
 
 ```js
 Reveal.initialize({
@@ -33,6 +35,8 @@ Reveal.initialize({
     scrollActivationWidth: 900
 });
 ```
+
+> **Legacy-конфіг** (лекції 05–07): `width=1650–1750, height=900–920, maxScale=1.0, scrollActivationWidth=700`. Нові лекції використовують профіль вище.
 
 ---
 
@@ -136,7 +140,7 @@ pre code { display: block; padding: 0.4em; font-size: 0.8em; color: #c9d1d9; lin
 ```html
 <div class="box" style="border-color:#444; font-size:0.75em; margin-top:0.4em;">
     📊 35 слайдів &nbsp;·&nbsp; Лекція N з 11 &nbsp;·&nbsp;
-    ← <a href="../lecture-NN/_NN.html" style="color:#58a6ff;">Лекція N-1: Назва</a> &nbsp;·&nbsp;
+    ← <a href="../lecture-NN/presentation.html" style="color:#58a6ff;">Лекція N-1: Назва</a> &nbsp;·&nbsp;
     → Лекція N+1: Назва
 </div>
 ```
@@ -225,7 +229,7 @@ function updateNotesContent() {
     const body = document.getElementById('notes-panel-body');
     const title = document.getElementById('notes-panel-title');
     const content = SLIDE_NOTES[idx];
-    title.textContent = `📄 Слайд ${idx + 1} / ${Reveal.getTotalSlides()}`;
+    title.textContent = `📄 Слайд ${idx + 1} / ${SLIDE_NOTES.length}`;
     body.innerHTML = content ||
         '<p style="color:#8b949e;font-style:italic;">Конспект для цього слайду відсутній.</p>';
 }
@@ -319,7 +323,7 @@ Reveal.on('slidechanged', () => { if (notesPanelOpen) updateNotesContent(); });
 
 ---
 
-## 9. Референсний шаблон — повний presentation_NN.html
+## 9. Референсний шаблон — повний presentation.html
 
 ```html
 <!doctype html>
@@ -455,7 +459,7 @@ Reveal.on('slidechanged', () => { if (notesPanelOpen) updateNotesContent(); });
             const body = document.getElementById('notes-panel-body');
             const title = document.getElementById('notes-panel-title');
             const content = SLIDE_NOTES[idx];
-            title.textContent = `📄 Слайд ${idx + 1} / ${Reveal.getTotalSlides()}`;
+            title.textContent = `📄 Слайд ${idx + 1} / ${SLIDE_NOTES.length}`;
             body.innerHTML = content ||
                 '<p style="color:#8b949e;font-style:italic;">Конспект для цього слайду відсутній.</p>';
         }
@@ -467,7 +471,7 @@ Reveal.on('slidechanged', () => { if (notesPanelOpen) updateNotesContent(); });
 
 ---
 
-## 10. Чеклист перед збереженням presentation_NN.html
+## 10. Чеклист перед збереженням presentation.html
 
 - [ ] `Reveal.initialize` містить всі параметри з розділу 2
 - [ ] CSS містить `overflow-y: auto !important` для `.reveal .slides section`
