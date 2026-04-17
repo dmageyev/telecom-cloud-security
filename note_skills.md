@@ -157,7 +157,7 @@
 
 ### 5.3 Приклад коректного блоку коду
 
-```yaml
+```hcl
 # AWS IAM Policy — Least Privilege для S3 Read-Only
 resource "aws_iam_policy" "s3_read_only" {
   name = "s3-logs-read-only"
