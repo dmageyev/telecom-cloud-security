@@ -12,8 +12,8 @@
 - Один `<html lang="uk">` файл
 - Тема: `black` (`theme/black.css`)
 - CDN: `https://cdn.jsdelivr.net/npm/reveal.js/`
-- **35 слайдів** (може бути 34–40 залежно від теми)
-- Файл розміщується у: `lectures/lecture-NN/presentation.html`
+- **36 слайдів** (може бути 34–50 залежно від теми)
+- Файл розміщується у: `lectures/lecture-NN/presentation_NN.html`
 
 ---
 
@@ -25,16 +25,14 @@ Reveal.initialize({
     transition: 'slide',
     slideNumber: 'c/t',
     center: false,
-    width: 1650,
-    height: 900,
+    width: 1750,
+    height: 950,
     margin: 0.04,
     minScale: 0.2,
-    maxScale: 1.0,
-    scrollActivationWidth: 700
+    maxScale: 1.05,
+    scrollActivationWidth: 900
 });
 ```
-
-> **Примітка:** Lecture-07 використовує `width=1750, height=920, maxScale=1.05` — інші лекції використовують `width=1650, height=900, maxScale=1.0`.
 
 ---
 
@@ -88,7 +86,7 @@ pre code { display: block; padding: 0.4em; font-size: 0.8em; color: #c9d1d9; lin
   Це масштабує весь контент секції приблизно на 14%.
 - Таблиці: `font-size: 0.7em` (вже в CSS)
 - Списки в щільних слайдах: `font-size: 0.82em` або `0.75em` inline
-- `pre code`: `font-size: 0.8em` (або `0.62em` у lecture-06)
+- `pre code`: `font-size: 0.8em`
 
 ---
 
@@ -133,7 +131,6 @@ pre code { display: block; padding: 0.4em; font-size: 0.8em; color: #c9d1d9; lin
   - Блок **Золоте правило** або ключовий висновок у `.box` з `border-color:#238636`
   - Рекомендовані ресурси (`<ul>` зі списком посилань/документів)
   - Навігаційний блок з посиланнями ← попередня / → наступна лекція
-  - Завершення: `🎓 Дякую за увагу! Питання?`
 
 Приклад навігаційного блоку:
 ```html
@@ -168,10 +165,10 @@ pre code { display: block; padding: 0.4em; font-size: 0.8em; color: #c9d1d9; lin
 
 ```css
 #notes-btn {
-    position: fixed; bottom: 18px; right: 90px; z-index: 10000;
-    width: 46px; height: 46px; border-radius: 50%;
+    position: fixed; bottom: 25px; right: 40px; z-index: 10000;
+    width: 30px; height: 30px; border-radius: 50%;
     background: #1f6feb; border: none; cursor: pointer;
-    font-size: 1.3em; color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    font-size: 1.1em; color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.5);
     display: flex; align-items: center; justify-content: center;
 }
 #notes-btn:hover { background: #388bfd; }
@@ -362,10 +359,10 @@ Reveal.on('slidechanged', () => { if (notesPanelOpen) updateNotesContent(); });
         }
         /* Notes Button */
         #notes-btn {
-            position: fixed; bottom: 18px; right: 90px; z-index: 10000;
-            width: 46px; height: 46px; border-radius: 50%;
+            position: fixed; bottom: 25px; right: 40px; z-index: 10000;
+            width: 30px; height: 30px; border-radius: 50%;
             background: #1f6feb; border: none; cursor: pointer;
-            font-size: 1.3em; color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            font-size: 1.1em; color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.5);
             display: flex; align-items: center; justify-content: center;
         }
         #notes-btn:hover { background: #388bfd; }
@@ -430,12 +427,12 @@ Reveal.on('slidechanged', () => { if (notesPanelOpen) updateNotesContent(); });
             transition: 'slide',
             slideNumber: 'c/t',
             center: false,
-            width: 1650,
-            height: 900,
+            width: 1750,
+            height: 950,
             margin: 0.04,
             minScale: 0.2,
-            maxScale: 1.0,
-            scrollActivationWidth: 700
+            maxScale: 1.05,
+            scrollActivationWidth: 900
         });
 
         const SLIDE_NOTES = [
@@ -474,7 +471,7 @@ Reveal.on('slidechanged', () => { if (notesPanelOpen) updateNotesContent(); });
 
 - [ ] `Reveal.initialize` містить всі параметри з розділу 2
 - [ ] CSS містить `overflow-y: auto !important` для `.reveal .slides section`
-- [ ] Кнопка `#notes-btn` розміщена правильно (bottom:18px, right:90px)
+- [ ] Кнопка `#notes-btn` розміщена правильно (bottom:25px, right:40px)
 - [ ] Панель `#notes-panel` шириною 410px, початкова позиція `right:-420px`
 - [ ] `SLIDE_NOTES` має рівно стільки елементів, скільки слайдів
 - [ ] Перший і другий елементи `SLIDE_NOTES` — `null`
@@ -482,4 +479,4 @@ Reveal.on('slidechanged', () => { if (notesPanelOpen) updateNotesContent(); });
 - [ ] Всі `${...}` у SLIDE_NOTES екрановані як `\${...}`
 - [ ] Передостанній слайд: Антипатерни + Чеклист
 - [ ] Останній слайд: Підсумок з тегами, ресурсами та навігацією
-- [ ] Загальна кількість слайдів: 34–40
+- [ ] Загальна кількість слайдів: 34–50
