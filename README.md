@@ -19,20 +19,20 @@
 
 | # | Тема | Матеріали |
 |---|------|-----------|
-| 1 | Вступ до ІБ телекомунікацій та хмар | [📊 Презентація](lectures/lecture-01/_01.html) |
+| 1 | Вступ до ІБ телекомунікацій та хмар | [📊 Презентація](lectures/lecture-01/presentation_01.html) |
 | 2 | Архітектура телекомунікаційних систем і вектори атак | — |
 | 3 | Мережева безпека в AWS | — |
-| 4 | Управління ідентифікацією та доступом (IAM) | [📊 Презентація](lectures/lecture-04/_04.html) |
+| 4 | Управління ідентифікацією та доступом (IAM) | [📊 Презентація](lectures/lecture-04/presentation_04.html) |
 | 5 | Захист даних і криптографія в AWS | — |
 
 ## Модуль 2: Захист сервісів, інциденти та відповідність
 
 | # | Тема | Матеріали |
 |---|------|-----------|
-| 6 | Безпека обчислювальних сервісів і контейнерів | [📊 Презентація](lectures/lecture-06/_06.html) · [📖 Конспект](lectures/lecture-06/notes.html) · [📋 README](lectures/lecture-06/README.md) · [🔗 Джерела](lectures/lecture-06/references.md) |
-| 7 | Безпека веб- та телеком-застосунків | [📊 Презентація](lectures/lecture-07/_07.html) |
-| 8 | Моніторинг, логування та виявлення загроз | [📊 Презентація](lectures/lecture-08/_08.html) · [📖 Конспект](lectures/lecture-08/notes_08.html) |
-| 9 | Захист від DDoS та забезпечення доступності | [📊 Презентація](lectures/lecture-09/_09.html) · [📖 Конспект](lectures/lecture-09/notes_09.html) |
+| 6 | Безпека обчислювальних сервісів і контейнерів | [📊 Презентація](lectures/lecture-06/presentation_06.html) · [📖 Конспект](lectures/lecture-06/notes.html) · [📋 README](lectures/lecture-06/README.md) · [🔗 Джерела](lectures/lecture-06/references.md) |
+| 7 | Безпека веб- та телеком-застосунків | [📊 Презентація](lectures/lecture-07/presentation_07.html) |
+| 8 | Моніторинг, логування та виявлення загроз | [📊 Презентація](lectures/lecture-08/presentation_08.html) · [📖 Конспект](lectures/lecture-08/notes_08.html) |
+| 9 | Захист від DDoS та забезпечення доступності | [📊 Презентація](lectures/lecture-09/presentation_09.html) · [📖 Конспект](lectures/lecture-09/notes_09.html) |
 | 10 | Реагування на інциденти та цифрова криміналістика | — |
 | 11 | Відповідність стандартам і сучасні підходи | — |
 
@@ -56,7 +56,7 @@ lectures/lecture-XX/
 ```bash
 cd lectures/lecture-06
 python3 -m http.server 8080
-# Відкрити: http://localhost:8080/_06.html
+# Відкрити: http://localhost:8080/presentation_06.html
 ```
 
 **Навігація в презентації:**

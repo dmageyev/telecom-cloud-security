@@ -78,7 +78,7 @@
 
 | Файл | Опис |
 |------|------|
-| [`_06.html`](./_06.html) | Reveal.js презентація (37 слайдів) |
+| [`presentation_06.html`](./presentation_06.html) | Reveal.js презентація (37 слайдів) |
 | [`README.md`](./README.md) | Цей файл — огляд та навігація |
 | [`references.md`](./references.md) | Бібліографія, посилання, стандарти |
 | [`notes.md`](./notes.md) | Конспект лекції з детальними поясненнями (Markdown) |
@@ -92,10 +92,10 @@
 # Локальний HTTP-сервер (Python)
 cd lectures/lecture-06
 python3 -m http.server 8080
-# Відкрити: http://localhost:8080/_06.html
+# Відкрити: http://localhost:8080/presentation_06.html
 ```
 
-Або відкрийте `_06.html` безпосередньо в браузері.
+Або відкрийте `presentation_06.html` безпосередньо в браузері.
 
 **Навігація в презентації:**
 - `→` або `Space` — наступний слайд

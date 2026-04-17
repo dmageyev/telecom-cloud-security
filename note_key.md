@@ -1,11 +1,11 @@
 # note_key.md — Стандарти оформлення лекційних презентацій
 
-> Цей файл є специфікацією для ШІ-агентів, що створюють або редагують файли `_NN.html` у цьому репозиторії.  
+> Цей файл є специфікацією для ШІ-агентів, що створюють або редагують файли `presentation_NN.html` у цьому репозиторії.  
 > Всі агенти зобов'язані точно дотримуватися цих вимог, щоб забезпечити однаковий стиль у всіх лекціях.
 
 ---
 
-## 1. Загальна структура _NN.html
+## 1. Загальна структура presentation_NN.html
 
 Кожна презентація є **standalone Reveal.js deck** (CDN-посилання на reveal.js), що складається з:
 
@@ -13,7 +13,7 @@
 - Тема: `black` (`theme/black.css`)
 - CDN: `https://cdn.jsdelivr.net/npm/reveal.js/`
 - **36 слайдів** (може бути 34–50 залежно від теми)
-- Файл розміщується у: `lectures/lecture-NN/_NN.html` (наприклад, `lectures/lecture-08/_08.html`)
+- Файл розміщується у: `lectures/lecture-NN/presentation_NN.html` (наприклад, `lectures/lecture-08/presentation_08.html`)
 
 ---
 
@@ -138,7 +138,7 @@ pre code { display: block; padding: 0.4em; font-size: 0.8em; color: #c9d1d9; lin
 ```html
 <div class="box" style="border-color:#444; font-size:0.75em; margin-top:0.4em;">
     📊 35 слайдів &nbsp;·&nbsp; Лекція N з 11 &nbsp;·&nbsp;
-    ← <a href="../lecture-NN/_NN.html" style="color:#58a6ff;">Лекція N-1: Назва</a> &nbsp;·&nbsp;
+    ← <a href="../lecture-NN/presentation_NN.html" style="color:#58a6ff;">Лекція N-1: Назва</a> &nbsp;·&nbsp;
     → Лекція N+1: Назва
 </div>
 ```
@@ -321,7 +321,7 @@ Reveal.on('slidechanged', () => { if (notesPanelOpen) updateNotesContent(); });
 
 ---
 
-## 9. Референсний шаблон — повний _NN.html
+## 9. Референсний шаблон — повний presentation_NN.html
 
 ```html
 <!doctype html>
@@ -469,7 +469,7 @@ Reveal.on('slidechanged', () => { if (notesPanelOpen) updateNotesContent(); });
 
 ---
 
-## 10. Чеклист перед збереженням _NN.html
+## 10. Чеклист перед збереженням presentation_NN.html
 
 - [ ] `Reveal.initialize` містить всі параметри з розділу 2
 - [ ] CSS містить `overflow-y: auto !important` для `.reveal .slides section`
