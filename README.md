@@ -29,7 +29,7 @@
 
 | # | Тема | Матеріали |
 |---|------|-----------|
-| 6 | Безпека обчислювальних сервісів і контейнерів | [📊 Презентація](lectures/lecture-06/presentation_06.html) · [📖 Конспект](lectures/lecture-06/notes.html) · [📋 README](lectures/lecture-06/README.md) · [🔗 Джерела](lectures/lecture-06/references.md) |
+| 6 | Безпека обчислювальних сервісів і контейнерів | [📊 Презентація](lectures/lecture-06/presentation_06.html) · [📖 Конспект](lectures/lecture-06/notes.md) · [📋 README](lectures/lecture-06/README.md) · [🔗 Джерела](lectures/lecture-06/references.md) |
 | 7 | Безпека веб- та телеком-застосунків | [📊 Презентація](lectures/lecture-07/presentation_07.html) |
 | 8 | Моніторинг, логування та виявлення загроз | [📊 Презентація](lectures/lecture-08/presentation_08.html) · [📖 Конспект](lectures/lecture-08/notes_08.html) |
 | 9 | Захист від DDoS та забезпечення доступності | [📊 Презентація](lectures/lecture-09/presentation_09.html) · [📖 Конспект](lectures/lecture-09/notes_09.html) |
@@ -44,11 +44,10 @@
 
 ```
 lectures/lecture-XX/
-├── _XX.html            # Reveal.js презентація (35–40 слайдів)
-├── README.md           # Огляд, цілі, зміст, навігація
-├── notes_XX.md         # Конспект з детальними поясненнями (Markdown)
-├── notes_XX.html       # Конспект у HTML-форматі для читання в браузері
-└── references.md       # Бібліографія, посилання, стандарти, інструменти
+├── presentation_XX.html  # Reveal.js презентація (35–40 слайдів)
+├── README.md             # Огляд, цілі, зміст, навігація
+├── notes_XX.md           # Конспект з детальними поясненнями (Markdown)
+└── references.md         # Бібліографія, посилання, стандарти, інструменти
 ```
 
 ### Як відкрити презентацію
