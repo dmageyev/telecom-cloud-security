@@ -243,7 +243,7 @@
             </section>
 
             <!-- ===== СЛАЙД 6: Botnet та DDoS-as-a-Service ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>Ботнети та DDoS-as-a-Service</h2>
                 <div class="two-col">
                     <div>
@@ -287,7 +287,7 @@
             </section>
 
             <!-- ===== СЛАЙД 7: Layer 7 атаки ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>Layer 7 атаки — Slowloris та HTTP Flood</h2>
                 <div class="two-col">
                     <div>
@@ -337,7 +337,7 @@ X-Custom-Header-1: ...\r\n
             </section>
 
             <!-- ===== СЛАЙД 8: DDoS у телекомунікаціях ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>DDoS у телекомунікаційних мережах</h2>
                 <div class="two-col">
                     <div>
@@ -412,7 +412,7 @@ X-Custom-Header-1: ...\r\n
             </section>
 
             <!-- ===== СЛАЙД 10: AWS Shield Standard і Advanced ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>AWS Shield — захист від DDoS</h2>
                 <div class="two-col">
                     <div>
@@ -468,7 +468,7 @@ resource "aws_shield_proactive_engagement"
             </section>
 
             <!-- ===== СЛАЙД 11: AWS WAF ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>AWS WAF — захист на рівні застосунку</h2>
                 <div class="two-col">
                     <div>
@@ -536,7 +536,7 @@ resource "aws_shield_proactive_engagement"
             </section>
 
             <!-- ===== СЛАЙД 12: WAF — розширені можливості ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>AWS WAF — Bot Control та геоблокування</h2>
                 <div class="two-col">
                     <div>
@@ -597,7 +597,7 @@ LIMIT 20;</code></pre>
             </section>
 
             <!-- ===== СЛАЙД 13: Концепції HA — RTO, RPO, SLA ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>Концепції доступності — RTO, RPO, SLA</h2>
                 <div class="two-col">
                     <div>
@@ -641,7 +641,7 @@ LIMIT 20;</code></pre>
             </section>
 
             <!-- ===== СЛАЙД 14: CloudFront CDN та захист ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>AWS CloudFront — CDN та захист на периметрі</h2>
                 <div class="two-col">
                     <div>
@@ -717,7 +717,7 @@ resource "aws_security_group_rule" "cf_only" {
             </section>
 
             <!-- ===== СЛАЙД 15: Route 53 — DNS failover ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>Route 53 — DNS failover та висока доступність</h2>
                 <div class="two-col">
                     <div>
@@ -782,7 +782,7 @@ resource "aws_route53_record" "secondary" {
             </section>
 
             <!-- ===== СЛАЙД 16: Elastic Load Balancing ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>Elastic Load Balancing — типи та захист від DDoS</h2>
                 <div class="two-col">
                     <div>
@@ -1136,7 +1136,7 @@ resource "aws_elasticache_replication_group"
             </section>
 
             <!-- ===== СЛАЙД 22: Rate Limiting та Circuit Breaker ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>Rate Limiting та Circuit Breaker патерни</h2>
                 <div class="two-col">
                     <div>
@@ -1303,7 +1303,7 @@ def respond_to_ddos(event, context):
             </section>
 
             <!-- ===== СЛАЙД 25: AWS Resilience Hub ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>AWS Resilience Hub — оцінка та покращення відмовостійкості</h2>
                 <div class="two-col">
                     <div>
@@ -1461,7 +1461,7 @@ resource "aws_ce_anomaly_monitor" "main" {
             </section>
 
             <!-- ===== СЛАЙД 28: DDoS Testing та Red Team ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>Тестування захисту від DDoS</h2>
                 <div class="two-col">
                     <div>
@@ -1824,13 +1824,28 @@ resource "aws_cloudwatch_metric_alarm"
                             <li>NIST SP 800-61 Rev 3 — Incident Handling Guide</li>
                             <li>AWS Fault Injection Simulator Workshop (catalog.workshops.aws/fis)</li>
                         </ul>
-                        <div class="box" style="border-color:#444; font-size:0.75em; margin-top:0.4em;">
-                            📊 35 слайдів &nbsp;·&nbsp; Лекція 9 з 11 &nbsp;·&nbsp;
-                            ← <a href="../lecture-08/presentation.html" style="color:#58a6ff;">Лекція 8: Моніторинг та виявлення загроз</a> &nbsp;·&nbsp;
-                            → Лекція 10: Реагування на інциденти
-                        </div>
-                        <p style="font-size:1.1em; margin-top:0.5em;">🎓 Дякую за увагу! Питання?</p>
                     </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 36: Анонс наступної лекції ===== -->
+            <section>
+                <h2>Дякую за увагу!</h2>
+                <p style="font-size:1.3em; margin-top:0.5em;">🎓 Питання?</p>
+                <hr style="border-color:#444; margin:1em 0;">
+                <h3>⏭️ Наступна лекція — Лекція 10: Реагування на інциденти</h3>
+                <ul style="font-size:0.9em; margin-top:0.5em;">
+                    <li>Incident Response lifecycle: Preparation → Detection → Containment → Eradication → Recovery</li>
+                    <li>AWS Security Incident Response Guide та AWS IR Runbooks</li>
+                    <li>Автоматизація реагування: EventBridge + Lambda + Step Functions (SOAR)</li>
+                    <li>Forensics у хмарі: EC2 snapshot, VPC Flow Logs, CloudTrail evidence</li>
+                    <li>Управління інцидентами в телеком: SS7/Diameter-атаки, SIM swap, регуляторна звітність</li>
+                    <li>Post-Incident Review та Lessons Learned</li>
+                </ul>
+                <div class="box" style="border-color:#444; font-size:0.8em; margin-top:1em;">
+                    📊 36 слайдів &nbsp;·&nbsp; Лекція 9 з 11 &nbsp;·&nbsp;
+                    ← <a href="../lecture-08/presentation.html" style="color:#58a6ff;">Лекція 8: Моніторинг та виявлення загроз</a> &nbsp;·&nbsp;
+                    → Лекція 10: Реагування на інциденти
                 </div>
             </section>
 
@@ -2352,6 +2367,7 @@ resource "aws_autoscaling_policy" "target_cpu" {
 <li>☑ Автоматизований runbook (EventBridge + Lambda)</li>
 <li>☑ Synthetic canary monitoring</li>
 </ul>`,
+            null,
             null
         ];
 

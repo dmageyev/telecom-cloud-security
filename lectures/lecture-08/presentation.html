@@ -287,7 +287,7 @@ resource "aws_kinesis_firehose_delivery_stream" "logs" {
             </section>
 
             <!-- ===== СЛАЙД 7: SIEM — концепція та архітектура ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>SIEM — Security Information and Event Management</h2>
                 <div class="two-col">
                     <div>
@@ -329,7 +329,7 @@ resource "aws_kinesis_firehose_delivery_stream" "logs" {
             </section>
 
             <!-- ===== СЛАЙД 8: Кореляція подій та правила виявлення ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>Кореляція подій та правила виявлення</h2>
                 <div class="two-col">
                     <div>
@@ -375,7 +375,7 @@ level: high</code></pre>
             </section>
 
             <!-- ===== СЛАЙД 9: UEBA та поведінковий аналіз ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>UEBA — User and Entity Behavior Analytics</h2>
                 <div class="two-col">
                     <div>
@@ -418,7 +418,7 @@ level: high</code></pre>
             </section>
 
             <!-- ===== СЛАЙД 10: MITRE ATT&CK ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>MITRE ATT&amp;CK — Framework для виявлення загроз</h2>
                 <div class="two-col">
                     <div>
@@ -572,7 +572,7 @@ resource "aws_cloudwatch_metric_alarm"
             </section>
 
             <!-- ===== СЛАЙД 13: AWS CloudTrail ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>AWS CloudTrail — аудит API-викликів</h2>
                 <div class="two-col">
                     <div>
@@ -673,7 +673,7 @@ ORDER BY eventtime DESC;</code></pre>
             </section>
 
             <!-- ===== СЛАЙД 15: AWS Config ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>AWS Config — моніторинг конфігурацій ресурсів</h2>
                 <div class="two-col">
                     <div>
@@ -1074,7 +1074,7 @@ ORDER BY first_use;</code></pre>
             </section>
 
             <!-- ===== СЛАЙД 23: Моніторинг телеком-мереж ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>Моніторинг телекомунікаційних мереж</h2>
                 <div class="two-col">
                     <div>
@@ -1280,7 +1280,7 @@ phases:
             </section>
 
             <!-- ===== СЛАЙД 28: Amazon OpenSearch для SIEM ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>Amazon OpenSearch Service — SIEM платформа</h2>
                 <div class="two-col">
                     <div>
@@ -1418,7 +1418,7 @@ ORDER BY actions;</code></pre>
             </section>
 
             <!-- ===== СЛАЙД 31: Anomaly Detection та ML ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>Machine Learning для виявлення аномалій</h2>
                 <div class="two-col">
                     <div>
@@ -1559,7 +1559,7 @@ def isolate_ec2(instance_id):
             </section>
 
             <!-- ===== СЛАЙД 34: Типові помилки та антипатерни ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>Типові помилки моніторингу та як їх уникнути</h2>
                 <div class="two-col">
                     <div>
@@ -1625,13 +1625,28 @@ def isolate_ec2(instance_id):
                             <li>NIST SP 800-92 — Guide to Computer Security Log Management</li>
                             <li>AWS Workshop: Building a SIEM with Amazon OpenSearch</li>
                         </ul>
-                        <div class="box" style="border-color:#444; font-size:0.75em; margin-top:0.4em;">
-                            📊 35 слайдів &nbsp;·&nbsp; Лекція 8 з 11 &nbsp;·&nbsp;
-                            ← <a href="../lecture-07/presentation.html" style="color:#58a6ff;">Лекція 7: Безпека веб-застосунків</a> &nbsp;·&nbsp;
-                            → Лекція 9: Захист від DDoS
-                        </div>
-                        <p style="font-size:1.1em; margin-top:0.5em;">🎓 Дякую за увагу! Питання?</p>
                     </div>
+                </div>
+            </section>
+
+            <!-- ===== СЛАЙД 36: Анонс наступної лекції ===== -->
+            <section>
+                <h2>Дякую за увагу!</h2>
+                <p style="font-size:1.3em; margin-top:0.5em;">🎓 Питання?</p>
+                <hr style="border-color:#444; margin:1em 0;">
+                <h3>⏭️ Наступна лекція — Лекція 9: Захист від DDoS та забезпечення доступності</h3>
+                <ul style="font-size:0.9em; margin-top:0.5em;">
+                    <li>DDoS — класифікація атак: Volumetric, Protocol, Application Layer</li>
+                    <li>AWS Shield Standard та Advanced, DRT (DDoS Response Team)</li>
+                    <li>AWS WAF — Web Access Control Lists, правила та Managed Rule Groups</li>
+                    <li>CloudFront, Route 53 Failover, ALB/NLB, Auto Scaling</li>
+                    <li>Стратегії High Availability: RTO, RPO, Multi-AZ, Multi-Region</li>
+                    <li>DDoS у телекомунікаціях: SS7 DoS, SIP Flood, захист сигнального рівня</li>
+                </ul>
+                <div class="box" style="border-color:#444; font-size:0.8em; margin-top:1em;">
+                    📊 36 слайдів &nbsp;·&nbsp; Лекція 8 з 11 &nbsp;·&nbsp;
+                    ← <a href="../lecture-07/presentation.html" style="color:#58a6ff;">Лекція 7: Безпека веб-застосунків</a> &nbsp;·&nbsp;
+                    → <a href="../lecture-09/presentation.html" style="color:#58a6ff;">Лекція 9: Захист від DDoS</a>
                 </div>
             </section>
 
@@ -2131,6 +2146,7 @@ ORDER BY api_count DESC;</code></pre>
 <li>☑ SOAR playbooks: EventBridge → Lambda для HIGH+ findings</li>
 <li>☑ Security Hub findings SLA: документований та дотримується</li>
 </ul>`,
+            null,
             null
         ];
 
