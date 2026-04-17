@@ -5,7 +5,7 @@
 
 ---
 
-## 1. Загальна структура presentation.html
+## 1. Загальна структура presentation_NN.html
 
 Кожна презентація є **standalone Reveal.js deck** (CDN-посилання на reveal.js), що складається з:
 
@@ -136,7 +136,7 @@ pre code { display: block; padding: 0.4em; font-size: 0.8em; color: #c9d1d9; lin
 ```html
 <div class="box" style="border-color:#444; font-size:0.75em; margin-top:0.4em;">
     📊 35 слайдів &nbsp;·&nbsp; Лекція N з 11 &nbsp;·&nbsp;
-    ← <a href="../lecture-NN/presentation.html" style="color:#58a6ff;">Лекція N-1: Назва</a> &nbsp;·&nbsp;
+    ← <a href="../lecture-NN/presentation_NN.html" style="color:#58a6ff;">Лекція N-1: Назва</a> &nbsp;·&nbsp;
     → Лекція N+1: Назва
 </div>
 ```
