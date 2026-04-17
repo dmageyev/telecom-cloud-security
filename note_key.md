@@ -1,6 +1,6 @@
 # note_key.md — Стандарти оформлення лекційних презентацій
 
-> Цей файл є специфікацією для ШІ-агентів, що створюють або редагують файли `presentation.html` у цьому репозиторії.  
+> Цей файл є специфікацією для ШІ-агентів, що створюють або редагують файли `presentation_NN.html` у цьому репозиторії.  
 > Всі агенти зобов'язані точно дотримуватися цих вимог, щоб забезпечити однаковий стиль у всіх лекціях.
 
 ---
@@ -13,7 +13,7 @@
 - Тема: `black` (`theme/black.css`)
 - CDN: `https://cdn.jsdelivr.net/npm/reveal.js/`
 - **36 слайдів** (може бути 34–50 залежно від теми)
-- Файл розміщується у: `lectures/lecture-NN/presentation_NN.html`
+- Файл розміщується у: `lectures/lecture-NN/_NN.html`
 
 ---
 
@@ -136,7 +136,7 @@ pre code { display: block; padding: 0.4em; font-size: 0.8em; color: #c9d1d9; lin
 ```html
 <div class="box" style="border-color:#444; font-size:0.75em; margin-top:0.4em;">
     📊 35 слайдів &nbsp;·&nbsp; Лекція N з 11 &nbsp;·&nbsp;
-    ← <a href="../lecture-NN/presentation_NN.html" style="color:#58a6ff;">Лекція N-1: Назва</a> &nbsp;·&nbsp;
+    ← <a href="../lecture-NN/_NN.html" style="color:#58a6ff;">Лекція N-1: Назва</a> &nbsp;·&nbsp;
     → Лекція N+1: Назва
 </div>
 ```
@@ -275,7 +275,7 @@ Reveal.on('slidechanged', () => { if (notesPanelOpen) updateNotesContent(); });
 
 Якщо цього не зробити — браузер отримає `ReferenceError`, і сторінка відобразиться білим екраном.
 
-Правило: при конвертації тексту notes.md у SLIDE_NOTES — автоматично замінювати всі `${` на `\${`.
+Правило: при конвертації тексту notes_NN.md у SLIDE_NOTES — автоматично замінювати всі `${` на `\${`.
 
 **Приклад:**
 ```js
@@ -309,7 +309,7 @@ Reveal.on('slidechanged', () => { if (notesPanelOpen) updateNotesContent(); });
 
 ### 8.3 Розподіл контенту між великими секціями
 
-Якщо тема одного розділу notes.md охоплює 2+ слайди — розподілити контент розділу між відповідними слайдами (перша половина → перший слайд, друга → другий).
+Якщо тема одного розділу notes_NN.md охоплює 2+ слайди — розподілити контент розділу між відповідними слайдами (перша половина → перший слайд, друга → другий).
 
 ### 8.4 Заборони
 
@@ -319,7 +319,7 @@ Reveal.on('slidechanged', () => { if (notesPanelOpen) updateNotesContent(); });
 
 ---
 
-## 9. Референсний шаблон — повний presentation.html
+## 9. Референсний шаблон — повний presentation_NN.html
 
 ```html
 <!doctype html>
@@ -467,7 +467,7 @@ Reveal.on('slidechanged', () => { if (notesPanelOpen) updateNotesContent(); });
 
 ---
 
-## 10. Чеклист перед збереженням presentation.html
+## 10. Чеклист перед збереженням presentation_NN.html
 
 - [ ] `Reveal.initialize` містить всі параметри з розділу 2
 - [ ] CSS містить `overflow-y: auto !important` для `.reveal .slides section`
