@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Конспект: Моніторинг, логування та виявлення загроз — Лекція 8</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            margin: 0;
+            padding: 0;
+            line-height: 1.75;
+        }
+        .page { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+        header { border-bottom: 2px solid #21262d; padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        header h1 { font-size: 1.8rem; color: #58a6ff; margin: 0 0 0.4rem; }
+        header .meta { font-size: 0.85rem; color: #8b949e; }
+        header .meta span { margin-right: 1.2em; }
+        .toc { background: #161b22; border: 1px solid #21262d; border-radius: 8px; padding: 1rem 1.5rem; margin-bottom: 2.5rem; }
+        .toc h2 { font-size: 1rem; color: #e8b04b; margin: 0 0 0.6rem; }
+        .toc ol { margin: 0; padding-left: 1.4em; }
+        .toc li { font-size: 0.88rem; margin: 0.15em 0; }
+        .toc a { color: #58a6ff; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        section { margin-bottom: 3rem; padding-bottom: 1.5rem; border-bottom: 1px solid #21262d; }
+        section:last-child { border-bottom: none; }
+        h2 { font-size: 1.35rem; color: #58a6ff; margin: 0 0 0.8rem; padding-top: 0.5rem; }
+        h3 { font-size: 1.05rem; color: #e8b04b; margin: 1.2rem 0 0.4rem; }
+        p { margin: 0.5rem 0 0.9rem; }
+        ul, ol { margin: 0.3rem 0; padding-left: 1.6em; }
+        li { margin: 0.2em 0; }
+        code { background: #161b22; border: 1px solid #30363d; border-radius: 4px; padding: 1px 5px; font-size: 0.88em; color: #58a6ff; }
+        pre { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 1rem; overflow-x: auto; margin: 0.8rem 0; }
+        pre code { border: none; padding: 0; font-size: 0.82em; color: #c9d1d9; line-height: 1.5; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.88em; margin: 0.8rem 0 1.2rem; }
+        th { background: #1f6feb; color: #fff; padding: 6px 10px; text-align: left; }
+        td { padding: 5px 10px; border-bottom: 1px solid #21262d; }
+        tr:nth-child(even) td { background: #161b22; }
+        blockquote { border-left: 3px solid #e8b04b; margin: 0.8rem 0; padding: 0.4rem 1rem; color: #8b949e; background: #161b22; border-radius: 0 4px 4px 0; }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header>
+        <h1>Конспект лекції 8: Моніторинг, логування та виявлення загроз</h1>
+        <div class="meta">
+            <span>Курс: Інформаційна безпека телекомунікаційних та хмарних технологій</span>
+            <span>Модуль 2 — Лекція 8</span>
+        </div>
+    </header>
+
+    <div class="toc">
+        <h2>Зміст</h2>
+        <ol>
+            <li><a href="#s1">Навіщо моніторинг безпеки — масштаб проблеми</a></li>
+            <li><a href="#s2">Модель видимості: шари моніторингу в хмарному середовищі</a></li>
+            <li><a href="#s3">Основи логування: формати, рівні, структура</a></li>
+            <li><a href="#s4">Архітектура збору та зберігання логів в AWS</a></li>
+            <li><a href="#s5">SIEM: Security Information and Event Management</a></li>
+            <li><a href="#s6">Кореляція подій та правила виявлення (Sigma Rules)</a></li>
+            <li><a href="#s7">UEBA: User and Entity Behavior Analytics</a></li>
+            <li><a href="#s8">MITRE ATT&amp;CK: Framework для виявлення загроз</a></li>
+            <li><a href="#s9">AWS CloudWatch: метрики та тривоги</a></li>
+            <li><a href="#s10">AWS CloudWatch Logs та Logs Insights</a></li>
+            <li><a href="#s11">AWS CloudTrail: аудит API-викликів</a></li>
+            <li><a href="#s12">CloudTrail: аналіз та розслідування інцидентів</a></li>
+            <li><a href="#s13">AWS Config: безперервний моніторинг конфігурацій</a></li>
+            <li><a href="#s14">AWS Security Hub: єдина панель безпеки</a></li>
+            <li><a href="#s15">AWS GuardDuty: ML-детекція загроз</a></li>
+            <li><a href="#s16">AWS Inspector, Macie та Detective</a></li>
+            <li><a href="#s17">VPC Flow Logs: мережевий моніторинг</a></li>
+            <li><a href="#s18">Threat Hunting: проактивне виявлення загроз</a></li>
+            <li><a href="#s19">SOAR: автоматизація реакції на інциденти</a></li>
+            <li><a href="#s20">Alert Fatigue та пріоритизація алертів</a></li>
+            <li><a href="#s21">Моніторинг телекомунікаційних та 5G мереж</a></li>
+            <li><a href="#s22">SOC: Security Operations Center</a></li>
+            <li><a href="#s23">Compliance моніторинг: PCI DSS, GDPR, ISO 27001</a></li>
+            <li><a href="#s24">Централізований моніторинг Multi-Account AWS</a></li>
+            <li><a href="#s25">Виявлення інсайдерських загроз та ML-аномалії</a></li>
+            <li><a href="#s26">DevSecOps: моніторинг у CI/CD pipeline</a></li>
+            <li><a href="#s27">Практичний кейс: Виявлення атаки в AWS</a></li>
+            <li><a href="#s28">Типові помилки та чеклист налаштування моніторингу</a></li>
+        </ol>
+    </div>
+
+    <section id="s1">
+        <h2>1. Навіщо моніторинг безпеки — масштаб проблеми</h2>
+        <p>Моніторинг безпеки є одним із фундаментальних стовпів сучасної стратегії кіберзахисту. Принцип «неможливо захистити те, чого не бачиш» лаконічно відображає ключову цінність цього напрямку: лише тоді, коли організація має повну видимість (visibility) власного середовища, вона здатна своєчасно виявляти загрози, мінімізувати збитки та забезпечувати виконання регуляторних вимог. Відсутність належного моніторингу перетворює навіть найбільш захищену архітектуру на «чорну скриньку», де зловмисник може діяти непоміченим місяцями.</p>
+        <p>Статистика підтверджує масштаб проблеми. Відповідно до Verizon DBIR 2024, медіанний час перебування зловмисника в скомпрометованій системі (dwell time) без виявлення становить 194 дні. Ще більш тривожним є той факт, що 68% зламів виявляються не власними службами безпеки, а зовнішніми агентами — клієнтами, партнерами або регуляторами. IBM Cost of a Data Breach Report 2024 фіксує середню вартість витоку даних на рівні $4,88M, причому організації з розвиненим SOC скорочують цей показник у середньому на 49%.</p>
+        <table>
+            <tr><th>Показник</th><th>Без моніторингу</th><th>З повноцінним SOC</th></tr>
+            <tr><td>MTTD</td><td>194 дні</td><td>30 хвилин</td></tr>
+            <tr><td>MTTR</td><td>73 дні</td><td>5 хвилин (авто)</td></tr>
+            <tr><td>Вартість витоку</td><td>$4.88M</td><td>−49% при ранньому виявленні</td></tr>
+            <tr><td>Зовнішнє виявлення</td><td>68%</td><td>&lt;20%</td></tr>
+        </table>
+        <p>Мета моніторингу охоплює чотири взаємопов'язані завдання: Detection (виявлення аномальної активності в реальному часі), Investigation (збір доказів та відтворення хронології інциденту), Response (нейтралізація загрози) та Compliance (документальне підтвердження виконання вимог PCI DSS, GDPR, ISO 27001). AWS Well-Architected Framework визначає Detection як обов'язковий елемент Security Pillar поряд з Identity Management та Infrastructure Protection.</p>
+    </section>
+
+    <section id="s2">
+        <h2>2. Модель видимості: шари моніторингу в хмарному середовищі</h2>
+        <p>Ефективний моніторинг безпеки хмарного середовища будується за принципом багатошарової видимості, що охоплює всі рівні технологічного стека. Кожен шар генерує специфічні типи подій та вимагає специфічних інструментів збору та аналізу.</p>
+        <ul>
+            <li><strong>Мережевий рівень (Network Layer):</strong> VPC Flow Logs, DNS logs, GuardDuty network analysis — виявлення аномального трафіку, C2-з'єднань, сканування.</li>
+            <li><strong>Рівень хоста (Host Layer):</strong> System logs, auth events, file operations — AWS Systems Manager, Inspector v2.</li>
+            <li><strong>Прикладний рівень (Application Layer):</strong> HTTP access logs, DB logs, API Gateway logs — CloudWatch Logs, WAF logs.</li>
+            <li><strong>Рівень ідентичності (Identity Layer):</strong> CloudTrail (усі API-виклики), IAM Access Analyzer — повний аудит who did what when.</li>
+            <li><strong>Рівень даних (Data Layer):</strong> S3 access, RDS, Secrets Manager — Macie, S3 Data Events в CloudTrail.</li>
+        </ul>
+        <p>Цикл моніторингу безпеки є безперервним процесом: <strong>Collect → Normalize → Correlate → Analyze → Alert → Investigate → Respond → Learn</strong>. Кожен етап є необхідним: пропуск Normalize унеможливлює кореляцію, відсутність Learn призводить до повторення одних і тих самих інцидентів.</p>
+    </section>
+
+    <section id="s3">
+        <h2>3. Основи логування: формати, рівні, структура</h2>
+        <p>Лог-файли є первинним артефактом моніторингу безпеки. Якість та повнота логування безпосередньо визначають можливість виявлення та розслідування інцидентів.</p>
+        <h3>Структурований лог (JSON)</h3>
+        <pre><code>{
+  "timestamp": "2024-03-15T14:22:31.123Z",
+  "level": "WARNING",
+  "service": "auth-service",
+  "event_type": "authentication_failed",
+  "user_id": "user-1234",
+  "source_ip": "198.51.100.42",
+  "attempt": 5,
+  "user_agent": "python-requests/2.31.0",
+  "request_id": "req-abc-xyz"
+}</code></pre>
+        <p>Обов'язкові поля безпекового лог-запису: timestamp (ISO 8601 UTC), event_type, severity, actor (user/service), source_ip, resource, action, outcome (success/failure), request_id для трасування.</p>
+        <h3>Що обов'язково логувати</h3>
+        <ul>
+            <li>Усі успішні та невдалі спроби автентифікації</li>
+            <li>Зміни привілеїв та IAM-прав</li>
+            <li>Зміни конфігурацій (Security Group, S3 Policy, IAM Policy)</li>
+            <li>Доступ до чутливих даних</li>
+            <li>Мережева аномальна активність</li>
+        </ul>
+        <blockquote><strong>⚠️ Заборонено в логах:</strong> паролі, ключі API, номери карток (PAN), SSN, персональні дані без маскування — вимога PCI DSS та GDPR.</blockquote>
+    </section>
+
+    <section id="s4">
+        <h2>4. Архітектура збору та зберігання логів в AWS</h2>
+        <p>Централізована архітектура логування є необхідною умовою ефективного моніторингу, особливо в multi-account середовищах. Типова архітектура: Log Sources → Kinesis Data Firehose → S3 (archive) + OpenSearch (real-time search) + CloudWatch Logs (operational).</p>
+        <table>
+            <tr><th>Компонент</th><th>Роль</th><th>Зберігання</th></tr>
+            <tr><td>CloudTrail Trail</td><td>Аудит API-викликів</td><td>S3 (1–7 років)</td></tr>
+            <tr><td>VPC Flow Logs</td><td>Мережевий трафік</td><td>CloudWatch Logs / S3</td></tr>
+            <tr><td>ALB/CloudFront Logs</td><td>HTTP трафік</td><td>S3</td></tr>
+            <tr><td>CloudWatch Logs</td><td>Застосунки, OS</td><td>1–365 днів</td></tr>
+            <tr><td>S3 (log archive)</td><td>Централізоване сховище</td><td>Object Lock WORM</td></tr>
+        </table>
+        <p>Цілісність логів забезпечується через S3 Object Lock (WORM-режим) та CloudTrail Log File Validation (SHA-256 digest-файли). Шифрування KMS (CMK) є обов'язковою вимогою PCI DSS та ISO 27001.</p>
+        <pre><code>resource "aws_cloudwatch_log_group" "security" {
+  name              = "/security/audit"
+  retention_in_days = 365
+  kms_key_id        = aws_kms_key.logs.arn
+}</code></pre>
+    </section>
+
+    <section id="s5">
+        <h2>5. SIEM: Security Information and Event Management</h2>
+        <p>SIEM є центральним компонентом зрілого SOC, що виконує функцію «мозку» системи безпеки — агрегує, нормалізує, корелює та аналізує події безпеки з усього середовища в реальному часі.</p>
+        <h3>Функціональні компоненти SIEM</h3>
+        <ol>
+            <li><strong>Data Collection</strong> — прийом логів із сотень різнорідних джерел</li>
+            <li><strong>Normalization</strong> — уніфікована схема (OCSF, ECS)</li>
+            <li><strong>Storage</strong> — Elasticsearch/OpenSearch + S3 archival</li>
+            <li><strong>Correlation</strong> — правила виявлення паттернів атак</li>
+            <li><strong>Alerting</strong> — пріоритизовані сповіщення для SOC</li>
+            <li><strong>Reporting</strong> — compliance звіти</li>
+        </ol>
+        <table>
+            <tr><th>Сервіс</th><th>Роль у AWS SIEM</th></tr>
+            <tr><td>CloudTrail</td><td>Джерело IAM/API подій</td></tr>
+            <tr><td>GuardDuty</td><td>ML-детектор загроз</td></tr>
+            <tr><td>Security Hub</td><td>Агрегатор findings</td></tr>
+            <tr><td>OpenSearch</td><td>SIEM-рушій, пошук, дашборди</td></tr>
+            <tr><td>EventBridge</td><td>Маршрутизація та тригери автоматизації</td></tr>
+            <tr><td>Lambda</td><td>SOAR playbook виконання</td></tr>
+        </table>
+    </section>
+
+    <section id="s6">
+        <h2>6. Кореляція подій та правила виявлення (Sigma Rules)</h2>
+        <p>Кореляція подій — процес зіставлення множини окремих подій для виявлення складних паттернів атак, жодна з яких поодинці не є індикатором компромісу. Sigma — відкритий стандарт правил виявлення, транслюється в різні платформи.</p>
+        <pre><code>title: AWS IAM Privilege Escalation via Policy Attachment
+status: stable
+logsource:
+  product: aws
+  service: cloudtrail
+detection:
+  selection:
+    eventSource: iam.amazonaws.com
+    eventName:
+      - AttachUserPolicy
+      - AttachGroupPolicy
+      - PutUserPolicy
+    requestParameters.policyArn|contains:
+      - 'AdministratorAccess'
+      - 'PowerUserAccess'
+  timeframe: 15m
+  condition: selection
+level: high
+tags:
+  - attack.privilege_escalation
+  - attack.t1098</code></pre>
+        <h3>Типові правила виявлення AWS</h3>
+        <ul>
+            <li><strong>Публічний S3:</strong> <code>PutBucketPublicAccessBlock</code> з дозволеним доступом</li>
+            <li><strong>Зміна SG:</strong> <code>AuthorizeSecurityGroupIngress</code> 0–65535 від 0.0.0.0/0</li>
+            <li><strong>Видалення CloudTrail:</strong> <code>DeleteTrail</code> або <code>StopLogging</code></li>
+            <li><strong>Підозрілий IAM:</strong> &gt;20 різних API-дій за 1 хвилину</li>
+            <li><strong>Root account usage:</strong> будь-яка дія від root</li>
+        </ul>
+    </section>
+
+    <section id="s7">
+        <h2>7. UEBA: User and Entity Behavior Analytics</h2>
+        <p>UEBA — перехід від детекції за сигнатурами до виявлення аномалій на основі ML та статистичного моделювання. Ключова інновація: формування індивідуального «поведінкового базису» для кожного user/entity, і виявлення відхилень від нього.</p>
+        <h3>Технічні підходи UEBA</h3>
+        <ul>
+            <li>Peer grouping — порівняння з аналогічними за роллю колегами</li>
+            <li>Time-series analysis — чи типово виконувати дії о 3 AM?</li>
+            <li>Entity graph analysis — незвичні зв'язки між ресурсами</li>
+            <li>Geographic anomaly — логін з двох континентів за 5 хвилин</li>
+        </ul>
+        <h3>AWS GuardDuty як UEBA</h3>
+        <p>GuardDuty аналізує VPC Flow Logs, CloudTrail Events та Route 53 DNS Logs через ML-моделі, побудовані на мільярдах подій. Автоматично формує behavioral baseline для кожного ресурсу та виявляє відхилення без ручного налаштування порогів. Severity Score: 0.1 (мінімальний) до 8.9 (критичний).</p>
+    </section>
+
+    <section id="s8">
+        <h2>8. MITRE ATT&amp;CK: Framework для виявлення загроз</h2>
+        <p>MITRE ATT&amp;CK — структурований каталог тактик та технік реальних APT-угруповань. Ключовий принцип: фокус на ЩО робить зловмисник (поведінка), а не ЧИМ (конкретний інструмент/сигнатура).</p>
+        <h3>14 тактик ATT&amp;CK Enterprise</h3>
+        <p>Reconnaissance → Resource Development → <strong>Initial Access</strong> → Execution → <strong>Persistence</strong> → <strong>Privilege Escalation</strong> → Defense Evasion → Credential Access → Discovery → <strong>Lateral Movement</strong> → Collection → Command and Control → <strong>Exfiltration</strong> → Impact</p>
+        <h3>Приклад ланцюжка атаки в AWS</h3>
+        <table>
+            <tr><th>Техніка (ATT&amp;CK)</th><th>Дія зловмисника</th><th>Виявлення</th></tr>
+            <tr><td>T1566.001 — Phishing</td><td>Компрометація AWS Key</td><td>GuardDuty: UnauthorizedAccess</td></tr>
+            <tr><td>T1580 — Cloud Discovery</td><td>aws iam list-users, aws s3 ls</td><td>CloudWatch: excessive Read API</td></tr>
+            <tr><td>T1098 — Account Manipulation</td><td>AttachPolicy: AdministratorAccess</td><td>Sigma Rule: PrivEsc</td></tr>
+            <tr><td>T1562.001 — Impair Defenses</td><td>StopLogging CloudTrail</td><td>CloudWatch Alarm: Trail stopped</td></tr>
+            <tr><td>T1530 — Data from Cloud Storage</td><td>Bulk S3 download</td><td>GuardDuty: Exfiltration finding</td></tr>
+        </table>
+    </section>
+
+    <section id="s9">
+        <h2>9. AWS CloudWatch: метрики та тривоги</h2>
+        <p>CloudWatch є центральним сервісом моніторингу AWS, що охоплює метрики, логи, події та трейси. CloudWatch Metrics — часові ряди від AWS-сервісів та custom метрики застосунків.</p>
+        <pre><code>aws cloudwatch put-metric-data \
+  --namespace "Security/AuthMetrics" \
+  --metric-name "FailedLoginAttempts" \
+  --value 7 \
+  --dimensions Service=auth-api,Environment=prod</code></pre>
+        <h3>CloudWatch Alarms для безпеки</h3>
+        <pre><code>resource "aws_cloudwatch_metric_alarm" "root_activity" {
+  alarm_name          = "root-account-usage"
+  metric_name         = "RootAccountUsageCount"
+  namespace           = "CloudTrailMetrics"
+  statistic           = "Sum"
+  period              = 300
+  evaluation_periods  = 1
+  threshold           = 1
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  alarm_actions       = [aws_sns_topic.security_alerts.arn]
+  treat_missing_data  = "notBreaching"
+}</code></pre>
+        <p><strong>CloudWatch Anomaly Detection</strong> застосовує ML для автоматичного встановлення динамічних порогів із урахуванням сезонності — особливо цінно для метрик без фіксованих «нормальних» значень.</p>
+    </section>
+
+    <section id="s10">
+        <h2>10. AWS CloudWatch Logs та Logs Insights</h2>
+        <p>CloudWatch Logs є сервісом централізованого зберігання та аналізу лог-даних. Logs Insights — інтерактивний аналіз із власною мовою запитів.</p>
+        <pre><code>fields @timestamp, sourceIPAddress, userAgent, errorCode
+| filter eventSource = "signin.amazonaws.com" 
+  and eventName = "ConsoleLogin"
+  and errorCode = "Failed authentication"
+| stats count(*) as failCount by sourceIPAddress, userIdentity.arn
+| sort failCount desc
+| limit 20</code></pre>
+        <p>Metric Filters перетворюють паттерни в логах на CloudWatch Metrics для тригерування Alarms:</p>
+        <pre><code>resource "aws_cloudwatch_log_metric_filter" "unauthorized_api" {
+  name           = "UnauthorizedAPICalls"
+  log_group_name = aws_cloudwatch_log_group.cloudtrail.name
+  pattern = "{ ($.errorCode = \"*UnauthorizedAccess*\") || ($.errorCode = \"AccessDenied*\") }"
+  metric_transformation {
+    name      = "UnauthorizedAPICallsCount"
+    namespace = "CloudTrailMetrics"
+    value     = "1"
+  }
+}</code></pre>
+    </section>
+
+    <section id="s11">
+        <h2>11. AWS CloudTrail: аудит API-викликів</h2>
+        <p>CloudTrail записує кожен API-виклик до AWS-сервісів: хто (IAM identity), що (eventName), де (sourceIPAddress, region), коли (eventTime), з якими параметрами, і з яким результатом.</p>
+        <h3>Типи подій CloudTrail</h3>
+        <ul>
+            <li><strong>Management Events</strong> — адміністративні операції (CreateVPC, AttachRolePolicy). Зберігаються 90 днів у Event History безкоштовно.</li>
+            <li><strong>Data Events</strong> — операції над даними (S3 GetObject, Lambda Invoke). Потребують явного увімкнення.</li>
+            <li><strong>Insights Events</strong> — незвичні паттерни Management Events.</li>
+        </ul>
+        <pre><code>resource "aws_cloudtrail" "main" {
+  name                          = "main-trail"
+  s3_bucket_name                = aws_s3_bucket.trail_logs.id
+  include_global_service_events = true
+  is_multi_region_trail         = true
+  enable_log_file_validation    = true
+  cloud_watch_logs_group_arn    = "${aws_cloudwatch_log_group.trail.arn}:*"
+  kms_key_id                    = aws_kms_key.trail.arn
+}</code></pre>
+        <blockquote>🚨 <strong>Підозрілий запис:</strong> dev-alice прикріпила AdministratorAccess о 3:14 AM — класичний privilege escalation!</blockquote>
+    </section>
+
+    <section id="s12">
+        <h2>12. CloudTrail: аналіз та розслідування інцидентів</h2>
+        <p>Amazon Athena дозволяє виконувати SQL-запити до CloudTrail-логів у S3 — найефективніший спосіб аналізу мільйонів подій при forensic-розслідуванні.</p>
+        <pre><code>-- Хронологія дій конкретного IAM user
+SELECT eventtime, eventsource, eventname, 
+       sourceipaddress, requestparameters, errormessage
+FROM cloudtrail_logs
+WHERE useridentity.arn LIKE '%dev-alice%'
+  AND eventtime > '2024-03-14'
+ORDER BY eventtime;</code></pre>
+        <pre><code>-- Виявлення bulk S3 download (data exfiltration)
+SELECT sourceipaddress, useragent, sum(1) as request_count
+FROM cloudtrail_logs
+WHERE eventsource = 's3.amazonaws.com'
+  AND eventname IN ('GetObject', 'ListBucket')
+  AND errorcode IS NULL
+GROUP BY sourceipaddress, useragent
+ORDER BY request_count DESC;</code></pre>
+        <p><strong>Amazon Detective</strong> автоматизує цей процес: граф взаємозв'язків між ресурсами, IP-адресами та часовими вікнами дозволяє за кілька кліків відповісти на питання щодо scope of blast radius.</p>
+    </section>
+
+    <section id="s13">
+        <h2>13. AWS Config: безперервний моніторинг конфігурацій</h2>
+        <p>AWS Config фіксує стан кожного ресурсу у кожний момент часу та оцінює відповідність визначеним правилам (Config Rules). CloudTrail = WHO did WHAT; Config = СТАН ресурсів у часі.</p>
+        <table>
+            <tr><th>Config Rule</th><th>Що перевіряє</th></tr>
+            <tr><td><code>s3-bucket-public-read-prohibited</code></td><td>S3 bucket не дозволяє публічне читання</td></tr>
+            <tr><td><code>encrypted-volumes</code></td><td>EBS томи зашифровані</td></tr>
+            <tr><td><code>mfa-enabled-for-iam-console-access</code></td><td>MFA активовано для консольного доступу</td></tr>
+            <tr><td><code>cloudtrail-enabled</code></td><td>CloudTrail активований у всіх регіонах</td></tr>
+            <tr><td><code>rds-storage-encrypted</code></td><td>RDS-інстанси зашифровані</td></tr>
+        </table>
+        <p>Auto Remediation через SSM Automation: при спрацьовуванні Config Rule автоматично виправляє невідповідність — наприклад, видаляє правило SG <code>0.0.0.0/0 → SSH</code> або вмикає шифрування S3.</p>
+    </section>
+
+    <section id="s14">
+        <h2>14. AWS Security Hub: єдина панель безпеки</h2>
+        <p>Security Hub агрегує findings від GuardDuty, Inspector, Macie, Config, IAM Access Analyzer та сторонніх партнерів у єдиному інтерфейсі. Використовує стандартний формат ASFF (Amazon Security Finding Format).</p>
+        <p>Стандарти відповідності, що оцінюються автоматично: AWS Foundational Security Best Practices, CIS AWS Foundations Benchmark v1.4.0, PCI DSS v3.2.1, NIST SP 800-53 Rev 5.</p>
+        <pre><code># Lambda автоматизації через EventBridge
+def lambda_handler(event, context):
+    finding = event['detail']['findings'][0]
+    severity = finding['Severity']['Label']
+    
+    if severity in ['CRITICAL', 'HIGH']:
+        quarantine_ec2(finding['Resources'][0]['Id'])
+        revoke_iam_keys(finding)
+        notify_soc(finding)</code></pre>
+        <p>Best practice: автоматично закривати INFORMATIONAL знахідки через 30 днів, якщо не підтверджені аналітиком — для боротьби з alert fatigue.</p>
+    </section>
+
+    <section id="s15">
+        <h2>15. AWS GuardDuty: ML-детекція загроз</h2>
+        <p>GuardDuty — managed service виявлення загроз на базі ML, що аналізує VPC Flow Logs, CloudTrail та Route 53 DNS Logs. Не потребує агентів. Автоматично формує behavioral baseline.</p>
+        <table>
+            <tr><th>Категорія знахідки</th><th>Приклад</th><th>Рекомендована дія</th></tr>
+            <tr><td>Backdoor:EC2/C&amp;CActivity</td><td>EC2 → known C2 IP</td><td>Isolate EC2, forensics</td></tr>
+            <tr><td>UnauthorizedAccess:IAMUser/TorIPCaller</td><td>API з Tor Exit Node</td><td>Revoke key, investigate</td></tr>
+            <tr><td>CryptoCurrency:EC2/BitcoinTool</td><td>EC2 → mining pools</td><td>Terminate + investigate</td></tr>
+            <tr><td>Exfiltration:S3/AnomalousBehavior</td><td>S3 bulk download</td><td>Investigate data access</td></tr>
+            <tr><td>Recon:IAMUser/MaliciousIPCaller</td><td>AWS API з known-bad IP</td><td>Block IP, investigate IAM</td></tr>
+        </table>
+        <pre><code>resource "aws_cloudwatch_event_rule" "guardduty_high" {
+  name = "guardduty-high-severity"
+  event_pattern = jsonencode({
+    source      = ["aws.guardduty"]
+    detail-type = ["GuardDuty Finding"]
+    detail = { severity = [{ numeric = [">=", 7] }] }
+  })
+}</code></pre>
+    </section>
+
+    <section id="s16">
+        <h2>16. AWS Inspector, Macie та Detective</h2>
+        <h3>AWS Inspector v2</h3>
+        <p>Безперервне сканування EC2 та ECR на CVE-вразливості через SSM Agent. Числовий Risk Score (0–10). Аналіз reachability: чи доступна вразлива служба з Інтернету через конфігурацію Security Groups.</p>
+        <h3>Amazon Macie</h3>
+        <p>ML-сервіс для автоматичного виявлення PII (номери карток, SSN, медичні дані) в Amazon S3. Ключовий інструмент GDPR-compliance: автоматичне сканування + findings у Security Hub. Виявляє також публічні S3 buckets та buckets без шифрування.</p>
+        <h3>Amazon Detective</h3>
+        <p>Forensic-розслідування через граф взаємозв'язків між ресурсами. Відповідає на питання: «Які ресурси спілкувались із цим EC2?», «З яких IP входив цей IAM user?», «Що ще зробила ця роль?». Особливо цінний для визначення scope of blast radius при компрометації.</p>
+    </section>
+
+    <section id="s17">
+        <h2>17. VPC Flow Logs: мережевий моніторинг</h2>
+        <p>VPC Flow Logs захоплюють метадані мережевих потоків (не payload): src/dst IP, порт, протокол, байти, пакети, ACCEPT/REJECT. Формат запису:</p>
+        <pre><code>2 123456789012 eni-0abc1234 10.0.1.15 192.168.1.1 45621 443 6 15 7548 ... ACCEPT OK
+2 123456789012 eni-0abc1234 198.51.100.42 10.0.1.15 0 22 6 4 240 ... REJECT OK</code></pre>
+        <p>Аналіз REJECT-записів — детектор розвідувальної активності. Аналіз в Athena:</p>
+        <pre><code>-- Виявлення port scanning
+SELECT srcaddr, count(distinct dstport) as ports_scanned
+FROM vpc_flow_logs
+WHERE action = 'REJECT'
+  AND start > unix_timestamp(NOW() - INTERVAL 1 HOUR)
+GROUP BY srcaddr
+HAVING ports_scanned > 50
+ORDER BY ports_scanned DESC;</code></pre>
+        <h3>Сценарії виявлення загроз</h3>
+        <ul>
+            <li>Внутрішнє сканування — lateral movement між EC2</li>
+            <li>Великий аутбаунд трафік — data exfiltration</li>
+            <li>DNS tunneling — аномальні DNS пакети</li>
+            <li>З'єднання до known-bad IP</li>
+        </ul>
+    </section>
+
+    <section id="s18">
+        <h2>18. Threat Hunting: проактивне виявлення загроз</h2>
+        <p>Threat Hunting — проактивний пошук прихованих зловмисників, що не були виявлені автоматичними системами. Базується на гіпотезах: «Що якщо зловмисник вже в мережі?»</p>
+        <h3>Методологія</h3>
+        <ol>
+            <li><strong>Гіпотеза</strong> — наприклад, «Скомпрометовані IAM-credentials виконують S3 discovery»</li>
+            <li><strong>Збір даних</strong> — CloudTrail, VPC Flow Logs за відповідний period</li>
+            <li><strong>IoC/IoA пошук</strong> — Athena запити для аномальних паттернів</li>
+            <li><strong>Верифікація</strong> — підтвердження або спростування гіпотези</li>
+            <li><strong>Документування</strong> — закриття або ескалація до інциденту</li>
+        </ol>
+        <pre><code>-- Hunt: S3 discovery anomaly
+SELECT useridentity.arn, sourceipaddress, count(*) as api_count
+FROM cloudtrail_logs
+WHERE eventname IN ('ListBuckets', 'ListObjects', 'GetBucketAcl', 'GetBucketPolicy')
+  AND eventtime > '2024-03-01'
+GROUP BY useridentity.arn, sourceipaddress
+HAVING api_count > 100
+ORDER BY api_count DESC;</code></pre>
+    </section>
+
+    <section id="s19">
+        <h2>19. SOAR: автоматизація реакції на інциденти</h2>
+        <p>SOAR (Security Orchestration, Automation and Response) автоматизує повторювані playbook-реакції та оркеструє дії між системами. Ключова цінність: скорочення MTTR з годин до хвилин.</p>
+        <h3>Playbook: Compromised IAM Key</h3>
+        <pre><code>def compromised_iam_key_playbook(event, context):
+    finding = event['detail']['findings'][0]
+    iam_user = extract_iam_user(finding)
+    
+    # Step 1: Відкликати access key
+    iam.update_access_key(
+        UserName=iam_user,
+        AccessKeyId=finding['Resources'][0]['Details']['...']['AccessKeyId'],
+        Status='Inactive'
+    )
+    # Step 2: Прикріпити Deny-all policy
+    attach_deny_policy(iam_user)
+    # Step 3: Зберегти CloudTrail snapshot для forensic
+    save_cloudtrail_snapshot(iam_user, hours_back=24)
+    # Step 4: Відкрити тікет + сповістити SOC
+    create_incident_ticket(severity='HIGH', user=iam_user)
+    notify_soc_channel(f"Compromised IAM key for {iam_user} - auto-revoked")</code></pre>
+        <p>Цей playbook виконується автоматично за 5–30 секунд після GuardDuty finding — задовго до того, як аналітик відкриє консоль.</p>
+    </section>
+
+    <section id="s20">
+        <h2>20. Alert Fatigue та пріоритизація алертів</h2>
+        <p>Alert fatigue — стан, коли SOC-аналітик механічно або ігнорує алерти через їх надмірну кількість. За EY GISS, 44% алертів ігноруються. Це підвищує ризик пропустити справжній інцидент.</p>
+        <h3>Стратегії зниження шуму</h3>
+        <ul>
+            <li><strong>False positive analysis</strong> — тюнінг правил на основі закритих як FP алертів</li>
+            <li><strong>Контекстуальне збагачення</strong> — бізнес-контекст у кожному алерті</li>
+            <li><strong>Auto-close INFORMATIONAL</strong> — через 30 днів без підтвердження</li>
+            <li><strong>Suppression Rules</strong> — ігнорування відомо-дозволених паттернів</li>
+        </ul>
+        <h3>Оптимальна черга SOC</h3>
+        <p>CRITICAL + NEW → HIGH + NEW → MEDIUM (за наявності часу) → LOW (лише при аудиті). Security Hub Score (0–100) відстежує загальний прогрес покращення постури безпеки.</p>
+    </section>
+
+    <section id="s21">
+        <h2>21. Моніторинг телекомунікаційних та 5G мереж</h2>
+        <p>Телекомунікаційні мережі мають специфічні протоколи (SS7, Diameter, SIP), що відрізняють їх моніторинг від стандартного ІТ-середовища.</p>
+        <h3>CDR Analysis та SS7</h3>
+        <p>CDR (Call Detail Record) фіксує IMSI/IMEI, A/B-party, час дзвінка, тип з'єднання. Аномалії в CDR є індикатором SS7-атак: IMSI Catchers (масові Location Update без реального руху), SIM-card fraud, clone attacks. SS7 Firewall (GSMA FS.11) аналізує кожне повідомлення та блокує підозрілі.</p>
+        <h3>SIP/VoIP моніторинг</h3>
+        <p>Session Border Controller (SBC) логує SIP-трейси. Виявляє: toll fraud (несанкціоновані міжнародні дзвінки), SIP brute-force (масові REGISTER), SIP flooding (INVITE flood DoS). Fail2ban-інтеграція для автоматичного блокування атакуючих IP.</p>
+        <h3>5G Core Monitoring (3GPP TS 33.501)</h3>
+        <p>AMF логує Authentication, Authorization та Registration Events. SMF — PDU Session Establishment. 5G NF генерують JSON-логи через N-інтерфейси → CloudWatch через Kinesis Agent. Ключова метрика: <strong>Authentication Success Rate</strong> — падіння нижче 95% = аномалія (IMSI Catcher або SIM fraud).</p>
+    </section>
+
+    <section id="s22">
+        <h2>22. SOC: Security Operations Center</h2>
+        <p>SOC — підрозділ, відповідальний за безперервний моніторинг, виявлення та реагування на інциденти 24/7/365. Трирівнева ієрархія: Tier 1 (Alert Analyst) → Tier 2 (Incident Responder) → Tier 3 (Threat Hunter).</p>
+        <h3>Ключові метрики SOC</h3>
+        <table>
+            <tr><th>Метрика</th><th>Ціль</th><th>Опис</th></tr>
+            <tr><td>MTTD</td><td>≤30 хвилин</td><td>Час від початку інциденту до виявлення</td></tr>
+            <tr><td>MTTR</td><td>≤4 години (HIGH)</td><td>Час від виявлення до нейтралізації</td></tr>
+            <tr><td>False Positive Rate</td><td>&lt;20%</td><td>Відсоток хибних спрацьовувань</td></tr>
+            <tr><td>Alert Coverage</td><td>100% в SLA</td><td>Відсоток алертів, оброблених вчасно</td></tr>
+        </table>
+        <p>Перевага Cloud-Native SOC: GuardDuty + Security Hub = managed SIEM із ML за фіксованою вартістю без власної SIEM-інфраструктури.</p>
+    </section>
+
+    <section id="s23">
+        <h2>23. Compliance моніторинг: PCI DSS, GDPR, ISO 27001</h2>
+        <h3>PCI DSS v4.0 — Requirement 10</h3>
+        <ul>
+            <li>Логування всіх доступів до CDE (Cardholder Data Environment)</li>
+            <li>Зберігання логів ≥12 місяців (3 місяці онлайн)</li>
+            <li>Захист логів від неавторизованих змін (S3 Object Lock)</li>
+            <li>Щоденний огляд логів критичних систем</li>
+        </ul>
+        <h3>GDPR</h3>
+        <ul>
+            <li>Article 30: Records of Processing Activities — документація</li>
+            <li>Article 33: Повідомлення supervisory authority за 72 год при витоку</li>
+            <li>Article 25: Privacy by Design — виключення PII з логів або маскування</li>
+        </ul>
+        <h3>ISO 27001</h3>
+        <p>A.12.4 Logging and Monitoring → CloudTrail, CloudWatch. A.16 Incident Management → Security Hub, SOAR. AWS Audit Manager автоматично збирає evidence для ISO 27001, PCI DSS, SOC 2.</p>
+    </section>
+
+    <section id="s24">
+        <h2>24. Централізований моніторинг Multi-Account AWS</h2>
+        <p>AWS Organizations + Security Hub Delegated Administrator: один Security Tooling Account отримує aggregated findings від усіх member accounts — єдина точка видимості для SOC.</p>
+        <p>AWS Control Tower автоматично налаштовує security guardrails при провіжнингу нових акаунтів: CloudTrail у всіх регіонах, Config, GuardDuty, централізовані лог-архіви до Log Archive Account.</p>
+        <p>AWS Security Lake (OCSF-формат) — managed data lake, що агрегує безпекові дані з усіх акаунтів та регіонів у стандартизованій схемі для cross-source кореляції:</p>
+        <pre><code>resource "aws_securitylake_data_lake" "main" {
+  configuration {
+    region = "eu-west-1"
+    encryption_configuration {
+      kms_key_id = aws_kms_key.security_lake.arn
+    }
+    lifecycle_configuration {
+      expiration { days = 365 }
+    }
+  }
+}</code></pre>
+    </section>
+
+    <section id="s25">
+        <h2>25. Виявлення інсайдерських загроз та ML-аномалії</h2>
+        <p>Інсайдерські загрози — одні з найважко виявних. 20% усіх витоків пов'язані з інсайдерами (IBM). Три типи: злочинний інсайдер, недбалий інсайдер, компрометований інсайдер.</p>
+        <h3>Індикатори підозрілої поведінки</h3>
+        <ul>
+            <li>Download before resignation — різке зростання S3 GetObject за 2 тижні до звільнення</li>
+            <li>Доступ до незвичних ресурсів (DBA, що читає HR-документи)</li>
+            <li>Нічні операції від акаунту, що завжди активний лише вдень</li>
+            <li>Використання особистих хмарних сховищ для передачі корпоративних даних</li>
+        </ul>
+        <h3>ML у Security</h3>
+        <p>CloudWatch Anomaly Detection (ML для метрик), GuardDuty ML (мережа + API), Amazon Detective (graph ML для forensic), Amazon SageMaker (custom ML-детектори на CloudTrail features).</p>
+    </section>
+
+    <section id="s26">
+        <h2>26. DevSecOps: моніторинг у CI/CD pipeline</h2>
+        <p>Security Observability охоплює весь lifecycle: від написання коду до production. Перевірки у pipeline: SAST, SCA, DAST, Container Scanning, IaC Security.</p>
+        <table>
+            <tr><th>Тип перевірки</th><th>Інструменти AWS</th><th>Де у pipeline</th></tr>
+            <tr><td>SAST</td><td>CodeGuru Security</td><td>PR merge</td></tr>
+            <tr><td>Container Scan</td><td>Inspector v2 (ECR)</td><td>Image push</td></tr>
+            <tr><td>IaC Security</td><td>CloudFormation Guard</td><td>Pre-deploy</td></tr>
+            <tr><td>Runtime</td><td>GuardDuty + CloudTrail</td><td>Production</td></tr>
+        </table>
+        <p>Runtime Security Monitoring: abnormal process execution (Lambda запускає bash), незвичний мережевий трафік від сервісного акаунту, аномальні системні виклики.</p>
+    </section>
+
+    <section id="s27">
+        <h2>27. Практичний кейс: Виявлення атаки в AWS</h2>
+        <p><strong>Сценарій:</strong> Compromised EC2 Instance → Data Exfiltration з S3.</p>
+        <table>
+            <tr><th>Час</th><th>Подія</th><th>Виявлення</th></tr>
+            <tr><td>14:00</td><td>Phishing → IMDS credential theft</td><td>GuardDuty: MetadataCredentialTheft</td></tr>
+            <tr><td>14:05</td><td>Discovery: aws s3 ls, aws iam list-users</td><td>CloudWatch Alarm: UnauthorizedAPICalls</td></tr>
+            <tr><td>14:10</td><td>S3 bulk download 400 GB</td><td>GuardDuty: Exfiltration + Macie finding</td></tr>
+            <tr><td>14:11</td><td>EventBridge trigger</td><td>Lambda: revoke credentials, block IP, isolate EC2</td></tr>
+            <tr><td>14:13</td><td>Containment завершено</td><td>Security Hub: HIGH finding resolved</td></tr>
+            <tr><td>14:30</td><td>SOC forensic</td><td>Detective: повна timeline</td></tr>
+        </table>
+        <p><strong>MTTD:</strong> 10 хвилин (GuardDuty ML) vs. 194 дні (без моніторингу)</p>
+        <p><strong>MTTR:</strong> 1 хвилина (автоматизація) vs. 73 дні (вручну)</p>
+    </section>
+
+    <section id="s28">
+        <h2>28. Типові помилки та чеклист налаштування моніторингу</h2>
+        <h3>Антипатерни</h3>
+        <table>
+            <tr><th>Антипатерн</th><th>Наслідок</th><th>Рішення</th></tr>
+            <tr><td>CloudTrail тільки в одному регіоні</td><td>Blind spot</td><td><code>is_multi_region_trail = true</code></td></tr>
+            <tr><td>CloudWatch Logs без retention</td><td>Необмежені витрати</td><td>Встановити 90–365 днів</td></tr>
+            <tr><td>GuardDuty у тестовому режимі</td><td>Немає реальної детекції</td><td>Увімкнути + підписки</td></tr>
+            <tr><td>S3 Data Events вимкнено</td><td>Невидимість ексфільтрації</td><td>Увімкнути для critical buckets</td></tr>
+            <tr><td>Алерти без SLA</td><td>Обробка роками</td><td>CRITICAL ≤15 хв, HIGH ≤1 год</td></tr>
+            <tr><td>Security Theatre</td><td>False sense of security</td><td>Перевірити що findings обробляються</td></tr>
+        </table>
+        <h3>✅ Чеклист налаштування моніторингу AWS</h3>
+        <ul>
+            <li>☑ CloudTrail: Multi-region Trail → S3 з log file validation + KMS encryption</li>
+            <li>☑ GuardDuty: enabled у всіх регіонах, findings → Security Hub</li>
+            <li>☑ Security Hub: enabled, стандарти AWS FSBP + CIS увімкнені</li>
+            <li>☑ Config: enabled з managed rules + Auto Remediation</li>
+            <li>☑ VPC Flow Logs: enabled для всіх VPC</li>
+            <li>☑ CloudWatch Alarms: Root usage, unauthorized API, SG changes</li>
+            <li>☑ S3 Data Events: enabled для sensitive buckets</li>
+            <li>☑ Macie: enabled для critical S3 buckets</li>
+            <li>☑ Inspector v2: enabled для EC2 та ECR</li>
+            <li>☑ Log retention policies: встановлені для всіх Log Groups</li>
+            <li>☑ SOAR playbooks: EventBridge → Lambda для HIGH+ findings</li>
+            <li>☑ Security Hub findings SLA: документований та дотримується</li>
+        </ul>
+    </section>
+
+</div>
+</body>
+</html>
