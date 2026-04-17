@@ -1,11 +1,11 @@
 # note_key.md — Стандарти оформлення лекційних презентацій
 
-> Цей файл є специфікацією для ШІ-агентів, що створюють або редагують файли `presentation.html` у цьому репозиторії.  
+> Цей файл є специфікацією для ШІ-агентів, що створюють або редагують файли `_NN.html` у цьому репозиторії.  
 > Всі агенти зобов'язані точно дотримуватися цих вимог, щоб забезпечити однаковий стиль у всіх лекціях.
 
 ---
 
-## 1. Загальна структура presentation.html
+## 1. Загальна структура _NN.html
 
 Кожна презентація є **standalone Reveal.js deck** (CDN-посилання на reveal.js), що складається з:
 
@@ -13,13 +13,13 @@
 - Тема: `black` (`theme/black.css`)
 - CDN: `https://cdn.jsdelivr.net/npm/reveal.js/`
 - **36 слайдів** (може бути 34–50 залежно від теми)
-- Файл розміщується у: `lectures/lecture-NN/presentation.html`
+- Файл розміщується у: `lectures/lecture-NN/_NN.html` (наприклад, `lectures/lecture-08/_08.html`)
 
 ---
 
 ## 2. Reveal.initialize — параметри
 
-Лекції 08+ використовують наступний профіль (оптимізований для 1920×1080):
+Єдиний стандарт для всіх лекцій (оптимізований для 1920×1080):
 
 ```js
 Reveal.initialize({
@@ -35,8 +35,6 @@ Reveal.initialize({
     scrollActivationWidth: 900
 });
 ```
-
-> **Legacy-конфіг** (лекції 05–07): `width=1650–1750, height=900–920, maxScale=1.0, scrollActivationWidth=700`. Нові лекції використовують профіль вище.
 
 ---
 
@@ -140,7 +138,7 @@ pre code { display: block; padding: 0.4em; font-size: 0.8em; color: #c9d1d9; lin
 ```html
 <div class="box" style="border-color:#444; font-size:0.75em; margin-top:0.4em;">
     📊 35 слайдів &nbsp;·&nbsp; Лекція N з 11 &nbsp;·&nbsp;
-    ← <a href="../lecture-NN/presentation.html" style="color:#58a6ff;">Лекція N-1: Назва</a> &nbsp;·&nbsp;
+    ← <a href="../lecture-NN/_NN.html" style="color:#58a6ff;">Лекція N-1: Назва</a> &nbsp;·&nbsp;
     → Лекція N+1: Назва
 </div>
 ```
@@ -323,7 +321,7 @@ Reveal.on('slidechanged', () => { if (notesPanelOpen) updateNotesContent(); });
 
 ---
 
-## 9. Референсний шаблон — повний presentation.html
+## 9. Референсний шаблон — повний _NN.html
 
 ```html
 <!doctype html>
@@ -471,7 +469,7 @@ Reveal.on('slidechanged', () => { if (notesPanelOpen) updateNotesContent(); });
 
 ---
 
-## 10. Чеклист перед збереженням presentation.html
+## 10. Чеклист перед збереженням _NN.html
 
 - [ ] `Reveal.initialize` містить всі параметри з розділу 2
 - [ ] CSS містить `overflow-y: auto !important` для `.reveal .slides section`
